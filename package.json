@@ -1,0 +1,24 @@
+{
+  "name": "yeni-abi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keremcanaltintas/-logistic101.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/keremcanaltintas/-logistic101/issues"
+  },
+  "homepage": "https://github.com/keremcanaltintas/-logistic101#readme",
+  "dependencies": {
+    "@libsql/client": "^0.17.3"
+  }
+}
