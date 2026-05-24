@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Nestro Fulfillment | Panel & Giriş</title>
+	<!-- FontAwesome Icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+	<!-- ==================== GİRİŞ EKRANI ==================== -->
+	<div id="login-page" class="page-container">
+		<!-- Ambient Background -->
+		<div class="ambient-bg">
+			<div class="glow glow-1"></div>
+			<div class="glow glow-2"></div>
+			<div class="glow glow-3"></div>
+		</div>
+
+		<div class="container" id="container">
+			<!-- ========== KAYIT OL FORMU ========== -->
+			<div class="form-container sign-up-container">
+				<form id="signup-form" onsubmit="event.preventDefault();">
+					<div class="form-logo">
+						<svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+							<path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" stroke="#28a745" stroke-width="2.5" stroke-linejoin="round"/>
+							<path d="M12 22V12" stroke="#28a745" stroke-width="2.5"/>
+							<path d="M22 7L12 12L2 7" stroke="#28a745" stroke-width="2.5"/>
+						</svg>
+						<span>Nestro</span>
+					</div>
+					<h1>Hesap Oluştur</h1>
+					<div class="social-container">
+						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" class="social"><i class="fab fa-google"></i></a>
+						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					</div>
+					<span class="form-subtitle">veya e-posta ile kayıt olun</span>
+					
+					<div class="input-group">
+						<i class="fas fa-user"></i>
+						<input type="text" placeholder="Ad Soyad" />
+					</div>
+					<div class="input-group">
+						<i class="fas fa-envelope"></i>
+						<input type="email" placeholder="E-posta" />
+					</div>
+					<div class="input-group">
+						<i class="fas fa-lock"></i>
+						<input type="password" placeholder="Şifre" />
+					</div>
+					<button type="button" class="btn-primary" onclick="alert('Kayıt sistemi şu an pasiftir. Lütfen Giriş Yap panelini kullanın.')">Kayıt Ol</button>
+				</form>
+			</div>
+
+			<!-- ========== GİRİŞ YAP FORMU ========== -->
+			<div class="form-container sign-in-container">
+				<form id="login-form">
+					<div class="form-logo">
+						<svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+							<path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" stroke="#28a745" stroke-width="2.5" stroke-linejoin="round"/>
+							<path d="M12 22V12" stroke="#28a745" stroke-width="2.5"/>
+							<path d="M22 7L12 12L2 7" stroke="#28a745" stroke-width="2.5"/>
+						</svg>
+						<span>Nestro</span>
+					</div>
+					<h1>Giriş Yap</h1>
+					<div class="social-container">
+						<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" class="social"><i class="fab fa-google"></i></a>
+						<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+					</div>
+					<span class="form-subtitle">Kullanıcı adı ve şifre olarak <strong>123456</strong> giriniz</span>
+					
+					<!-- Bildirim Toast Alanı -->
+					<div id="login-toast" class="error-toast"></div>
+
+					<div class="input-group">
+						<i class="fas fa-user"></i>
+						<input type="text" id="username-input" placeholder="Kullanıcı Adı" required autocomplete="username" />
+					</div>
+					<div class="input-group">
+						<i class="fas fa-lock"></i>
+						<input type="password" id="password-input" placeholder="Şifre" required autocomplete="current-password" />
+					</div>
+					<a href="#" class="forgot-link" onclick="alert('Şifreniz varsayılan olarak 123456\'dır.')">Şifrenizi mi unuttunuz?</a>
+					<button type="submit" id="login-btn">Giriş Yap</button>
+				</form>
+			</div>
+
+			<!-- ========== OVERLAY PANELLERİ ========== -->
+			<div class="overlay-container">
+				<div class="overlay">
+					<div class="overlay-panel overlay-left">
+						<img src="delivery.png" alt="Teslimat Takibi" class="overlay-illustration">
+						<h1>Tekrar Hoş Geldiniz!</h1>
+						<p>Kargo takibi, stok yönetimi ve sipariş süreçlerinize kaldığınız yerden devam edin.</p>
+						<button class="ghost" id="signIn">Giriş Yap</button>
+					</div>
+					<div class="overlay-panel overlay-right">
+						<img src="fulfillment.png" alt="Fulfillment Merkezi" class="overlay-illustration">
+						<h1>Nestro'ya Hoş Geldiniz!</h1>
+						<p>Fulfillment süreçlerinizi dijitalleştirin, siparişlerinizi hızlandırın ve lojistik operasyonlarınızı tek platformdan yönetin.</p>
+						<button class="ghost" id="signUp">Kayıt Ol</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ==================== DASHBOARD PANELİ ==================== -->
+	<div id="dashboard-page" class="page-container dashboard-layout" style="display: none;">
+		
+		<!-- Sol Sabit Sidebar -->
+		<aside class="sidebar">
+			<div class="sidebar-header">
+				<div class="logo">
+					<svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+						<path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" stroke="#28a745" stroke-width="2.5" stroke-linejoin="round" fill="rgba(40, 167, 73, 0.1)"/>
+						<path d="M12 22V12" stroke="#28a745" stroke-width="2.5"/>
+						<path d="M22 7L12 12L2 7" stroke="#28a745" stroke-width="2.5"/>
+					</svg>
+					<span class="logo-text">Nestro</span>
+				</div>
+				<span class="badge">Fulfillment</span>
+				<button class="sidebar-close-btn" id="sidebar-close-btn" onclick="toggleMobileSidebar()" title="Kapat">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+			</div>
+
+			<nav class="sidebar-menu">
+				<a href="#" class="menu-item active" id="nav-dashboard">
+					<i class="fa-solid fa-chart-pie"></i>
+					<span>Dashboard</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-connect">
+					<i class="fa-brands fa-shopify"></i>
+					<span>Mağaza Bağla</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-orders">
+					<i class="fa-solid fa-boxes-stacked"></i>
+					<span>Siparişlerim</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-products">
+					<i class="fa-solid fa-box"></i>
+					<span>Ürünlerim</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-wallet">
+					<i class="fa-solid fa-wallet"></i>
+					<span>Cüzdan</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-sms">
+					<i class="fa-solid fa-comment-sms"></i>
+					<span>SMS Ayarları</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-support">
+					<i class="fa-solid fa-headset"></i>
+					<span>Destek</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-reports">
+					<i class="fa-solid fa-chart-simple"></i>
+					<span>Raporlar</span>
+				</a>
+				<a href="#" class="menu-item" id="nav-settings">
+					<i class="fa-solid fa-gear"></i>
+					<span>Ayarlar</span>
+				</a>
+			</nav>
+
+			<div class="sidebar-footer">
+				<!-- Eğitimi Yeniden Başlat butonu tamamen kaldırılmıştır -->
+				<button class="btn-logout" id="nav-logout" onclick="logout()">
+					<i class="fa-solid fa-arrow-right-from-bracket"></i>
+					<span>Çıkış Yap</span>
+				</button>
+			</div>
+		</aside>
+
+		<!-- Mobil Sidebar Karartma Örtüsü -->
+		<div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+		<!-- Sağ Ana İçerik Alanı -->
+		<main class="main-content">
+			
+			<!-- ==================== ÜST NAVİGASYON BARI (YENİ) ==================== -->
+			<div class="top-navbar">
+				<!-- Mobil Hamburger Menü Butonu -->
+				<button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileSidebar()" title="Menü">
+					<i class="fa-solid fa-bars"></i>
+				</button>
+				
+				<!-- Sol: Arama Barı -->
+				<div class="search-bar-wrapper">
+					<i class="fa-solid fa-magnifying-glass search-icon"></i>
+					<input type="text" id="global-search" placeholder="Sipariş kodu, müşteri ismi ara..." autocomplete="off">
+				</div>
+				
+				<!-- Sağ: Canlı Tarih, Aksiyon İkonları ve Profil -->
+				<div class="top-navbar-right">
+					<div class="live-date-wrapper">
+						<i class="fa-regular fa-calendar-days"></i>
+						<span id="live-date">Yükleniyor...</span>
+					</div>
+					
+					<div class="nav-icon-buttons">
+						<button class="nav-icon-btn" title="Destek / SSS" onclick="alert('Destek ve SSS merkezi açılıyor...')">
+							<i class="fa-regular fa-circle-question"></i>
+						</button>
+						<button class="nav-icon-btn notification-btn" title="Bildirimler" onclick="alert('Yeni bildirim bulunmuyor.')">
+							<i class="fa-regular fa-bell"></i>
+							<span class="notification-badge-dot"></span>
+						</button>
+					</div>
+					
+					<div class="profile-dropdown-trigger" onclick="alert('Mağaza Ayarları açılıyor...')">
+						<div class="profile-avatar">
+							<i class="fa-solid fa-store"></i>
+						</div>
+						<span class="profile-store-text">Mağazam</span>
+						<i class="fa-solid fa-chevron-down profile-chevron"></i>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== KONTROL PANELİ GÖRÜNÜMÜ (DASHBOARD VIEW) ========== -->
+			<div id="dashboard-view" class="view-section">
+				<!-- Header (Karşılama) -->
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Bugün 12 yeni siparişin var, Merhaba <span id="username-display">Kullanıcı</span> 👋</h1>
+						<p class="header-subtitle">Mağazanız sorunsuz bir şekilde senkronize edildi.</p>
+					</div>
+				</header>
+
+				<!-- 4 Durum Kartı (Grid) -->
+				<section class="dashboard-section">
+					<div class="section-title-bar">
+						<h2>Sipariş Genel Durumu</h2>
+						<span class="time-range">Bugün (Gerçek Zamanlı)</span>
+					</div>
+					
+					<div class="status-grid" id="status-cards-container">
+						<!-- Aylık Ciro Vurgu Kartı -->
+						<div class="status-card revenue">
+							<div class="card-icon-wrapper">
+								<i class="fa-solid fa-money-bill-trend-up"></i>
+							</div>
+							<div class="card-content">
+								<span class="card-label">Aylık Ciro</span>
+								<h3 class="card-value">₺45.250</h3>
+							</div>
+							<div class="card-trend up">
+								<i class="fa-solid fa-arrow-trend-up"></i> +18%
+							</div>
+						</div>
+
+						<div class="status-card pending">
+							<div class="card-icon-wrapper">
+								<i class="fa-solid fa-clock"></i>
+							</div>
+							<div class="card-content">
+								<span class="card-label">Bekleyen</span>
+								<h3 class="card-value">5</h3>
+							</div>
+							<div class="card-trend up">
+								<i class="fa-solid fa-arrow-trend-up"></i> 12%
+							</div>
+						</div>
+
+						<div class="status-card processing">
+							<div class="card-icon-wrapper">
+								<i class="fa-solid fa-spinner fa-spin-slow"></i>
+							</div>
+							<div class="card-content">
+								<span class="card-label">Hazırlanan</span>
+								<h3 class="card-value">3</h3>
+							</div>
+							<div class="card-trend up">
+								<i class="fa-solid fa-arrow-trend-up"></i> 8%
+							</div>
+						</div>
+
+						<div class="status-card shipped">
+							<div class="card-icon-wrapper">
+								<i class="fa-solid fa-truck-fast"></i>
+							</div>
+							<div class="card-content">
+								<span class="card-label">Kargoya Verilen</span>
+								<h3 class="card-value">4</h3>
+							</div>
+							<div class="card-trend up">
+								<i class="fa-solid fa-check"></i> Tamamlandı
+							</div>
+						</div>
+
+						<div class="status-card problem">
+							<div class="card-icon-wrapper">
+								<i class="fa-solid fa-triangle-exclamation"></i>
+							</div>
+							<div class="card-content">
+								<span class="card-label">Sorunlu</span>
+								<h3 class="card-value">0</h3>
+							</div>
+							<div class="card-trend ok">
+								<i class="fa-solid fa-shield-halved"></i> Güvende
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Gelişmiş "Bugünün Görevleri" (Tasks Checklist) -->
+				<section class="dashboard-section tasks-section">
+					<div class="section-title-bar">
+						<h2>Bugünün Görevleri</h2>
+						<span class="task-count" id="task-count-display">Yükleniyor...</span>
+					</div>
+					
+					<div class="tasks-card">
+						<!-- Görevlerin Dinamik Listelendiği Alan -->
+						<div id="tasks-list">
+							<!-- JavaScript ile doldurulacak -->
+						</div>
+
+						<!-- Yeni Görev Ekleme Formu -->
+						<div class="task-form-container">
+							<h3 class="form-title"><i class="fa-solid fa-circle-plus"></i> Yeni Görev Ekle</h3>
+							<form id="task-form" onsubmit="handleAddTask(event)">
+								<div class="task-form-row">
+									<div class="form-input-group flex-grow">
+										<input type="text" id="new-task-desc" placeholder="Yapılacak görevin tanımını yazın..." required>
+									</div>
+									<div class="form-input-group priority-select-group">
+										<select id="new-task-priority">
+											<option value="high">Yüksek</option>
+											<option value="medium" selected>Orta</option>
+											<option value="low">Düşük</option>
+										</select>
+									</div>
+									<button type="submit" class="btn-add-task">
+										<i class="fa-solid fa-plus"></i> Ekle
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+			</div>
+
+			<!-- ========== MAĞAZA BAĞLA GÖRÜNÜMÜ (CONNECT VIEW) ========== -->
+			<div id="connect-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Mağaza Bağla</h1>
+						<p class="header-subtitle">Shopify mağazanızı bağlayarak siparişlerinizi ve envanterinizi otomatik olarak senkronize edin</p>
+					</div>
+				</header>
+
+				<!-- İki Sütunlu Bağlantı Düzeni (Connect Store Layout) -->
+				<div class="connect-page-layout">
+					<!-- Sol Sütun: Bağlantı Formu -->
+					<div class="connect-form-section">
+						<div class="connect-card">
+							<!-- Kahraman Grafik: Shopify -> Nestro -->
+							<div class="connect-hero-graphic">
+								<div class="brand-logo-wrapper shopify">
+									<i class="fa-brands fa-shopify"></i>
+								</div>
+								<div class="connect-arrow">
+									<i class="fa-solid fa-right-long animate-arrow"></i>
+								</div>
+								<div class="brand-logo-wrapper nestro">
+									<svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+										<path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" stroke="#28a745" stroke-width="2.5" stroke-linejoin="round" fill="rgba(40, 167, 73, 0.1)"/>
+										<path d="M12 22V12" stroke="#28a745" stroke-width="2.5"/>
+										<path d="M22 7L12 12L2 7" stroke="#28a745" stroke-width="2.5"/>
+									</svg>
+								</div>
+							</div>
+
+							<h3 class="connect-title">Shopify Mağazanı Nestro'ya Bağla</h3>
+							
+							<form id="connect-store-form" onsubmit="handleConnectStoreSubmit(event)">
+								<div class="form-group-draft">
+									<label for="connect-store-url">Shopify Mağaza Adı</label>
+									<input type="text" id="connect-store-url" placeholder="Örn: dukkanadi.myshopify.com" required onblur="validateAndFormatStoreUrl(this)">
+								</div>
+								
+								<div class="form-group-draft">
+									<label for="connect-api-token">Admin API Erişim Jetonu</label>
+									<input type="password" id="connect-api-token" placeholder="shpat_..." required>
+								</div>
+								
+								<button type="submit" class="btn-create-draft" id="btn-connect-store">
+									<span id="btn-connect-text">Mağazayı Bağla</span>
+								</button>
+							</form>
+
+							<p class="permissions-note">
+								<i class="fa-solid fa-shield-halved"></i> Sistemimiz siparişleri işlemek için yalnızca Okuma/Yazma ve Stok izinlerine ihtiyaç duyar.
+							</p>
+						</div>
+					</div>
+
+					<!-- Sağ Sütun: Görsel Rehber -->
+					<div class="connect-guide-section">
+						<div class="guide-card">
+							<h3 class="guide-title"><i class="fa-solid fa-lightbulb"></i> 3 Adımda Jetonu Nasıl Alırım?</h3>
+							
+							<ol class="guide-steps">
+								<li>
+									<span class="step-number">1</span>
+									<span class="step-text">Shopify panelinizden <strong>Ayarlar > Uygulamalar ve Satış Kanalları</strong> bölümüne gidin.</span>
+								</li>
+								<li>
+									<span class="step-number">2</span>
+									<span class="step-text"><strong>Uygulama Geliştirme</strong> butonuna tıklayıp yeni bir uygulama oluşturun.</span>
+								</li>
+								<li>
+									<span class="step-number">3</span>
+									<span class="step-text"><strong>Sipariş ve Stok izinlerini</strong> verip Jetonu Göster diyerek kodu buraya yapıştırın.</span>
+								</li>
+							</ol>
+
+							<!-- Kargo Firması Seçim Bölümü (Video yerine eklendi) -->
+							<div class="carrier-selection-box">
+								<h4 class="carrier-box-title"><i class="fa-solid fa-truck-fast"></i> Varsayılan Kargo Firmaları</h4>
+								<p class="carrier-box-desc">Sipariş tipine göre otomatik atanacak varsayılan kargoları seçin.</p>
+								
+								<div class="carrier-group">
+									<label for="carrier-paid-select"><i class="fa-solid fa-credit-card"></i> Ödenmiş Siparişler</label>
+									<div class="priority-select-group" style="width: 100%;">
+										<select id="carrier-paid-select">
+											<option value="Yurtiçi Kargo" selected>Yurtiçi Kargo (Varsayılan)</option>
+											<option value="Aras Kargo">Aras Kargo</option>
+											<option value="MNG Kargo">MNG Kargo</option>
+											<option value="Sürat Kargo">Sürat Kargo</option>
+											<option value="Hepsijet">Hepsijet</option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="carrier-group" style="margin-top: 14px;">
+									<label for="carrier-cod-select"><i class="fa-solid fa-hand-holding-dollar"></i> Kapıda Ödemeli Siparişler (CoD)</label>
+									<div class="priority-select-group" style="width: 100%;">
+										<select id="carrier-cod-select">
+											<option value="Aras Kargo" selected>Aras Kargo (Varsayılan)</option>
+											<option value="Yurtiçi Kargo">Yurtiçi Kargo</option>
+											<option value="MNG Kargo">MNG Kargo</option>
+											<option value="Sürat Kargo">Sürat Kargo</option>
+											<option value="Hepsijet">Hepsijet</option>
+										</select>
+									</div>
+								</div>
+
+								<button type="button" class="btn-save-carrier" id="btn-save-carrier" onclick="handleSaveCarrierSettings()" style="margin-top: 18px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+									<i class="fa-solid fa-floppy-disk"></i>
+									<span id="btn-save-carrier-text">Ayarları Kaydet</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== SİPARİŞLERİM GÖRÜNÜMÜ (ORDERS VIEW) ========== -->
+			<div id="orders-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+						<div class="header-welcome">
+							<h1>Siparişlerim</h1>
+							<p class="header-subtitle">Tüm siparişlerini buradan kolayca yönetebilirsin</p>
+						</div>
+						<div class="orders-search-wrapper" style="position: relative; max-width: 280px; width: 100%;">
+							<i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13.5px;"></i>
+							<input type="text" id="orders-local-search" placeholder="Siparişlerde Ara..." style="width: 100%; padding: 10px 14px 10px 38px; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius-md); font-family: var(--font-main); font-size: 13.5px; outline: none; transition: var(--transition-smooth);" oninput="handleLocalOrderSearch()">
+						</div>
+					</div>
+				</header>
+
+				<!-- Sipariş Alt Göstergeleri (Sub-Dashboard) -->
+				<div class="orders-sub-dashboard">
+					<!-- Ödenen Siparişler -->
+					<div class="orders-mini-card">
+						<div class="orders-mini-card-icon paid">
+							<i class="fa-solid fa-circle-check"></i>
+						</div>
+						<div class="orders-mini-card-info">
+							<span class="orders-mini-card-label">Ödenen Siparişler</span>
+							<h3 class="orders-mini-card-value" id="orders-stat-paid">0</h3>
+							<span class="orders-mini-card-sub">Kredi Kartı / Havale</span>
+						</div>
+					</div>
+					<!-- Kapıda Ödeme -->
+					<div class="orders-mini-card">
+						<div class="orders-mini-card-icon cod">
+							<i class="fa-solid fa-clock-rotate-left"></i>
+						</div>
+						<div class="orders-mini-card-info">
+							<span class="orders-mini-card-label">Kapıda Ödeme (COD)</span>
+							<h3 class="orders-mini-card-value" id="orders-stat-cod">0</h3>
+							<span class="orders-mini-card-sub">SMS Onayı Bekleyenler</span>
+						</div>
+					</div>
+					<!-- İptal Edilenler -->
+					<div class="orders-mini-card">
+						<div class="orders-mini-card-icon cancelled">
+							<i class="fa-solid fa-circle-xmark"></i>
+						</div>
+						<div class="orders-mini-card-info">
+							<span class="orders-mini-card-label">İptal Edilenler</span>
+							<h3 class="orders-mini-card-value" id="orders-stat-cancelled">0</h3>
+							<span class="orders-mini-card-sub">Son 30 Gün</span>
+						</div>
+					</div>
+					<!-- İade Talepleri -->
+					<div class="orders-mini-card">
+						<div class="orders-mini-card-icon returned">
+							<i class="fa-solid fa-rotate-left"></i>
+						</div>
+						<div class="orders-mini-card-info">
+							<span class="orders-mini-card-label">İade Talepleri</span>
+							<h3 class="orders-mini-card-value" id="orders-stat-returned">3</h3>
+							<span class="orders-mini-card-sub">İnceleme Bekliyor</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- İki Sütunlu Sayfa Düzeni (Orders Page Layout) -->
+				<div class="orders-page-layout">
+					<!-- Sol Sütun: Filtreler ve Sipariş Listesi -->
+					<div class="orders-list-section">
+						<!-- Filtreleme Tab Menüsü -->
+						<div class="orders-tab-container">
+							<button class="orders-tab-btn active" id="tab-orders-all" onclick="filterOrdersNew('all')">Tüm Siparişler</button>
+							<button class="orders-tab-btn" id="tab-orders-paid" onclick="filterOrdersNew('card')">Ödendi</button>
+							<button class="orders-tab-btn" id="tab-orders-cod" onclick="filterOrdersNew('cod')">Kapıda Ödeme</button>
+							<button class="orders-tab-btn" id="tab-orders-cancelled" onclick="filterOrdersNew('cancelled')">İptal Edildi</button>
+						</div>
+
+						<!-- Sipariş Tablo Yapısı -->
+						<div class="table-responsive" style="margin-top: 10px;">
+							<table class="orders-table-new" id="orders-table-wrapper">
+								<thead>
+									<tr>
+										<th>Sipariş No</th>
+										<th>Tarih</th>
+										<th>Müşteri</th>
+										<th>Ödeme Yöntemi</th>
+										<th>Durum</th>
+										<th class="align-right">Tutar</th>
+										<th style="text-align: right; padding-right: 20px;">Aksiyon</th>
+									</tr>
+								</thead>
+								<tbody id="orders-tbody-new">
+									<!-- JavaScript ile doldurulacak -->
+								</tbody>
+							</table>
+						</div>
+
+						<!-- Boş Durum (Empty State) -->
+						<div id="orders-empty-state" class="empty-state-container" style="display: none;">
+							<div class="empty-state-card">
+								<div class="empty-state-icon">
+									<i class="fa-solid fa-box-open"></i>
+								</div>
+								<h3>Henüz sipariş yok</h3>
+								<p>Mağazanı bağladığında siparişlerin burada görünecek</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sağ Sütun: Taslak Sipariş Paneli -->
+					<div class="draft-order-panel">
+						<div class="draft-card">
+							<h3 class="draft-title"><i class="fa-solid fa-circle-plus"></i> Taslak Sipariş Oluştur</h3>
+							<form id="draft-order-form" onsubmit="handleCreateDraftOrder(event)">
+								<!-- Sipariş Kodu (Read-only) -->
+								<div class="form-group-draft">
+									<label for="draft-order-code">Sipariş Kodu</label>
+									<input type="text" id="draft-order-code" readonly value="#1025">
+								</div>
+								<div class="form-group-draft">
+									<label for="draft-customer-name">Müşteri Bilgisi</label>
+									<input type="text" id="draft-customer-name" placeholder="Müşterinin Adı Soyadı" required>
+								</div>
+								<div class="form-group-draft">
+									<label for="draft-product-name">Ürün</label>
+									<input type="text" id="draft-product-name" placeholder="Örn: Wireless Ergonomik Mouse" required>
+								</div>
+								<div class="form-group-draft">
+									<label for="draft-customer-phone">Telefon Numarası</label>
+									<input type="text" id="draft-customer-phone" placeholder="Örn: +90 532 123 4567" required>
+								</div>
+								<div class="form-group-draft">
+									<label for="draft-payment-type">Ödeme Tipi</label>
+									<div class="priority-select-group" style="width: 100%;">
+										<select id="draft-payment-type" style="width: 100%;">
+											<option value="paid" selected>Ödendi (Kredi Kartı / EFT)</option>
+											<option value="cod">Kapıda Ödeme (CoD)</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group-draft">
+									<label for="draft-customer-address">Teslimat Adresi</label>
+									<textarea id="draft-customer-address" placeholder="Detaylı Teslimat Adresi" required rows="3"></textarea>
+								</div>
+								<button type="submit" class="btn-create-draft">Oluştur</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== ÜRÜNLERİM GÖRÜNÜMÜ (PRODUCTS VIEW) ========== -->
+			<div id="products-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+						<div class="header-welcome">
+							<h1>Ürünlerim</h1>
+							<p class="header-subtitle">Depodaki stok durumunu ve raf konumlarını takip et</p>
+						</div>
+						<button class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 20px;" onclick="handleAddProductPrompt()">
+							<i class="fa-solid fa-plus"></i> Yeni Ürün Ekle
+						</button>
+					</div>
+				</header>
+
+				<!-- Ürünler Tablosu Konteyneri -->
+				<div class="products-card" style="margin-top: 10px;">
+					<div class="table-responsive">
+						<table class="products-table">
+							<thead>
+								<tr>
+									<th>Görsel</th>
+									<th>Ürün Adı & SKU</th>
+									<th>Stok Adedi</th>
+									<th>İade Adedi</th>
+									<th>Raf Konumu</th>
+									<th style="text-align: right; padding-right: 24px;">Aksiyonlar</th>
+								</tr>
+							</thead>
+							<tbody id="products-list-tbody">
+								<!-- JavaScript ile doldurulacak -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== CÜZDAN GÖRÜNÜMÜ (WALLET VIEW) ========== -->
+			<div id="wallet-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Cüzdan & Faturalandırma</h1>
+						<p class="header-subtitle">Bakiye hareketlerini izle ve ödemelerini güvenle yönet</p>
+					</div>
+				</header>
+
+				<div class="wallet-grid">
+					<!-- Sol Taraf: Kart / Bakiye ve Otomatik Yükleme -->
+					<div class="wallet-left-column">
+						<div class="balance-card">
+							<div class="balance-card-header">
+								<span>GÜNCEL BAKİYE</span>
+								<i class="fa-solid fa-wallet"></i>
+							</div>
+							<div class="balance-amount" id="wallet-balance-val">₺4.250,00</div>
+							<div class="balance-card-actions">
+								<button class="btn-deposit" onclick="openDepositModal()">
+									<i class="fa-solid fa-circle-plus"></i> Bakiye Yükle
+								</button>
+								<button class="btn-withdraw" onclick="openWithdrawModal()">
+									<i class="fa-solid fa-money-bill-transfer"></i> Para Çek
+								</button>
+							</div>
+						</div>
+
+						<div class="auto-topup-card">
+							<div class="auto-topup-header">
+								<div class="auto-topup-text">
+									<h4>Otomatik Bakiye Yükleme</h4>
+									<p>Bakiye ₺500 altına düştüğünde kayıtlı karttan otomatik ₺2.000 yükleme yap.</p>
+								</div>
+								<label class="toggle-switch">
+									<input type="checkbox" id="auto-topup-toggle" onchange="handleAutoTopupToggle(this)">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sağ Taraf: Son İşlemler -->
+					<div class="wallet-right-column">
+						<div class="transactions-card">
+							<h3 class="transactions-title"><i class="fa-solid fa-clock-rotate-left"></i> İşlem Geçmişi</h3>
+							<div class="table-responsive">
+								<table class="transactions-table">
+									<thead>
+										<tr>
+											<th>Tarih</th>
+											<th>İşlem</th>
+											<th>Tutar</th>
+											<th>Durum</th>
+										</tr>
+									</thead>
+									<tbody id="transactions-list-tbody">
+										<!-- JavaScript ile doldurulacak -->
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== DESTEK GÖRÜNÜMÜ (SUPPORT VIEW) ========== -->
+			<div id="support-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+						<div class="header-welcome">
+							<h1>Destek Taleplerim</h1>
+							<p class="header-subtitle">Depo operasyonları ve siparişleriniz için destek talebi oluşturun</p>
+						</div>
+						<button class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 20px;" onclick="handleCreateTicketPrompt()">
+							<i class="fa-solid fa-plus"></i> Yeni Talep Oluştur
+						</button>
+					</div>
+				</header>
+
+				<!-- Destek Talepleri Tablosu -->
+				<div class="support-card" style="margin-top: 10px;">
+					<div class="table-responsive">
+						<table class="support-table">
+							<thead>
+								<tr>
+									<th>Destek Kodu</th>
+									<th>Konu</th>
+									<th>Son Güncelleme</th>
+									<th>Durum</th>
+								</tr>
+							</thead>
+							<tbody id="tickets-list-tbody">
+								<!-- JavaScript ile doldurulacak -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== SMS AYARLARI GÖRÜNÜMÜ (SMS VIEW) ========== -->
+			<div id="sms-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+						<div class="header-welcome">
+							<h1>SMS Ayarları</h1>
+							<p class="header-subtitle">Kapıda ödeme siparişlerinizi SMS doğrulaması ile güvence altına alın</p>
+						</div>
+					</div>
+				</header>
+
+				<!-- Üst Bölüm: SMS İstatistikleri ve Bakiye -->
+				<div class="sms-stats-container">
+					<div class="sms-stats-grid">
+						<div class="sms-stat-card">
+							<div class="sms-stat-icon-wrapper">
+								<i class="fa-solid fa-comment-sms"></i>
+							</div>
+							<div class="sms-stat-content">
+								<span class="sms-stat-label">Kalan SMS Hakkı</span>
+								<h3 class="sms-stat-value" id="sms-balance-stat">450</h3>
+							</div>
+						</div>
+						<div class="sms-stat-card">
+							<div class="sms-stat-icon-wrapper">
+								<i class="fa-solid fa-shield-check"></i>
+							</div>
+							<div class="sms-stat-content">
+								<span class="sms-stat-label">Doğrulanan Siparişler</span>
+								<h3 class="sms-stat-value">128</h3>
+							</div>
+						</div>
+						<div class="sms-stat-card">
+							<div class="sms-stat-icon-wrapper">
+								<i class="fa-solid fa-paper-plane"></i>
+							</div>
+							<div class="sms-stat-content">
+								<span class="sms-stat-label">Gönderilen SMS</span>
+								<h3 class="sms-stat-value">145</h3>
+							</div>
+						</div>
+					</div>
+					<button class="btn-sms-buy" onclick="openSmsPackageModal()">
+						<i class="fa-solid fa-circle-plus"></i> SMS Paketi Al
+					</button>
+				</div>
+				<!-- Alt Bölüm: Şablon Düzenleyici ve Canlı Önizleme -->
+				<div class="sms-editor-grid">
+					<!-- Sol Sütun: Şablon Düzenleyici -->
+					<div class="sms-editor-column">
+						<div class="sms-editor-card">
+							<h3 class="sms-section-title"><i class="fa-solid fa-pen-to-square"></i> SMS Şablonunu Düzenle</h3>
+							
+							<div class="sms-variables-label">Dinamik Değişkenler (Eklemek için tıklayın):</div>
+							<div class="sms-variables-pills">
+								<button type="button" class="btn-variable-pill" onclick="insertVariable('[Müşteri Adı]')">+ [Müşteri Adı]</button>
+								<button type="button" class="btn-variable-pill" onclick="insertVariable('[Sipariş No]')">+ [Sipariş No]</button>
+								<button type="button" class="btn-variable-pill" onclick="insertVariable('[Tutar]')">+ [Tutar]</button>
+								<button type="button" class="btn-variable-pill" onclick="insertVariable('[Onay Linki]')">+ [Onay Linki]</button>
+							</div>
+
+							<textarea id="sms-template-textarea" rows="6" placeholder="SMS metnini yazın..." oninput="updateSmsLivePreview()"></textarea>
+							
+							<div class="sms-editor-footer">
+								<span class="sms-char-counter" id="sms-char-counter">0 Karakter (1 SMS)</span>
+								<button type="button" class="btn-sms-save" onclick="saveSmsTemplate()">
+									<i class="fa-solid fa-floppy-disk"></i> Şablonu Kaydet
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sağ Sütun: Canlı Önizleme -->
+					<div class="sms-preview-column">
+						<div class="sms-preview-card">
+							<h3 class="sms-section-title"><i class="fa-solid fa-mobile-screen-button"></i> Canlı Önizleme</h3>
+							
+							<div class="phone-mockup">
+								<div class="phone-notch"></div>
+								<div class="phone-status-bar">
+									<span class="phone-time">10:45</span>
+									<div class="phone-status-icons">
+										<i class="fa-solid fa-signal"></i>
+										<i class="fa-solid fa-wifi"></i>
+										<i class="fa-solid fa-battery-three-quarters"></i>
+									</div>
+								</div>
+								<div class="phone-screen">
+									<div class="phone-chat-header">
+										<i class="fa-solid fa-chevron-left"></i>
+										<div class="phone-chat-avatar">
+											<i class="fa-solid fa-comment-sms"></i>
+										</div>
+										<span class="phone-chat-title">Nestro Fulfill</span>
+										<i class="fa-solid fa-circle-info"></i>
+									</div>
+									
+									<div class="phone-chat-body">
+										<div class="chat-date">Bugün 10:45</div>
+										<div class="sms-preview-bubble" id="sms-preview-bubble-text">
+											<!-- JS ile anlık güncellenecek -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Alt Bölüm: Otomasyon Tetikleyicileri (Toggles) -->
+				<div class="sms-automation-card">
+					<h3 class="sms-section-title"><i class="fa-solid fa-gears"></i> Otomasyon Tetikleyicileri</h3>
+					<div class="sms-toggles-list">
+						<div class="sms-toggle-item">
+							<div class="sms-toggle-info">
+								<h4>Kapıda Ödeme Siparişlerinde SMS ile Onay İste</h4>
+								<p>Alıcıya kapıda ödemeli sipariş oluşturduğu an siparişi onaylaması için SMS ile onay linki gönderilir.</p>
+							</div>
+							<label class="toggle-switch">
+								<input type="checkbox" id="sms-rule-cod-confirm" checked onchange="handleSmsRuleChange(this, 'Kapıda Ödeme Onayı')">
+								<span class="slider"></span>
+							</label>
+						</div>
+						<div class="sms-toggle-item">
+							<div class="sms-toggle-info">
+								<h4>Sipariş Kargoya Verildiğinde SMS Gönder</h4>
+								<p>Sipariş durumu 'Kargoya Verildi' olarak güncellendiğinde, alıcıya kargo takip linki SMS ile iletilir.</p>
+							</div>
+							<label class="toggle-switch">
+								<input type="checkbox" id="sms-rule-shipped" onchange="handleSmsRuleChange(this, 'Kargo Bildirimi')">
+								<span class="slider"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== RAPORLAR GÖRÜNÜMÜ (REPORTS VIEW) ========== -->
+			<div id="reports-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Raporlar & Analizler</h1>
+						<p class="header-subtitle">Mağazanızın finansal ve operasyonel özetini inceleyin</p>
+					</div>
+				</header>
+
+				<!-- Üst Finansal Kartlar -->
+				<div class="reports-finance-grid">
+					<!-- Toplam Ciro -->
+					<div class="report-finance-card">
+						<div class="report-card-icon earnings">
+							<i class="fa-solid fa-money-bill-wave"></i>
+						</div>
+						<div class="report-card-info">
+							<span class="report-card-label">Toplam Ciro</span>
+							<h3 class="report-card-value">₺75.400,00</h3>
+							<span class="report-card-subtext">142 Başarılı Sipariş</span>
+						</div>
+					</div>
+					<!-- Lojistik Giderleri -->
+					<div class="report-finance-card">
+						<div class="report-card-icon expenses">
+							<i class="fa-solid fa-truck-ramp-box"></i>
+						</div>
+						<div class="report-card-info">
+							<span class="report-card-label">Lojistik Giderleri</span>
+							<h3 class="report-card-value">₺15.230,00</h3>
+							<span class="report-card-subtext expense-breakdown">Kargo: ₺12.400 | Depolama: ₺2.830</span>
+						</div>
+					</div>
+					<!-- Ortalama Sipariş Değeri -->
+					<div class="report-finance-card">
+						<div class="report-card-icon average">
+							<i class="fa-solid fa-calculator"></i>
+						</div>
+						<div class="report-card-info">
+							<span class="report-card-label">Ortalama Sipariş Değeri</span>
+							<h3 class="report-card-value">₺530,98</h3>
+							<span class="report-card-subtext trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Geçen aya göre %8 artış</span>
+						</div>
+					</div>
+					<!-- Net Kâr -->
+					<div class="report-finance-card net-profit-highlight">
+						<div class="report-card-icon profit">
+							<i class="fa-solid fa-piggy-bank"></i>
+						</div>
+						<div class="report-card-info">
+							<span class="report-card-label">Net Kâr</span>
+							<h3 class="report-card-value">₺60.170,00</h3>
+							<span class="report-card-subtext trend-up"><i class="fa-solid fa-circle-check"></i> %80 kârlılık oranı</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Sözel Özet Kartı (Executive Summary Alert Box) -->
+				<div class="report-verbal-alert">
+					<div class="alert-icon-wrapper">
+						<i class="fa-solid fa-lightbulb"></i>
+					</div>
+					<div class="alert-text-content">
+						<p>Harika bir ay geçiriyorsunuz! Bu ay kargo masraflarınız cironuzun sadece %20'sini oluşturdu. En çok sipariş gönderdiğiniz şehir: İstanbul.</p>
+					</div>
+				</div>
+
+				<!-- Finansal Veri Tablosu Konteyneri (Spreadsheet View) -->
+				<div class="reports-ledger-card">
+					<div class="ledger-card-header">
+						<h3 class="ledger-title"><i class="fa-solid fa-receipt"></i> Güncel Sipariş ve Gelir Logu</h3>
+						<button class="btn-excel-download" onclick="downloadReportsExcel()">
+							<i class="fa-solid fa-file-excel"></i> Excel Olarak İndir
+						</button>
+					</div>
+
+					<div class="table-responsive">
+						<table class="ledger-table">
+							<thead>
+								<tr>
+									<th>Tarih</th>
+									<th>Sipariş Kodu</th>
+									<th>Müşteri</th>
+									<th>Kargo Firması</th>
+									<th class="align-right">Kargo Maliyeti</th>
+									<th class="align-right">Sipariş Tutarı</th>
+									<th class="align-right">Net Kazanç</th>
+								</tr>
+							</thead>
+							<tbody id="reports-ledger-tbody">
+								<!-- JavaScript ile doldurulacak -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- ========== AYARLAR GÖRÜNÜMÜ (SETTINGS VIEW) ========== -->
+			<div id="settings-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Hesap & Sistem Ayarları</h1>
+						<p class="header-subtitle">Mağaza fatura bilgilerinizi ve bildirimlerinizi özelleştirin</p>
+					</div>
+				</header>
+
+				<div class="settings-grid">
+					<!-- Firma & Fatura Bilgileri Card -->
+					<div class="settings-card">
+						<h3 class="settings-card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Firma & Fatura Bilgileri</h3>
+						<form id="billing-settings-form" onsubmit="event.preventDefault(); showNotification('Fatura bilgileri başarıyla kaydedildi.', 'success');">
+							<div class="settings-form-row">
+								<div class="form-group-draft">
+									<label for="company-title">Şirket Unvanı</label>
+									<input type="text" id="company-title" value="Nestro Bilişim Ltd. Şti." placeholder="Şirket Tam Unvanı">
+								</div>
+								<div class="form-group-draft">
+									<label for="tax-office">Vergi Dairesi</label>
+									<input type="text" id="tax-office" value="Kadıköy" placeholder="Vergi Dairesi">
+								</div>
+							</div>
+							<div class="settings-form-row">
+								<div class="form-group-draft">
+									<label for="tax-number">Vergi Numarası</label>
+									<input type="text" id="tax-number" value="6310928341" placeholder="10 Haneli Vergi Numarası">
+								</div>
+							</div>
+							<div class="form-group-draft">
+								<label for="billing-address">Fatura Adresi</label>
+								<textarea id="billing-address" rows="3" placeholder="Resmi Fatura Adresi">Moda Caddesi No:45 Daire:8 Kadıköy / İstanbul</textarea>
+							</div>
+							<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 10px; padding: 10px 24px;">Değişiklikleri Kaydet</button>
+						</form>
+					</div>
+
+					<!-- Bildirim Tercihleri Card -->
+					<div class="settings-card">
+						<h3 class="settings-card-title"><i class="fa-solid fa-bell"></i> Bildirim Tercihleri</h3>
+						<div class="settings-toggles-list">
+							<div class="settings-toggle-item">
+								<div class="settings-toggle-text">
+									<h4>Yeni sipariş düştüğünde e-posta gönder</h4>
+									<p>Shopify mağazanızdan yeni sipariş çekildiğinde anlık e-posta bildirimi alırsınız.</p>
+								</div>
+								<label class="toggle-switch">
+									<input type="checkbox" id="toggle-email-new-order" checked onchange="handleSettingsNotificationChange(this, 'E-posta Bildirimi')">
+									<span class="slider"></span>
+								</label>
+							</div>
+							<div class="settings-toggle-item">
+								<div class="settings-toggle-text">
+									<h4>Bakiye kritik seviyeye geldiğinde SMS gönder</h4>
+									<p>Cüzdan bakiyeniz ₺500 altına düştüğünde kayıtlı numaranıza SMS gönderilir.</p>
+								</div>
+								<label class="toggle-switch">
+									<input type="checkbox" id="toggle-sms-low-balance" checked onchange="handleSettingsNotificationChange(this, 'SMS Bildirimi')">
+									<span class="slider"></span>
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sistem Ayarları Card (Restart Onboarding) -->
+					<div class="settings-card">
+						<h3 class="settings-card-title"><i class="fa-solid fa-screwdriver-wrench"></i> Sistem Ayarları</h3>
+						<div class="settings-system-actions">
+							<div class="settings-action-desc">
+								<h4>Eğitimi Yeniden Başlat</h4>
+								<p>İlk kez kayıt olan kullanıcılar için gösterilen Shopify entegrasyonu ve panel eğitim turlarını baştan başlatın.</p>
+							</div>
+							<button type="button" class="btn-danger" style="border-radius: var(--radius-md); font-size: 13.5px; font-weight: 700; padding: 12px 24px; width: auto; margin-top: 12px;" onclick="restartTutorial()">
+								<i class="fa-solid fa-redo"></i> Eğitimi Yeniden Başlat
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</main>
+	</div>
+
+	<!-- ==================== ONBOARDING WIZARD BİLEŞENLERİ ==================== -->
+	<!-- Cam Efektli Koyu Arka Plan Örtüsü -->
+	<div id="wizard-overlay" class="wizard-overlay"></div>
+
+	<!-- Konumlanabilir Bilgi Balonu -->
+	<div id="wizard-tooltip" class="wizard-tooltip">
+		<div class="wizard-tooltip-arrow"></div>
+		
+		<div class="wizard-tooltip-header">
+			<button id="wizard-skip" class="wizard-link-skip" onclick="skipWizard()">Eğitimi Atla</button>
+			<button id="wizard-close" class="wizard-btn-close" onclick="skipWizard()"><i class="fa-solid fa-xmark"></i></button>
+		</div>
+		
+		<div class="wizard-tooltip-body">
+			<p id="wizard-text">Yükleniyor...</p>
+		</div>
+		
+		<div class="wizard-tooltip-footer">
+			<span id="wizard-progress" class="wizard-progress-indicator">Adım 1/5</span>
+			<button id="wizard-next-btn" class="wizard-cta-btn" onclick="nextStep()">Başlayalım</button>
+		</div>
+	</div>
+
+	<!-- Konfeti Efekti Konteyneri (Başarı Modalında kullanılır) -->
+	<div id="confetti-container" class="confetti-container"></div>
+
+	<!-- ==================== MODAL BİLEŞENLERİ ==================== -->
+	<!-- Sipariş Detay Modalı -->
+	<div id="order-detail-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box">
+			<div class="modal-header">
+				<h3 class="modal-title">Sipariş Detayı <span id="detail-order-code" class="code-highlight">#1001</span></h3>
+				<button class="modal-close-btn" onclick="closeDetailModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="modal-detail-grid">
+					<div class="detail-section">
+						<h4><i class="fa-solid fa-user"></i> Müşteri Bilgileri</h4>
+						<p><strong>İsim:</strong> <span id="detail-customer-name">-</span></p>
+						<p><strong>Telefon:</strong> <span id="detail-customer-phone">-</span></p>
+						<p><strong>E-posta:</strong> <span id="detail-customer-email">-</span></p>
+					</div>
+					<div class="detail-section">
+						<h4><i class="fa-solid fa-location-dot"></i> Teslimat Adresi</h4>
+						<p id="detail-customer-address">-</p>
+					</div>
+					<div class="detail-section full-width">
+						<h4><i class="fa-solid fa-basket-shopping"></i> Ürünler</h4>
+						<div class="detail-products-list" id="detail-products-list">
+							<!-- Dinamik ürün satırları -->
+						</div>
+					</div>
+					<div class="detail-section">
+						<h4><i class="fa-solid fa-circle-info"></i> Sipariş Durumu</h4>
+						<span id="detail-order-status" class="status-badge-inline">-</span>
+					</div>
+					<div class="detail-section">
+						<h4><i class="fa-solid fa-truck-ramp-box"></i> Gönderim Detayı</h4>
+						<p><strong>Kargo Firması:</strong> <span id="detail-shipping-carrier">-</span></p>
+						<p><strong>Takip No:</strong> <span id="detail-shipping-tracking">-</span></p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-secondary" onclick="closeDetailModal()">Kapat</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sipariş İptal Onay Modalı -->
+	<div id="order-cancel-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box">
+			<div class="modal-header">
+				<h3 class="modal-title">Sipariş İptali ve Müşteri Bilgilendirmesi</h3>
+				<button class="modal-close-btn" onclick="closeCancelModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body">
+				<div style="display: flex; flex-direction: column; gap: 16px;">
+					<p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0;">
+						<strong>Sipariş <span id="cancel-order-code" class="code-highlight">-</span></strong> iptal edilecektir. Lütfen iptal nedenini yazarak müşteriyi bilgilendirin.
+					</p>
+					
+					<div class="form-group-draft" style="margin-bottom: 0;">
+						<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">İptal Nedeni ve Mesaj</label>
+						<textarea id="cancel-reason-input" placeholder="Müşteriye iletilecek iptal açıklamasını buraya yazın..." style="width: 100%; min-height: 100px; padding: 12px; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius-md); font-family: var(--font-main); font-size: 13.5px; outline: none; transition: var(--transition-smooth); resize: vertical;" required></textarea>
+					</div>
+					
+					<div class="info-note" style="display: flex; gap: 10px; align-items: start; background: rgba(0, 123, 255, 0.05); border: 1px solid rgba(0, 123, 255, 0.1); padding: 12px 16px; border-radius: var(--radius-md);">
+						<i class="fa-solid fa-circle-info" style="color: #007bff; margin-top: 2px;"></i>
+						<p style="font-size: 12.5px; color: #0056b3; line-height: 1.4; margin: 0;">
+							Bu mesaj müşteriye doğrudan e-posta olarak iletilecektir.
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-secondary" onclick="closeCancelModal()">Vazgeç</button>
+				<button class="btn-danger" id="btn-confirm-cancel" onclick="confirmCancelOrder()">Gönder ve İptal Et</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bakiye Yükleme Modalı -->
+	<div id="wallet-deposit-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 480px;">
+			<div class="modal-header">
+				<h3 class="modal-title">Bakiye Yükle</h3>
+				<button class="modal-close-btn" onclick="closeDepositModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="deposit-card-form" onsubmit="handleDepositSubmit(event)">
+				<div class="modal-body">
+					<div style="display: flex; flex-direction: column; gap: 16px;">
+						<!-- Tutar Girişi -->
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Yüklenecek Tutar (TL)</label>
+							<input type="number" id="deposit-amount-input" placeholder="Yüklemek istediğiniz tutarı girin (TL)" required min="1" step="any" style="padding: 12px; font-size: 15px; font-weight: 700; color: var(--primary);">
+						</div>
+						
+						<!-- Hızlı Tutar Seçimi -->
+						<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: -6px;">
+							<button type="button" class="btn-secondary" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 50px;" onclick="selectDepositAmount(1000)">+ ₺1.000</button>
+							<button type="button" class="btn-secondary" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 50px;" onclick="selectDepositAmount(2000)">+ ₺2.000</button>
+							<button type="button" class="btn-secondary" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border-radius: 50px;" onclick="selectDepositAmount(5000)">+ ₺5.000</button>
+						</div>
+
+						<hr style="border: 0; border-top: 1px solid var(--border-color); margin: 4px 0;">
+
+						<!-- Kart Bilgileri Kutusu (Stripe UI) -->
+						<div style="border: 1px solid rgba(0, 0, 0, 0.08); border-radius: var(--radius-md); padding: 16px; background: #fafafa; display: flex; flex-direction: column; gap: 12px;">
+							<div class="form-group-draft" style="margin-bottom: 0; gap: 4px;">
+								<label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Kart Üzerindeki İsim</label>
+								<input type="text" id="card-name-input" placeholder="Ad Soyad" required style="padding: 8px 12px; font-size: 13px; background: #ffffff;">
+							</div>
+							<div class="form-group-draft" style="margin-bottom: 0; gap: 4px;">
+								<label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Kart Numarası</label>
+								<div style="position: relative;">
+									<input type="text" id="card-number-input" placeholder="0000 0000 0000 0000" maxlength="19" required style="padding: 8px 12px 8px 36px; font-size: 13px; background: #ffffff; font-family: monospace;">
+									<i class="fa-solid fa-credit-card" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px;"></i>
+								</div>
+							</div>
+							<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+								<div class="form-group-draft" style="margin-bottom: 0; gap: 4px;">
+									<label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Son Kullanma (AA/YY)</label>
+									<input type="text" id="card-expiry-input" placeholder="AA/YY" maxlength="5" required style="padding: 8px 12px; font-size: 13px; background: #ffffff; text-align: center;">
+								</div>
+								<div class="form-group-draft" style="margin-bottom: 0; gap: 4px;">
+									<label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">CVV</label>
+									<input type="password" id="card-cvv-input" placeholder="123" maxlength="3" required style="padding: 8px 12px; font-size: 13px; background: #ffffff; text-align: center;">
+								</div>
+							</div>
+						</div>
+
+						<div style="display: flex; gap: 8px; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px;">
+							<i class="fa-solid fa-lock" style="color: #28a745;"></i>
+							<span>256-bit SSL şifreleme ile ödemeniz güvendedir.</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary" onclick="closeDepositModal()">Vazgeç</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;"><i class="fa-solid fa-shield-check"></i> Güvenli Ödeme Yap</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Para Çekme Modalı -->
+	<div id="wallet-withdraw-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 440px;">
+			<div class="modal-header">
+				<h3 class="modal-title">Para Çek</h3>
+				<button class="modal-close-btn" onclick="closeWithdrawModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="withdraw-funds-form" onsubmit="handleWithdrawSubmit(event)">
+				<div class="modal-body">
+					<div style="display: flex; flex-direction: column; gap: 16px;">
+						<!-- Çekilecek Tutar -->
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Çekilecek Tutar (TL)</label>
+							<input type="number" id="withdraw-amount-input" placeholder="Çekmek istediğiniz tutarı girin (TL)" required min="1" step="any" style="padding: 12px; font-size: 15px; font-weight: 700;">
+						</div>
+
+						<!-- IBAN Seçimi -->
+						<div class="form-group-draft" style="margin-bottom: 0; gap: 6px;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Kayıtlı IBAN Seçin</label>
+							<div class="priority-select-group" style="width: 100%;">
+								<select id="withdraw-iban-select" style="width: 100%; padding: 12px 32px 12px 16px; background-position: right 12px center;">
+									<option value="iban-1">TR45 0006 2000 1234 5678 9012 - Garanti Bankası</option>
+									<option value="iban-2">TR76 0004 6000 9876 5432 1098 - QNB Finansbank</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="info-note" style="display: flex; gap: 10px; align-items: start; background: rgba(0, 123, 255, 0.05); border: 1px solid rgba(0, 123, 255, 0.1); padding: 12px; border-radius: var(--radius-md);">
+							<i class="fa-solid fa-circle-info" style="color: #007bff; margin-top: 2px;"></i>
+							<p style="font-size: 12px; color: #0056b3; line-height: 1.4; margin: 0;">
+								Çekim talebiniz onaylandıktan sonra en geç 1 iş günü içerisinde hesabınıza transfer edilecektir.
+							</p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary" onclick="closeWithdrawModal()">Vazgeç</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Çekim Talebi Oluştur</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- SMS Paketi Satın Alma Modalı -->
+	<div id="sms-package-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box sms-package-modal-box" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title">SMS Paketi Satın Al</h3>
+				<button class="modal-close-btn" onclick="closeSmsPackageModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body">
+				<div class="sms-packages-list">
+					<!-- 100 SMS -->
+					<div class="sms-package-card" onclick="selectSmsPackage('pkg-100', 50, 100)" id="pkg-100">
+						<div class="pkg-badge"><i class="fa-solid fa-message"></i></div>
+						<div class="pkg-info">
+							<h4>100 SMS</h4>
+							<p>Başlangıç paketi, küçük ölçekli satıcılar için ideal</p>
+						</div>
+						<div class="pkg-price">50 TL</div>
+					</div>
+					<!-- 500 SMS -->
+					<div class="sms-package-card active" onclick="selectSmsPackage('pkg-500', 200, 500)" id="pkg-500">
+						<div class="pkg-badge"><i class="fa-solid fa-comments"></i></div>
+						<div class="pkg-info">
+							<h4>500 SMS</h4>
+							<p>Popüler paket, orta ölçekli büyüyen satıcılar için</p>
+						</div>
+						<div class="pkg-price">200 TL</div>
+					</div>
+					<!-- 1000 SMS -->
+					<div class="sms-package-card" onclick="selectSmsPackage('pkg-1000', 350, 1000)" id="pkg-1000">
+						<div class="pkg-badge"><i class="fa-solid fa-paper-plane"></i></div>
+						<div class="pkg-info">
+							<h4>1.000 SMS</h4>
+							<p>Profesyonel paket, yüksek sipariş hacimli satıcılar için</p>
+						</div>
+						<div class="pkg-price">350 TL</div>
+					</div>
+				</div>
+
+				<div class="payment-source-warning">
+					<i class="fa-solid fa-wallet"></i>
+					<span>Ödeme, Ana Cüzdan Bakiyenizden (<strong id="sms-modal-wallet-balance">₺4.250,00</strong>) düşülecektir.</span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn-secondary" onclick="closeSmsPackageModal()">Vazgeç</button>
+				<button type="button" class="btn-sms-confirm" onclick="confirmSmsPurchase()">Paketi Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Yüzen Destek Botu (Floating AI Chatbot) -->
+	<div class="chatbot-floating-wrapper">
+		<!-- Yüzen Buton -->
+		<button id="chatbot-toggle-btn" class="chatbot-toggle-btn" onclick="toggleChatWindow()">
+			<i class="fa-solid fa-comments"></i>
+			<span class="chat-badge-dot"></span>
+		</button>
+
+		<!-- Chat Penceresi -->
+		<div id="chatbot-window" class="chatbot-window">
+			<div class="chatbot-header">
+				<div class="chatbot-header-info">
+					<div class="chatbot-avatar-active">
+						<i class="fa-solid fa-robot"></i>
+						<span class="active-dot"></span>
+					</div>
+					<div class="chatbot-header-text">
+						<h4>Nestro AI Asistan</h4>
+						<span>Aktif / Online</span>
+					</div>
+				</div>
+				<button class="chatbot-close-btn" onclick="toggleChatWindow()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			
+			<!-- Mesaj Alanı -->
+			<div id="chatbot-messages" class="chatbot-messages">
+				<!-- JavaScript ile doldurulacak -->
+			</div>
+
+			<!-- Girdi Alanı -->
+			<form id="chatbot-input-form" onsubmit="handleSendChatMessage(event)" class="chatbot-input-area">
+				<input type="text" id="chatbot-message-input" placeholder="Mesajınızı yazın..." autocomplete="off" required>
+				<button type="submit" class="chatbot-send-btn" title="Gönder"><i class="fa-solid fa-paper-plane"></i></button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Toast Container -->
+	<div id="toast-container" class="toast-container"></div>
+
+	<!-- Destek Talebi Oluşturma Modalı -->
+	<div id="modal-support-ticket" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title">Yeni Destek Talebi Oluştur</h3>
+				<button type="button" class="modal-close-btn" onclick="closeSupportTicketModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
+				<div class="modal-body">
+					<div style="display: flex; flex-direction: column; gap: 16px;">
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Konu</label>
+							<div class="priority-select-group" style="width: 100%;">
+								<select id="ticket-subject-select" style="width: 100%;">
+									<option value="Kargo Durumu">Kargo Durumu</option>
+									<option value="İade İşlemi">İade İşlemi</option>
+									<option value="Fatura">Fatura</option>
+									<option value="Diğer">Diğer</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Sipariş Numarası (Opsiyonel)</label>
+							<input type="text" id="ticket-order-input" placeholder="Varsa ilgili sipariş kodunu girin (Örn: #1024)">
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mesajınız</label>
+							<textarea id="ticket-message-textarea" placeholder="Talebinizi buraya detaylıca yazın..." rows="5" required style="resize: vertical; font-family: var(--font-main);"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary" onclick="closeSupportTicketModal()">İptal</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Talebi Gönder</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Yeni Ürün Ekleme Modalı -->
+	<div id="modal-add-product" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title">Yeni Ürün Ekle</h3>
+				<button type="button" class="modal-close-btn" onclick="closeAddProductModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="add-product-form" onsubmit="submitAddProduct(event)">
+				<div class="modal-body">
+					<div style="display: flex; flex-direction: column; gap: 16px;">
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Ürün Adı</label>
+							<input type="text" id="product-name-input" placeholder="Örn: Basic Beyaz Tişört" required>
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">SKU Kodu</label>
+							<input type="text" id="product-sku-input" placeholder="Örn: TSH-WHT-01" required>
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Başlangıç Stoğu</label>
+							<input type="number" id="product-stock-input" placeholder="Başlangıç stok adedi" required min="0">
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Raf Konumu</label>
+							<input type="text" id="product-shelf-input" placeholder="Örn: A-12" required>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary" onclick="closeAddProductModal()">İptal</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Ürünü Kaydet</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Stoğa Ekleme Modalı (Row-level) -->
+	<div id="modal-restock-product" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title">Stoğa Ekle</h3>
+				<button type="button" class="modal-close-btn" onclick="closeRestockModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="restock-product-form" onsubmit="submitRestockProduct(event)">
+				<div class="modal-body">
+					<div style="display: flex; flex-direction: column; gap: 16px;">
+						<!-- Ürün Bilgisi (Read-Only) -->
+						<div id="restock-product-info-box" style="background: #f8f9fa; border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+							<!-- JS ile doldurulacak -->
+						</div>
+						<div class="form-group-draft" style="margin-bottom: 0;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Eklenecek Adet</label>
+							<input type="number" id="restock-amount-input" placeholder="Eklenecek adedi girin" required min="1">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary" onclick="closeRestockModal()">İptal</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Stoğa Ekle</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="./script.js"></script>
+</body>
+</html>
