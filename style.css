@@ -363,6 +363,27 @@ img, svg {
 	box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
+/* Mobile Switch Prompts */
+.mobile-switch-prompt {
+	display: none;
+	margin-top: 24px;
+	font-size: 13.5px;
+	color: #64748b;
+}
+
+.mobile-switch-prompt a {
+	color: #28a745 !important;
+	font-weight: 600;
+	text-decoration: underline !important;
+	margin-left: 4px;
+	cursor: pointer;
+	transition: var(--transition-fast);
+}
+
+.mobile-switch-prompt a:hover {
+	color: #218838 !important;
+}
+
 /* Container */
 .container {
 	background: #0c1420;
@@ -1682,6 +1703,10 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 	#login-page form {
 		padding: 0 24px;
+	}
+
+	.mobile-switch-prompt {
+		display: block;
 	}
 
 	/* Sidebar Mobil Off-Canvas Düzeni */

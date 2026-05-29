@@ -22,6 +22,26 @@ if (signUpButton && signInButton && container) {
 	});
 }
 
+// Mobil Cihazlar İçin Giriş ve Kayıt Paneli Geçişi
+const signUpMobileButton = document.getElementById('signUpMobile');
+const signInMobileButton = document.getElementById('signInMobile');
+
+if (signUpMobileButton && container) {
+	signUpMobileButton.addEventListener('click', (e) => {
+		e.preventDefault();
+		container.classList.add("right-panel-active");
+		hideToast();
+	});
+}
+
+if (signInMobileButton && container) {
+	signInMobileButton.addEventListener('click', (e) => {
+		e.preventDefault();
+		container.classList.remove("right-panel-active");
+		hideToast();
+	});
+}
+
 // Toast Bildirimi Göster / Gizle
 function showToast(message) {
 	loginToast.textContent = message;
@@ -77,6 +97,7 @@ function transitionToDashboard() {
 	
 	loginPage.classList.add('fade-out');
 	dashboardPage.style.display = 'flex';
+	showChatbot();
 	
 	setTimeout(() => {
 		loginPage.style.display = 'none';
@@ -97,6 +118,7 @@ function transitionToDashboard() {
 function logout() {
 	localStorage.removeItem('nestro_logged_in');
 	localStorage.removeItem('nestro_username');
+	hideChatbot();
 	// nestro_setup_completed silinmez, geri dönen kullanıcılar sihirbazı görmez.
 	
 	// Sihirbazı temizle
@@ -133,6 +155,7 @@ function checkLoginAndRoute() {
 		initDashboard(savedUsername);
 		document.getElementById('login-page').style.display = 'none';
 		document.getElementById('dashboard-page').style.display = 'flex';
+		showChatbot();
 		
 		// Kurulum durumuna göre yönlendirme yap
 		const isSetupCompleted = localStorage.getItem('nestro_setup_completed');
@@ -1801,6 +1824,26 @@ function submitSupportTicket(e) {
 let chatbotState = 0;
 let currentOrderNumber = '';
 let chatbotOpenedFirstTime = false;
+
+// Chatbot Göster/Gizle Yardımcı Fonksiyonları
+function showChatbot() {
+	const chatbotWrapper = document.querySelector('.chatbot-floating-wrapper');
+	if (chatbotWrapper) {
+		chatbotWrapper.style.display = 'block';
+	}
+}
+
+function hideChatbot() {
+	const chatbotWrapper = document.querySelector('.chatbot-floating-wrapper');
+	if (chatbotWrapper) {
+		chatbotWrapper.style.display = 'none';
+		// Açık olan chat penceresini de kapat
+		const windowEl = document.getElementById('chatbot-window');
+		if (windowEl) {
+			windowEl.classList.remove('active');
+		}
+	}
+}
 
 // Chat Penceresini Aç/Kapa
 function toggleChatWindow() {

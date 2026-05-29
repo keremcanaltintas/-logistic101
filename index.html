@@ -55,6 +55,9 @@
 						<input type="password" placeholder="Şifre" />
 					</div>
 					<button type="button" class="btn-primary" onclick="alert('Kayıt sistemi şu an pasiftir. Lütfen Giriş Yap panelini kullanın.')">Kayıt Ol</button>
+					<div class="mobile-switch-prompt">
+						Zaten hesabınız var mı? <a href="#" id="signInMobile">Giriş Yap</a>
+					</div>
 				</form>
 			</div>
 
@@ -90,6 +93,9 @@
 					</div>
 					<a href="#" class="forgot-link" onclick="alert('Şifreniz varsayılan olarak 123456\'dır.')">Şifrenizi mi unuttunuz?</a>
 					<button type="submit" id="login-btn">Giriş Yap</button>
+					<div class="mobile-switch-prompt">
+						Hesabınız yok mu? <a href="#" id="signUpMobile">Kayıt Ol</a>
+					</div>
 				</form>
 			</div>
 
@@ -1338,7 +1344,7 @@
 	</div>
 
 	<!-- Yüzen Destek Botu (Floating AI Chatbot) -->
-	<div class="chatbot-floating-wrapper">
+	<div class="chatbot-floating-wrapper" style="display: none;">
 		<!-- Yüzen Buton -->
 		<button id="chatbot-toggle-btn" class="chatbot-toggle-btn" onclick="toggleChatWindow()">
 			<i class="fa-solid fa-comments"></i>
