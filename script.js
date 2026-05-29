@@ -58,7 +58,7 @@ function hideToast() {
 	loginToast.style.display = 'none';
 }
 
-// Giriş Denetimi (Username: 123456, Password: 123456)
+// Giriş Denetimi (Username: 123456, Password: 123456 veya kayıtlı kullanıcılar)
 if (loginForm) {
 	loginForm.addEventListener('submit', (e) => {
 		e.preventDefault();
@@ -66,19 +66,35 @@ if (loginForm) {
 		const usernameVal = document.getElementById('username-input').value.trim();
 		const passwordVal = document.getElementById('password-input').value;
 		
-		if (usernameVal === "123456" && passwordVal === "123456") {
+		// Kayıtlı kullanıcıları localStorage'dan al
+		let users = [];
+		try {
+			users = JSON.parse(localStorage.getItem('nestro_registered_users') || '[]');
+		} catch (err) {
+			users = [];
+		}
+		
+		// Kullanıcı eşleşmesi kontrolü
+		const matchedUser = users.find(u => 
+			(u.email.toLowerCase() === usernameVal.toLowerCase() || u.name.toLowerCase() === usernameVal.toLowerCase()) && 
+			u.password === passwordVal
+		);
+		
+		if ((usernameVal === "123456" && passwordVal === "123456") || matchedUser) {
 			// Başarılı Giriş
 			hideToast();
 			loginBtn.disabled = true;
 			loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Giriş Yapılıyor...';
 			
+			const displayName = matchedUser ? matchedUser.name : usernameVal;
+			
 			// 1 saniyelik şık bir bekleme animasyonu (SaaS kalitesi için)
 			setTimeout(() => {
 				localStorage.setItem('nestro_logged_in', 'true');
-				localStorage.setItem('nestro_username', usernameVal);
+				localStorage.setItem('nestro_username', displayName);
 				
 				// Arayüzü Güncelle ve Dashboard'a geç
-				initDashboard(usernameVal);
+				initDashboard(displayName);
 				
 				// Giriş Ekranını Kapat, Dashboard'u Aç
 				transitionToDashboard();
@@ -87,6 +103,63 @@ if (loginForm) {
 			// Hatalı Giriş
 			showToast('Hatalı kullanıcı adı veya şifre! (Varsayılan: 123456)');
 		}
+	});
+}
+
+// Kayıt Ol Formu Gönderim Denetimi
+const signupForm = document.getElementById('signup-form');
+if (signupForm) {
+	signupForm.addEventListener('submit', (e) => {
+		e.preventDefault();
+		
+		const nameVal = document.getElementById('signup-name-input').value.trim();
+		const emailVal = document.getElementById('signup-email-input').value.trim();
+		const passwordVal = document.getElementById('signup-password-input').value;
+		
+		if (!nameVal || !emailVal || !passwordVal) {
+			alert('Lütfen tüm alanları doldurun.');
+			return;
+		}
+		
+		// Kayıtlı kullanıcıları localStorage'dan al
+		let users = [];
+		try {
+			users = JSON.parse(localStorage.getItem('nestro_registered_users') || '[]');
+		} catch (err) {
+			users = [];
+		}
+		
+		// E-posta adresiyle daha önce kayıt olunmuş mu kontrol et
+		const userExists = users.some(u => u.email.toLowerCase() === emailVal.toLowerCase());
+		if (userExists) {
+			alert('Bu e-posta adresiyle zaten kayıtlı bir hesap var!');
+			return;
+		}
+		
+		// Yeni kullanıcıyı ekle
+		users.push({
+			name: nameVal,
+			email: emailVal,
+			password: passwordVal
+		});
+		
+		localStorage.setItem('nestro_registered_users', JSON.stringify(users));
+		
+		alert('Hesabınız başarıyla oluşturuldu! Şimdi bu bilgilerle Giriş Yapabilirsiniz.');
+		
+		// Giriş yapma paneline yönlendir
+		if (container) {
+			container.classList.remove("right-panel-active");
+		}
+		
+		// Giriş yapma formundaki kullanıcı adı/şifre alanlarını otomatik doldur
+		const loginUsernameInput = document.getElementById('username-input');
+		const loginPasswordInput = document.getElementById('password-input');
+		if (loginUsernameInput) loginUsernameInput.value = emailVal;
+		if (loginPasswordInput) loginPasswordInput.value = passwordVal;
+		
+		// Formu sıfırla
+		signupForm.reset();
 	});
 }
 

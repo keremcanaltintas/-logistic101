@@ -44,17 +44,17 @@
 					
 					<div class="input-group">
 						<i class="fas fa-user"></i>
-						<input type="text" placeholder="Ad Soyad" />
+						<input type="text" id="signup-name-input" placeholder="Ad Soyad" required />
 					</div>
 					<div class="input-group">
 						<i class="fas fa-envelope"></i>
-						<input type="email" placeholder="E-posta" />
+						<input type="email" id="signup-email-input" placeholder="E-posta" required />
 					</div>
 					<div class="input-group">
 						<i class="fas fa-lock"></i>
-						<input type="password" placeholder="Şifre" />
+						<input type="password" id="signup-password-input" placeholder="Şifre" required />
 					</div>
-					<button type="button" class="btn-primary" onclick="alert('Kayıt sistemi şu an pasiftir. Lütfen Giriş Yap panelini kullanın.')">Kayıt Ol</button>
+					<button type="submit" class="btn-primary" id="signup-btn">Kayıt Ol</button>
 					<div class="mobile-switch-prompt">
 						Zaten hesabınız var mı? <a href="#" id="signInMobile">Giriş Yap</a>
 					</div>
