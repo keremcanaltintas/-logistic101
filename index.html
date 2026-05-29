@@ -369,46 +369,82 @@
 
 				<!-- İki Sütunlu Bağlantı Düzeni (Connect Store Layout) -->
 				<div class="connect-page-layout">
-					<!-- Sol Sütun: Bağlantı Formu -->
+					<!-- Sol Sütun: Bağlantı Paneli (Izgara Görünümü) -->
 					<div class="connect-form-section">
 						<div class="connect-card">
-							<!-- Kahraman Grafik: Shopify -> Nestro -->
-							<div class="connect-hero-graphic">
-								<div class="brand-logo-wrapper shopify">
-									<i class="fa-brands fa-shopify"></i>
+							<h3 class="connect-title"><i class="fa-solid fa-plug"></i> Mağaza Entegrasyonları</h3>
+							<p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6;">
+								Entegrasyonunu başlatmak için aşağıdaki e-ticaret platformlarından mağazanızın altyapısını seçin.
+							</p>
+							
+							<!-- E-Ticaret Mağaza Seçim Izgarası -->
+							<div class="store-grid" id="store-platforms-grid">
+								<!-- Shopify Card -->
+								<div class="store-card shopify" onclick="openConnectModal('shopify')">
+									<div class="store-icon-wrapper">
+										<i class="fa-brands fa-shopify"></i>
+									</div>
+									<span class="store-name">Shopify</span>
+									<span class="store-status" id="status-shopify">Bağla</span>
 								</div>
-								<div class="connect-arrow">
-									<i class="fa-solid fa-right-long animate-arrow"></i>
+								
+								<!-- WooCommerce Card -->
+								<div class="store-card woocommerce" onclick="openConnectModal('woocommerce')">
+									<div class="store-icon-wrapper">
+										<i class="fa-brands fa-woocommerce"></i>
+									</div>
+									<span class="store-name">WooCommerce</span>
+									<span class="store-status" id="status-woocommerce">Bağla</span>
 								</div>
-								<div class="brand-logo-wrapper nestro">
-									<svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-										<path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" stroke="#28a745" stroke-width="2.5" stroke-linejoin="round" fill="rgba(40, 167, 73, 0.1)"/>
-										<path d="M12 22V12" stroke="#28a745" stroke-width="2.5"/>
-										<path d="M22 7L12 12L2 7" stroke="#28a745" stroke-width="2.5"/>
-									</svg>
+
+								<!-- Ikas Card -->
+								<div class="store-card ikas" onclick="openConnectModal('ikas')">
+									<div class="store-icon-wrapper">
+										<i class="fa-solid fa-bolt"></i>
+									</div>
+									<span class="store-name">Ikas</span>
+									<span class="store-status" id="status-ikas">Bağla</span>
+								</div>
+
+								<!-- Ticimax Card -->
+								<div class="store-card ticimax" onclick="openConnectModal('ticimax')">
+									<div class="store-icon-wrapper">
+										<i class="fa-solid fa-globe"></i>
+									</div>
+									<span class="store-name">Ticimax</span>
+									<span class="store-status" id="status-ticimax">Bağla</span>
+								</div>
+
+								<!-- IdeaSoft Card -->
+								<div class="store-card ideasoft" onclick="openConnectModal('ideasoft')">
+									<div class="store-icon-wrapper">
+										<i class="fa-solid fa-cubes"></i>
+									</div>
+									<span class="store-name">IdeaSoft</span>
+									<span class="store-status" id="status-ideasoft">Bağla</span>
+								</div>
+
+								<!-- Trendyol Card -->
+								<div class="store-card trendyol" onclick="openConnectModal('trendyol')">
+									<div class="store-icon-wrapper">
+										<i class="fa-solid fa-bag-shopping"></i>
+									</div>
+									<span class="store-name">Trendyol</span>
+									<span class="store-status" id="status-trendyol">Bağla</span>
+								</div>
+
+								<!-- Hepsiburada Card -->
+								<div class="store-card hepsiburada" onclick="openConnectModal('hepsiburada')">
+									<div class="store-icon-wrapper">
+										<i class="fa-solid fa-shopping-basket"></i>
+									</div>
+									<span class="store-name">Hepsiburada</span>
+									<span class="store-status" id="status-hepsiburada">Bağla</span>
 								</div>
 							</div>
 
-							<h3 class="connect-title">Shopify Mağazanı Nestro'ya Bağla</h3>
-							
-							<form id="connect-store-form" onsubmit="handleConnectStoreSubmit(event)">
-								<div class="form-group-draft">
-									<label for="connect-store-url">Shopify Mağaza Adı</label>
-									<input type="text" id="connect-store-url" placeholder="Örn: dukkanadi.myshopify.com" required onblur="validateAndFormatStoreUrl(this)">
-								</div>
-								
-								<div class="form-group-draft">
-									<label for="connect-api-token">Admin API Erişim Jetonu</label>
-									<input type="password" id="connect-api-token" placeholder="shpat_..." required>
-								</div>
-								
-								<button type="submit" class="btn-create-draft" id="btn-connect-store">
-									<span id="btn-connect-text">Mağazayı Bağla</span>
-								</button>
-							</form>
-
 							<p class="permissions-note">
-								<i class="fa-solid fa-shield-halved"></i> Sistemimiz siparişleri işlemek için yalnızca Okuma/Yazma ve Stok izinlerine ihtiyaç duyar.
+								<i class="fa-solid fa-shield-halved"></i> Entegrasyonlarımız siparişlerinizi çekmek ve stok senkronizasyonu yapmak için güvenli API bağlantısı kullanır.
 							</p>
 						</div>
 					</div>
@@ -1111,6 +1147,27 @@
 	<div id="confetti-container" class="confetti-container"></div>
 
 	<!-- ==================== MODAL BİLEŞENLERİ ==================== -->
+	<!-- Dinamik Mağaza Bağlantı Modalı -->
+	<div id="store-connect-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 480px;">
+			<div class="modal-header">
+				<h3 class="modal-title" id="connect-modal-title">Mağaza Bağla</h3>
+				<button class="modal-close-btn" onclick="closeConnectModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="store-credentials-form" onsubmit="handleStoreConnectSubmit(event)">
+				<input type="hidden" id="connect-selected-platform" value="">
+				<div class="modal-body" id="connect-modal-body" style="padding: 24px;">
+					<!-- Girdiler JavaScript ile dinamik yerleştirilecektir -->
+				</div>
+				<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: flex-end; gap: 12px;">
+					<button type="button" class="btn-secondary" onclick="closeConnectModal()">İptal</button>
+					<button type="submit" class="btn-create-draft" id="btn-test-connect" style="margin-top: 0; width: auto; padding: 10px 20px;">
+						<span id="btn-test-connect-text">Bağlantıyı Sına & Kaydet</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 	<!-- Sipariş Detay Modalı -->
 	<div id="order-detail-modal" class="modal-backdrop" style="display: none;">
 		<div class="modal-box">

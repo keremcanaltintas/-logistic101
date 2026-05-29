@@ -289,6 +289,9 @@ function initDashboard(username) {
 
 	// Kargo firması ayarlarını başlat
 	initCarrierSettings();
+
+	// Entegre mağazaların durumlarını başlat
+	initConnectedStores();
 }
 
 
@@ -2106,57 +2109,234 @@ function validateAndFormatStoreUrl(input) {
 	input.value = val;
 }
 
-// Mağaza Bağlama Formu Gönderildiğinde
-function handleConnectStoreSubmit(e) {
-	e.preventDefault();
+// E-Ticaret Platformları API Alan Yapılandırmaları
+const platformFields = {
+	shopify: [
+		{ id: 'store-url', label: 'Shopify Mağaza Adresi (URL)', type: 'text', placeholder: 'Örn: dukkanadi.myshopify.com', required: true },
+		{ id: 'api-token', label: 'Admin API Erişim Jetonu (Access Token)', type: 'password', placeholder: 'shpat_...', required: true }
+	],
+	woocommerce: [
+		{ id: 'store-url', label: 'WooCommerce Site Adresi (URL)', type: 'text', placeholder: 'Örn: https://siteniz.com', required: true },
+		{ id: 'api-key', label: 'Tüketici Anahtarı (Consumer Key)', type: 'password', placeholder: 'ck_...', required: true },
+		{ id: 'api-secret', label: 'Gizli Anahtar (Consumer Secret)', type: 'password', placeholder: 'cs_...', required: true }
+	],
+	ikas: [
+		{ id: 'api-key', label: 'API Anahtarı (API Key)', type: 'text', placeholder: 'Ikas API Anahtarınız', required: true },
+		{ id: 'api-secret', label: 'API Gizli Anahtarı (API Secret)', type: 'password', placeholder: 'Ikas API Secret', required: true }
+	],
+	ticimax: [
+		{ id: 'api-key', label: 'API Anahtarı (API Key)', type: 'text', placeholder: 'Ticimax API Anahtarınız', required: true },
+		{ id: 'api-secret', label: 'API Gizli Anahtarı (API Secret)', type: 'password', placeholder: 'Ticimax API Secret', required: true }
+	],
+	ideasoft: [
+		{ id: 'api-key', label: 'API Anahtarı (API Key)', type: 'text', placeholder: 'IdeaSoft API Anahtarınız', required: true },
+		{ id: 'api-secret', label: 'API Gizli Anahtarı (API Secret)', type: 'password', placeholder: 'IdeaSoft API Secret', required: true }
+	],
+	trendyol: [
+		{ id: 'seller-id', label: 'Satıcı ID (Seller ID)', type: 'text', placeholder: 'Trendyol Satıcı ID\'niz', required: true },
+		{ id: 'api-key', label: 'API Anahtarı (API Key)', type: 'text', placeholder: 'Trendyol API Key', required: true },
+		{ id: 'api-secret', label: 'API Gizli Anahtarı (API Secret)', type: 'password', placeholder: 'Trendyol API Secret', required: true }
+	],
+	hepsiburada: [
+		{ id: 'seller-id', label: 'Satıcı ID (Seller ID)', type: 'text', placeholder: 'Hepsiburada Satıcı ID\'niz (Merchant ID)', required: true },
+		{ id: 'api-key', label: 'API Anahtarı (API Key)', type: 'text', placeholder: 'Hepsiburada API Key', required: true },
+		{ id: 'api-secret', label: 'API Gizli Anahtarı (API Secret)', type: 'password', placeholder: 'Hepsiburada API Secret', required: true }
+	]
+};
 
-	const storeUrlInput = document.getElementById('connect-store-url');
-	const apiTokenInput = document.getElementById('connect-api-token');
-	const submitBtn = document.getElementById('btn-connect-store');
-	const btnText = document.getElementById('btn-connect-text');
-
-	if (!storeUrlInput || !apiTokenInput || !submitBtn || !btnText) return;
-
-	const storeUrl = storeUrlInput.value.trim();
-	const apiToken = apiTokenInput.value.trim();
-
-	// Basit API Token kontrolü (Shopify tokenları shpat_ ile başlar)
-	if (!apiToken.startsWith('shpat_')) {
-		showNotification('Hata: Admin API Erişim Jetonu "shpat_" ile başlamalıdır.', 'error');
-		apiTokenInput.focus();
-		return;
+// Dinamik Bağlantı Modalı Aç
+function openConnectModal(platform) {
+	const modal = document.getElementById('store-connect-modal');
+	const modalTitle = document.getElementById('connect-modal-title');
+	const modalBody = document.getElementById('connect-modal-body');
+	const hiddenPlatform = document.getElementById('connect-selected-platform');
+	
+	if (!modal || !modalBody || !hiddenPlatform) return;
+	
+	const fields = platformFields[platform];
+	if (!fields) return;
+	
+	const platformNames = {
+		shopify: 'Shopify Mağazasını Bağla',
+		woocommerce: 'WooCommerce Mağazasını Bağla',
+		ikas: 'Ikas Mağazasını Bağla',
+		ticimax: 'Ticimax Mağazasını Bağla',
+		ideasoft: 'IdeaSoft Mağazasını Bağla',
+		trendyol: 'Trendyol Mağazasını Bağla',
+		hepsiburada: 'Hepsiburada Mağazasını Bağla'
+	};
+	
+	if (modalTitle) {
+		modalTitle.textContent = platformNames[platform] || 'Mağaza Bağla';
 	}
+	
+	hiddenPlatform.value = platform;
+	modalBody.innerHTML = '';
+	
+	// Alanları dinamik oluştur
+	fields.forEach(field => {
+		const formGroup = document.createElement('div');
+		formGroup.className = 'form-group-draft';
+		formGroup.style.marginBottom = '16px';
+		
+		const label = document.createElement('label');
+		label.setAttribute('for', `connect-field-${field.id}`);
+		label.textContent = field.label;
+		label.style.fontWeight = '600';
+		label.style.display = 'block';
+		label.style.marginBottom = '6px';
+		label.style.color = 'var(--text-secondary)';
+		label.style.fontSize = '13px';
+		
+		const input = document.createElement('input');
+		input.type = field.type;
+		input.id = `connect-field-${field.id}`;
+		input.placeholder = field.placeholder;
+		input.required = field.required;
+		input.style.width = '100%';
+		input.style.padding = '10px 14px';
+		input.style.border = '1px solid var(--border-color)';
+		input.style.borderRadius = 'var(--radius-md)';
+		input.style.fontSize = '13.5px';
+		input.style.fontFamily = 'var(--font-main)';
+		input.style.outline = 'none';
+		input.style.transition = 'var(--transition-smooth)';
+		
+		input.addEventListener('focus', () => {
+			input.style.borderColor = 'rgba(40, 167, 69, 0.4)';
+			input.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
+		});
+		input.addEventListener('blur', () => {
+			input.style.borderColor = 'var(--border-color)';
+			input.style.boxShadow = 'none';
+		});
+		
+		formGroup.appendChild(label);
+		formGroup.appendChild(input);
+		modalBody.appendChild(formGroup);
+	});
+	
+	modal.style.display = 'flex';
+}
 
-	// Buton durumunu yükleniyor yap
+// Modalı Kapat
+function closeConnectModal() {
+	const modal = document.getElementById('store-connect-modal');
+	if (modal) {
+		modal.style.display = 'none';
+	}
+	const form = document.getElementById('store-credentials-form');
+	if (form) form.reset();
+}
+
+// Bağlantıyı Sına & Kaydet Formu Gönderildiğinde
+function handleStoreConnectSubmit(e) {
+	e.preventDefault();
+	
+	const platform = document.getElementById('connect-selected-platform').value;
+	const submitBtn = document.getElementById('btn-test-connect');
+	const btnText = document.getElementById('btn-test-connect-text');
+	
+	if (!platform || !submitBtn || !btnText) return;
+	
+	// Basit API doğrulama kontrolleri
+	if (platform === 'shopify') {
+		const tokenInput = document.getElementById('connect-field-api-token');
+		if (tokenInput && !tokenInput.value.startsWith('shpat_')) {
+			showNotification('Hata: Admin API Erişim Jetonu "shpat_" ile başlamalıdır.', 'error');
+			tokenInput.focus();
+			return;
+		}
+	} else if (platform === 'woocommerce') {
+		const keyInput = document.getElementById('connect-field-api-key');
+		const secretInput = document.getElementById('connect-field-api-secret');
+		if (keyInput && !keyInput.value.startsWith('ck_')) {
+			showNotification('Hata: WooCommerce Consumer Key "ck_" ile başlamalıdır.', 'error');
+			keyInput.focus();
+			return;
+		}
+		if (secretInput && !secretInput.value.startsWith('cs_')) {
+			showNotification('Hata: WooCommerce Consumer Secret "cs_" ile başlamalıdır.', 'error');
+			secretInput.focus();
+			return;
+		}
+	}
+	
+	// Yükleniyor durumunu simüle et
 	submitBtn.disabled = true;
-	storeUrlInput.disabled = true;
-	apiTokenInput.disabled = true;
-	btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bağlanıyor...';
-
-	// 2 saniye bekleme (API bağlantı simülasyonu)
+	btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Bağlantı Sınanıyor...';
+	
 	setTimeout(() => {
-		// Butonu başarılı yeşile çek ve metni güncelle
-		submitBtn.className = 'btn-create-draft btn-connect-success';
-		btnText.innerHTML = 'Başarıyla Bağlandı! 🎉';
-
-		// Sağ altta toast bildirim fırlat
-		showNotification('Tebrikler! Mağazanız ve ürünleriniz senkronize ediliyor.', 'success');
-
-		// 1.5 saniye sonra setup tamamlandı işaretle ve dashboard'a geçiş yapıp Wizard 2'yi başlat
-		setTimeout(() => {
+		// Bağlı mağazaları localStorage'a kaydet
+		let connectedStores = {};
+		try {
+			connectedStores = JSON.parse(localStorage.getItem('nestro_connected_stores') || '{}');
+		} catch (err) {
+			connectedStores = {};
+		}
+		
+		connectedStores[platform] = true;
+		localStorage.setItem('nestro_connected_stores', JSON.stringify(connectedStores));
+		
+		// Izgara kartını güncelle
+		updatePlatformCardConnected(platform);
+		
+		const platformNames = {
+			shopify: 'Shopify',
+			woocommerce: 'WooCommerce',
+			ikas: 'Ikas',
+			ticimax: 'Ticimax',
+			ideasoft: 'IdeaSoft',
+			trendyol: 'Trendyol',
+			hepsiburada: 'Hepsiburada'
+		};
+		const pName = platformNames[platform] || platform;
+		showNotification(`${pName} mağazanız başarıyla entegre edildi ve siparişleriniz çekilmeye başlandı.`, 'success');
+		
+		// Modalı kapat
+		closeConnectModal();
+		
+		// Butonu sıfırla
+		submitBtn.disabled = false;
+		btnText.textContent = 'Bağlantıyı Sına & Kaydet';
+		
+		// Eğer ilk mağaza ise onboarding kurulumunu tamamla ve Dashboard'a yönlendir
+		const isSetupCompleted = localStorage.getItem('nestro_setup_completed');
+		if (isSetupCompleted !== 'true') {
 			localStorage.setItem('nestro_setup_completed', 'true');
 			switchView('dashboard');
 			startWizard2();
-
-			submitBtn.disabled = false;
-			storeUrlInput.disabled = false;
-			apiTokenInput.disabled = false;
-			submitBtn.className = 'btn-create-draft';
-			btnText.innerHTML = 'Mağazayı Bağla';
-			document.getElementById('connect-store-form').reset();
-		}, 1500);
-
+		}
 	}, 2000);
+}
+
+// localStorage'daki Mağaza Durumlarını Yükle
+function initConnectedStores() {
+	let connectedStores = {};
+	try {
+		connectedStores = JSON.parse(localStorage.getItem('nestro_connected_stores') || '{}');
+	} catch (err) {
+		connectedStores = {};
+	}
+	
+	Object.keys(connectedStores).forEach(platform => {
+		if (connectedStores[platform]) {
+			updatePlatformCardConnected(platform);
+		}
+	});
+}
+
+// Kartı "Bağlı" Olarak İşaretle
+function updatePlatformCardConnected(platform) {
+	const card = document.querySelector(`.store-card.${platform}`);
+	const statusEl = document.getElementById(`status-${platform}`);
+	
+	if (card) {
+		card.classList.add('connected');
+	}
+	if (statusEl) {
+		statusEl.textContent = 'Bağlı';
+	}
 }
 
 // ==========================================================================

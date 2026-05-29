@@ -3901,6 +3901,98 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	pointer-events: none !important;
 }
 
+/* Store selection grid styling */
+.store-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 16px;
+	margin-top: 16px;
+	margin-bottom: 24px;
+}
+
+.store-card {
+	background: #ffffff;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 20px 12px;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	position: relative;
+	box-shadow: var(--shadow-sm);
+}
+
+.store-card:hover {
+	transform: translateY(-4px);
+	border-color: var(--primary);
+	box-shadow: 0 8px 24px rgba(40, 167, 73, 0.08), 0 0 0 1px rgba(40, 167, 73, 0.15);
+}
+
+.store-card.connected {
+	border-color: #28a745;
+	background: rgba(40, 167, 73, 0.01);
+}
+
+.store-card.connected::after {
+	content: "\f058";
+	font-family: "Font Awesome 6 Free";
+	font-weight: 900;
+	color: #28a745;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	font-size: 14px;
+}
+
+.store-icon-wrapper {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f8f9fa;
+	font-size: 22px;
+	transition: all 0.3s ease;
+}
+
+.store-card:hover .store-icon-wrapper {
+	transform: scale(1.08);
+}
+
+.store-card.shopify .store-icon-wrapper { color: #96bf48; background: rgba(150, 191, 72, 0.05); }
+.store-card.woocommerce .store-icon-wrapper { color: #96588a; background: rgba(150, 88, 138, 0.05); }
+.store-card.trendyol .store-icon-wrapper { color: #f27a1a; background: rgba(242, 122, 26, 0.05); }
+.store-card.hepsiburada .store-icon-wrapper { color: #ff6000; background: rgba(255, 96, 0, 0.05); }
+.store-card.ikas .store-icon-wrapper { color: #00c2ff; background: rgba(0, 194, 255, 0.05); }
+.store-card.ticimax .store-icon-wrapper { color: #0a4c95; background: rgba(10, 76, 149, 0.05); }
+.store-card.ideasoft .store-icon-wrapper { color: #5e228d; background: rgba(94, 34, 141, 0.05); }
+
+.store-name {
+	font-size: 13.5px;
+	font-weight: 700;
+	color: var(--text-primary);
+}
+
+.store-status {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-muted);
+	background: #f1f3f5;
+	padding: 2px 8px;
+	border-radius: 50px;
+}
+
+.store-card.connected .store-status {
+	color: #28a745;
+	background: rgba(40, 167, 73, 0.1);
+}
+
 /* Responsive Connect page layout */
 @media (max-width: 900px) {
 	.connect-page-layout {
