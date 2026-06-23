@@ -950,7 +950,7 @@
 				<!-- Üst Finansal Kartlar -->
 				<div class="reports-finance-grid">
 					<!-- Toplam Ciro -->
-					<div class="report-finance-card">
+					<div class="report-finance-card active" onclick="renderReportTable('ciro')">
 						<div class="report-card-icon earnings">
 							<i class="fa-solid fa-money-bill-wave"></i>
 						</div>
@@ -961,7 +961,7 @@
 						</div>
 					</div>
 					<!-- Lojistik Giderleri -->
-					<div class="report-finance-card">
+					<div class="report-finance-card" onclick="renderReportTable('gider')">
 						<div class="report-card-icon expenses">
 							<i class="fa-solid fa-truck-ramp-box"></i>
 						</div>
@@ -972,7 +972,7 @@
 						</div>
 					</div>
 					<!-- Ortalama Sipariş Değeri -->
-					<div class="report-finance-card">
+					<div class="report-finance-card" onclick="renderReportTable('ortalama')">
 						<div class="report-card-icon average">
 							<i class="fa-solid fa-calculator"></i>
 						</div>
@@ -983,7 +983,7 @@
 						</div>
 					</div>
 					<!-- Net Kâr -->
-					<div class="report-finance-card net-profit-highlight">
+					<div class="report-finance-card net-profit-highlight" onclick="renderReportTable('kar')">
 						<div class="report-card-icon profit">
 							<i class="fa-solid fa-piggy-bank"></i>
 						</div>

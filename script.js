@@ -2549,35 +2549,162 @@ let reportTransactions = [
 	{ date: '19 Mayıs 2026', code: '#1017', customer: 'Gözde Karaca', carrier: 'MNG Kargo', cost: 80.00, revenue: 1100.00, profit: 1020.00 }
 ];
 
+// Aktif Rapor Filtresi
+let currentReportFilter = 'ciro';
+
+// Rapor Log Tablosunu Dinamik Doldurma (Filtreli Görünüm)
+function renderReportTable(filterType) {
+	currentReportFilter = filterType;
+	
+	// Kart aktiflik durumlarını güncelle
+	const cards = document.querySelectorAll('.report-finance-card');
+	cards.forEach(card => card.classList.remove('active'));
+	
+	let activeIndex = 0;
+	if (filterType === 'gider') activeIndex = 1;
+	else if (filterType === 'ortalama') activeIndex = 2;
+	else if (filterType === 'kar') activeIndex = 3;
+	
+	if (cards[activeIndex]) {
+		cards[activeIndex].classList.add('active');
+	}
+	
+	const titleEl = document.querySelector('.ledger-title');
+	const thead = document.querySelector('.ledger-table thead');
+	const tbody = document.getElementById('reports-ledger-tbody');
+	
+	if (!thead || !tbody) return;
+	
+	tbody.innerHTML = '';
+	
+	if (filterType === 'ciro') {
+		if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-receipt"></i> Güncel Sipariş ve Gelir Logu (Toplam Ciro Detayları)';
+		thead.innerHTML = `
+			<tr>
+				<th>Tarih</th>
+				<th>Sipariş Kodu</th>
+				<th>Müşteri</th>
+				<th class="align-right">Sipariş Tutarı (Gelir)</th>
+			</tr>
+		`;
+		
+		reportTransactions.forEach(t => {
+			const tr = document.createElement('tr');
+			const revenueFormatted = '₺' + t.revenue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			tr.innerHTML = `
+				<td>${escapeHTML(t.date)}</td>
+				<td class="ledger-code-style">${escapeHTML(t.code)}</td>
+				<td>${escapeHTML(t.customer)}</td>
+				<td class="align-right ledger-profit-green" style="font-weight: 600;">${revenueFormatted}</td>
+			`;
+			tbody.appendChild(tr);
+		});
+	} 
+	else if (filterType === 'gider') {
+		if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-receipt"></i> Güncel Sipariş ve Lojistik Giderleri Logu';
+		thead.innerHTML = `
+			<tr>
+				<th>Tarih</th>
+				<th>Sipariş Kodu</th>
+				<th>Müşteri</th>
+				<th>Kargo Firması</th>
+				<th class="align-right">Kargo Maliyeti (Gider)</th>
+			</tr>
+		`;
+		
+		reportTransactions.forEach(t => {
+			const tr = document.createElement('tr');
+			const costFormatted = '₺' + t.cost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			tr.innerHTML = `
+				<td>${escapeHTML(t.date)}</td>
+				<td class="ledger-code-style">${escapeHTML(t.code)}</td>
+				<td>${escapeHTML(t.customer)}</td>
+				<td>${escapeHTML(t.carrier)}</td>
+				<td class="align-right ledger-cost-red" style="font-weight: 600;">${costFormatted}</td>
+			`;
+			tbody.appendChild(tr);
+		});
+	}
+	else if (filterType === 'ortalama') {
+		if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-receipt"></i> Sipariş Değerleri ve Ortalama Hesaplama Detayları';
+		thead.innerHTML = `
+			<tr>
+				<th>Tarih</th>
+				<th>Sipariş Kodu</th>
+				<th>Müşteri</th>
+				<th class="align-right">Sipariş Tutarı</th>
+			</tr>
+		`;
+		
+		let totalRevenue = 0;
+		reportTransactions.forEach(t => {
+			totalRevenue += t.revenue;
+			const tr = document.createElement('tr');
+			const revenueFormatted = '₺' + t.revenue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			tr.innerHTML = `
+				<td>${escapeHTML(t.date)}</td>
+				<td class="ledger-code-style">${escapeHTML(t.code)}</td>
+				<td>${escapeHTML(t.customer)}</td>
+				<td class="align-right">${revenueFormatted}</td>
+			`;
+			tbody.appendChild(tr);
+		});
+		
+		const avgValue = totalRevenue / reportTransactions.length;
+		const avgFormatted = '₺' + avgValue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		const summaryTr = document.createElement('tr');
+		summaryTr.style.background = 'rgba(40, 167, 73, 0.05)';
+		summaryTr.style.fontWeight = 'bold';
+		summaryTr.innerHTML = `
+			<td colspan="3" style="color: var(--primary); padding: 14px 20px;">Ortalama Sipariş Değeri (${reportTransactions.length} Sipariş):</td>
+			<td class="align-right" style="color: var(--primary); padding: 14px 20px;">${avgFormatted}</td>
+		`;
+		tbody.appendChild(summaryTr);
+	}
+	else if (filterType === 'kar') {
+		if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-receipt"></i> Net Kâr Analiz Logu (Gelir - Gider)';
+		thead.innerHTML = `
+			<tr>
+				<th>Tarih</th>
+				<th>Sipariş Kodu</th>
+				<th>Müşteri</th>
+				<th class="align-right">Gelir (Sipariş Tutarı)</th>
+				<th class="align-right">Gider (Kargo Maliyeti)</th>
+				<th class="align-right">Net Kâr (Kazanç)</th>
+			</tr>
+		`;
+		
+		reportTransactions.forEach(t => {
+			const tr = document.createElement('tr');
+			const costFormatted = '₺' + t.cost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			const revenueFormatted = '₺' + t.revenue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			const profitFormatted = '₺' + t.profit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			tr.innerHTML = `
+				<td>${escapeHTML(t.date)}</td>
+				<td class="ledger-code-style">${escapeHTML(t.code)}</td>
+				<td>${escapeHTML(t.customer)}</td>
+				<td class="align-right">${revenueFormatted}</td>
+				<td class="align-right ledger-cost-red">${costFormatted}</td>
+				<td class="align-right ledger-profit-green" style="font-weight: 600;">${profitFormatted}</td>
+			`;
+			tbody.appendChild(tr);
+		});
+	}
+}
+
 // Excel Benzeri Log Tablosunu Doldurma
 function renderReportTransactions() {
-	const tbody = document.getElementById('reports-ledger-tbody');
-	if (!tbody) return;
-
-	tbody.innerHTML = '';
-	reportTransactions.forEach(t => {
-		const tr = document.createElement('tr');
-		
-		const costFormatted = '₺' + t.cost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-		const revenueFormatted = '₺' + t.revenue.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-		const profitFormatted = '₺' + t.profit.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-		tr.innerHTML = `
-			<td>${escapeHTML(t.date)}</td>
-			<td class="ledger-code-style">${escapeHTML(t.code)}</td>
-			<td>${escapeHTML(t.customer)}</td>
-			<td>${escapeHTML(t.carrier)}</td>
-			<td class="align-right ledger-cost-red">${costFormatted}</td>
-			<td class="align-right">${revenueFormatted}</td>
-			<td class="align-right ledger-profit-green">${profitFormatted}</td>
-		`;
-		tbody.appendChild(tr);
-	});
+	renderReportTable(currentReportFilter);
 }
 
 // Excel Olarak İndir Simülasyonu
 function downloadReportsExcel() {
-	showNotification('Excel raporu başarıyla oluşturuldu ve indirildi. (nestro-finansal-rapor.xlsx)', 'success');
+	let reportName = 'nestro-toplam-ciro-raporu.xlsx';
+	if (currentReportFilter === 'gider') reportName = 'nestro-lojistik-giderleri-raporu.xlsx';
+	else if (currentReportFilter === 'ortalama') reportName = 'nestro-ortalama-siparis-degeri-raporu.xlsx';
+	else if (currentReportFilter === 'kar') reportName = 'nestro-net-kar-raporu.xlsx';
+	
+	showNotification(`Excel raporu başarıyla oluşturuldu ve indirildi. (${reportName})`, 'success');
 }
 
 // ==========================================================================
