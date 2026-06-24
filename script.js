@@ -3090,3 +3090,99 @@ function closeDashboardOrdersSection() {
 	if (section) section.style.display = 'none';
 }
 
+// ==========================================================================
+// 21. MAĞAZAM AÇILIR MENÜSÜ FONKSİYONLARI (STORE DROPDOWN LOGIC)
+// ==========================================================================
+
+function toggleStoreDropdown(event) {
+	event.stopPropagation();
+	const menu = document.getElementById('store-dropdown-menu');
+	if (!menu) return;
+	
+	// E-ticaret kurulum durumunu localStorage'dan oku
+	const isSetupCompleted = localStorage.getItem('nestro_setup_completed') === 'true';
+	const shopifyItem = document.getElementById('dropdown-shopify-item');
+	const activeBadge = document.querySelector('.dropdown-header .active-badge');
+	
+	if (shopifyItem && activeBadge) {
+		if (isSetupCompleted) {
+			shopifyItem.classList.remove('inactive');
+			shopifyItem.innerHTML = `
+				<div class="store-item-info">
+					<i class="fa-brands fa-shopify shopify-color"></i>
+					<div>
+						<h5>Shopify Mağazam</h5>
+						<span class="store-sync-time" id="shopify-sync-time">Eşitleme: 5 dk önce</span>
+					</div>
+				</div>
+				<span class="status-pill-mini">Aktif</span>
+			`;
+			activeBadge.innerHTML = `<span class="dot"></span> 1 Aktif`;
+		} else {
+			shopifyItem.classList.add('inactive');
+			shopifyItem.innerHTML = `
+				<div class="store-item-info">
+					<i class="fa-brands fa-shopify shopify-color"></i>
+					<div>
+						<h5>Shopify</h5>
+						<span class="store-sync-time">Bağlantı bulunamadı</span>
+					</div>
+				</div>
+				<button class="btn-connect-mini" onclick="navigateToConnectView(event)">Bağla</button>
+			`;
+			activeBadge.innerHTML = `<span class="dot" style="background-color: var(--text-muted); box-shadow: none;"></span> 0 Aktif`;
+		}
+	}
+	
+	menu.classList.toggle('active');
+}
+
+function closeStoreDropdown() {
+	const menu = document.getElementById('store-dropdown-menu');
+	if (menu) menu.classList.remove('active');
+}
+
+function navigateToConnectView(event) {
+	event.stopPropagation();
+	closeStoreDropdown();
+	switchView('connect');
+}
+
+// Manuel Eşitleme Yapma (Simülasyon)
+function triggerManualSync(event) {
+	event.stopPropagation();
+	const btn = event.currentTarget;
+	if (btn.classList.contains('syncing')) return;
+	
+	btn.classList.add('syncing');
+	const textSpan = btn.querySelector('span');
+	const oldText = textSpan.textContent;
+	textSpan.textContent = 'Eşitleniyor...';
+	
+	setTimeout(() => {
+		btn.classList.remove('syncing');
+		textSpan.textContent = oldText;
+		
+		const syncTimeLabel = document.getElementById('shopify-sync-time');
+		if (syncTimeLabel) {
+			syncTimeLabel.textContent = 'Eşitleme: Şimdi';
+		}
+		
+		showNotification('Mağaza siparişleri başarıyla eşitlendi!', 'success');
+		
+		// Sipariş listesini ve istatistikleri yenile
+		renderOrders(currentFilter, currentSearchQuery);
+		updateDashboardStats();
+	}, 1800);
+}
+
+// Açılır menü dışına tıklandığında menüyü kapat
+document.addEventListener('click', function(event) {
+	const trigger = document.getElementById('store-dropdown-trigger');
+	const menu = document.getElementById('store-dropdown-menu');
+	if (trigger && menu && !trigger.contains(event.target)) {
+		menu.classList.remove('active');
+	}
+});
+
+

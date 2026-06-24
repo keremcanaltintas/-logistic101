@@ -227,12 +227,59 @@
 						</button>
 					</div>
 					
-					<div class="profile-dropdown-trigger" onclick="alert('Mağaza Ayarları açılıyor...')">
+					<div class="profile-dropdown-trigger" id="store-dropdown-trigger" onclick="toggleStoreDropdown(event)">
 						<div class="profile-avatar">
 							<i class="fa-solid fa-store"></i>
 						</div>
 						<span class="profile-store-text">Mağazam</span>
 						<i class="fa-solid fa-chevron-down profile-chevron"></i>
+						
+						<!-- Store Dropdown Menu ( frosted glass / premium look ) -->
+						<div class="store-dropdown-menu" id="store-dropdown-menu">
+							<div class="dropdown-header">
+								<h4>Bağlı Mağazalar</h4>
+								<span class="active-badge"><span class="dot"></span> 1 Aktif</span>
+							</div>
+							
+							<div class="dropdown-store-list">
+								<!-- Shopify Mağaza Durumu (Dinamik yüklenecektir) -->
+								<div class="dropdown-store-item" id="dropdown-shopify-item">
+									<div class="store-item-info">
+										<i class="fa-brands fa-shopify shopify-color"></i>
+										<div>
+											<h5>Shopify Mağazam</h5>
+											<span class="store-sync-time" id="shopify-sync-time">Eşitleme: 5 dk önce</span>
+										</div>
+									</div>
+									<span class="status-pill-mini">Aktif</span>
+								</div>
+								
+								<!-- WooCommerce Mağaza Durumu -->
+								<div class="dropdown-store-item inactive" id="dropdown-woo-item">
+									<div class="store-item-info">
+										<i class="fa-brands fa-woocommerce woocommerce-color"></i>
+										<div>
+											<h5>WooCommerce</h5>
+											<span class="store-sync-time">Bağlantı bulunamadı</span>
+										</div>
+									</div>
+									<button class="btn-connect-mini" onclick="navigateToConnectView(event)">Bağla</button>
+								</div>
+							</div>
+							
+							<div class="dropdown-actions">
+								<button type="button" class="btn-dropdown-action" onclick="triggerManualSync(event)">
+									<i class="fa-solid fa-rotate"></i> <span>Tümünü Eşitle</span>
+								</button>
+								<hr class="dropdown-divider">
+								<a href="#" class="dropdown-link" onclick="switchView('connect'); closeStoreDropdown(); event.preventDefault();">
+									<i class="fa-solid fa-plug"></i> Mağaza Entegrasyonları
+								</a>
+								<a href="#" class="dropdown-link" onclick="switchView('settings'); closeStoreDropdown(); event.preventDefault();">
+									<i class="fa-solid fa-gears"></i> Sistem Ayarları
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
