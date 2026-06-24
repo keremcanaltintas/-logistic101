@@ -3101,36 +3101,17 @@ function toggleStoreDropdown(event) {
 	
 	// E-ticaret kurulum durumunu localStorage'dan oku
 	const isSetupCompleted = localStorage.getItem('nestro_setup_completed') === 'true';
-	const shopifyItem = document.getElementById('dropdown-shopify-item');
-	const activeBadge = document.querySelector('.dropdown-header .active-badge');
+	const statusBadge = document.getElementById('dropdown-store-status');
 	
-	if (shopifyItem && activeBadge) {
+	if (statusBadge) {
 		if (isSetupCompleted) {
-			shopifyItem.classList.remove('inactive');
-			shopifyItem.innerHTML = `
-				<div class="store-item-info">
-					<i class="fa-brands fa-shopify shopify-color"></i>
-					<div>
-						<h5>Shopify Mağazam</h5>
-						<span class="store-sync-time" id="shopify-sync-time">Eşitleme: 5 dk önce</span>
-					</div>
-				</div>
-				<span class="status-pill-mini">Aktif</span>
-			`;
-			activeBadge.innerHTML = `<span class="dot"></span> 1 Aktif`;
+			statusBadge.innerHTML = `<span class="dot"></span> Aktif`;
+			statusBadge.style.background = 'var(--primary-light)';
+			statusBadge.style.color = 'var(--primary)';
 		} else {
-			shopifyItem.classList.add('inactive');
-			shopifyItem.innerHTML = `
-				<div class="store-item-info">
-					<i class="fa-brands fa-shopify shopify-color"></i>
-					<div>
-						<h5>Shopify</h5>
-						<span class="store-sync-time">Bağlantı bulunamadı</span>
-					</div>
-				</div>
-				<button class="btn-connect-mini" onclick="navigateToConnectView(event)">Bağla</button>
-			`;
-			activeBadge.innerHTML = `<span class="dot" style="background-color: var(--text-muted); box-shadow: none;"></span> 0 Aktif`;
+			statusBadge.innerHTML = `<span class="dot" style="background-color: var(--text-muted); box-shadow: none;"></span> Çevrimdışı`;
+			statusBadge.style.background = '#f1f3f5';
+			statusBadge.style.color = 'var(--text-muted)';
 		}
 	}
 	
@@ -3162,11 +3143,6 @@ function triggerManualSync(event) {
 	setTimeout(() => {
 		btn.classList.remove('syncing');
 		textSpan.textContent = oldText;
-		
-		const syncTimeLabel = document.getElementById('shopify-sync-time');
-		if (syncTimeLabel) {
-			syncTimeLabel.textContent = 'Eşitleme: Şimdi';
-		}
 		
 		showNotification('Mağaza siparişleri başarıyla eşitlendi!', 'success');
 		
