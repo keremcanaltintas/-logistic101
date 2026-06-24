@@ -5355,4 +5355,106 @@ aside.sidebar .menu-item.wizard-highlighted i {
 @keyframes btnPulse {
 	from { transform: scale(1); }
 	to { transform: scale(0.98); opacity: 0.6; }
+
 }
+
+/* ==========================================================================
+   19. DEPOYA ÜRÜN GÖNDER / GÖNDERİ OLUŞTURMA SAYFASI STİLLERİ (SEND TO WAREHOUSE)
+   ========================================================================== */
+
+/* Send to Warehouse Grid Layout */
+.send-to-warehouse-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+	margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+	.send-to-warehouse-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+}
+
+/* Service Type Toggle Button Group */
+.service-type-buttons {
+	display: flex;
+	gap: 12px;
+	margin-top: 6px;
+	width: 100%;
+}
+
+.btn-service-type {
+	flex: 1;
+	padding: 12px 16px;
+	font-weight: 700;
+	border-radius: var(--radius-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border: 2px solid rgba(0, 0, 0, 0.08);
+	background: #ffffff;
+	color: var(--text-secondary);
+	cursor: pointer;
+	transition: all 0.25s ease;
+	font-family: var(--font-main);
+	font-size: 13.5px;
+	outline: none;
+}
+
+.btn-service-type:hover:not(.active) {
+	border-color: rgba(0, 0, 0, 0.16);
+	background: #f8f9fa;
+	color: var(--text-primary);
+}
+
+.btn-service-type.active {
+	border-color: var(--primary);
+	background: var(--primary-light);
+	color: var(--primary);
+	box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.btn-service-type i {
+	font-size: 14px;
+}
+
+/* Barcode Printable Label styling */
+.barcode-card {
+	border: 2px solid #000000;
+	padding: 20px;
+	color: #000000;
+	font-family: 'Courier New', Courier, monospace;
+	background: #ffffff;
+	border-radius: var(--radius-sm);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	margin-top: 10px;
+}
+
+.mock-barcode-lines {
+	display: flex;
+	height: 50px;
+	width: 100%;
+	max-width: 320px;
+	background: #000000;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.mock-barcode-lines > div {
+	display: flex;
+	justify-content: center;
+	background: white;
+	padding: 2px 0;
+	width: 100%;
+}
+
+/* Custom button states */
+#btn-create-warehouse-shipment.loading-pulse {
+	animation: btnPulse 0.5s infinite alternate;
+	opacity: 0.7;
+	pointer-events: none;
+}
+
