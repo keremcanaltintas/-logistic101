@@ -269,7 +269,7 @@
 							</div>
 						</div>
 
-						<div class="status-card pending">
+						<div class="status-card pending" onclick="filterDashboardOrders('preparing')">
 							<div class="card-icon-wrapper">
 								<i class="fa-solid fa-clock"></i>
 							</div>
@@ -282,7 +282,7 @@
 							</div>
 						</div>
 
-						<div class="status-card processing">
+						<div class="status-card processing" onclick="filterDashboardOrders('ready')">
 							<div class="card-icon-wrapper">
 								<i class="fa-solid fa-spinner fa-spin-slow"></i>
 							</div>
@@ -295,7 +295,7 @@
 							</div>
 						</div>
 
-						<div class="status-card shipped">
+						<div class="status-card shipped" onclick="filterDashboardOrders('shipped')">
 							<div class="card-icon-wrapper">
 								<i class="fa-solid fa-truck-fast"></i>
 							</div>
@@ -308,7 +308,7 @@
 							</div>
 						</div>
 
-						<div class="status-card problem">
+						<div class="status-card problem" onclick="filterDashboardOrders('problem')">
 							<div class="card-icon-wrapper">
 								<i class="fa-solid fa-triangle-exclamation"></i>
 							</div>
@@ -319,6 +319,36 @@
 							<div class="card-trend ok">
 								<i class="fa-solid fa-shield-halved"></i> Güvende
 							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Durum Filtreli Sipariş Tablosu -->
+				<section class="dashboard-section" id="dashboard-orders-section" style="display: none; margin-top: 24px;">
+					<div class="section-title-bar">
+						<h2 id="dashboard-orders-title">Siparişler</h2>
+						<button type="button" class="btn-secondary" onclick="closeDashboardOrdersSection()" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: var(--radius-md); display: flex; align-items: center; gap: 6px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); background: #ffffff;">
+							<i class="fa-solid fa-xmark"></i> Kapat
+						</button>
+					</div>
+					<div class="settings-card" style="padding: 20px; margin-top: 12px; margin-bottom: 0;">
+						<div class="table-responsive">
+							<table class="orders-table-new" style="width: 100%;">
+								<thead>
+									<tr>
+										<th>Sipariş No</th>
+										<th>Tarih</th>
+										<th>Müşteri</th>
+										<th>Ödeme Yöntemi</th>
+										<th>Durum</th>
+										<th class="align-right">Tutar</th>
+										<th style="text-align: right; padding-right: 20px;">Aksiyon</th>
+									</tr>
+								</thead>
+								<tbody id="dashboard-orders-tbody">
+									<!-- JavaScript ile doldurulacak -->
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</section>

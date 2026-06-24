@@ -1312,6 +1312,11 @@ function updateDashboardStats() {
 		const username = localStorage.getItem('nestro_username') || 'Kullanıcı';
 		welcomeHeader.innerHTML = `Bugün ${totalToday} yeni siparişin var, Merhaba <span id="username-display">${username}</span> 👋`;
 	}
+
+	// Eğer dashboard'da filtreli sipariş tablosu açıksa onu da güncelle
+	if (typeof currentDashboardFilter !== 'undefined' && currentDashboardFilter) {
+		filterDashboardOrders(currentDashboardFilter, false);
+	}
 }
 
 // ==========================================================================
@@ -2990,5 +2995,98 @@ function printBarcodeLabel() {
 	printWindow.document.write('</div>');
 	printWindow.document.write('<script>window.onload = function() { window.print(); window.close(); }</script>');
 	printWindow.document.close();
+}
+
+let currentDashboardFilter = null;
+
+// Dashboard Stat Kartları Sipariş Filtreleme
+function filterDashboardOrders(statusType, shouldScroll = true) {
+	currentDashboardFilter = statusType;
+	
+	const section = document.getElementById('dashboard-orders-section');
+	const title = document.getElementById('dashboard-orders-title');
+	const tbody = document.getElementById('dashboard-orders-tbody');
+	
+	if (!section || !title || !tbody) return;
+	
+	let titleText = "Siparişler";
+	if (statusType === 'preparing') titleText = "Bekleyen Siparişler";
+	else if (statusType === 'ready') titleText = "Hazırlanan Siparişler";
+	else if (statusType === 'shipped') titleText = "Kargoya Verilen Siparişler";
+	else if (statusType === 'problem') titleText = "Sorunlu Siparişler";
+	
+	title.innerHTML = `<i class="fa-solid fa-boxes-stacked"></i> ${titleText}`;
+	
+	// Filtreleme (Sorunlu mock olarak boş)
+	const filtered = orders.filter(o => o.status === statusType);
+	
+	tbody.innerHTML = '';
+	
+	if (filtered.length === 0) {
+		const tr = document.createElement('tr');
+		tr.innerHTML = `<td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13.5px;">Bu durumda herhangi bir sipariş bulunmamaktadır.</td>`;
+		tbody.appendChild(tr);
+	} else {
+		filtered.forEach(order => {
+			const tr = document.createElement('tr');
+			
+			// Ödeme Yöntemi
+			let paymentBadge = '';
+			if (order.payment === 'card') {
+				paymentBadge = `<span class="badge-payment card"><i class="fa-solid fa-credit-card"></i> Kredi Kartı</span>`;
+			} else {
+				paymentBadge = `<span class="badge-payment cod"><i class="fa-solid fa-hand-holding-dollar"></i> Kapıda Ödeme</span>`;
+			}
+			
+			// Durum Rozeti
+			let statusBadge = '';
+			if (order.status === 'preparing') {
+				statusBadge = `<span class="status-pill preparing"><i class="fa-solid fa-clock"></i> Hazırlanıyor</span>`;
+			} else if (order.status === 'ready') {
+				statusBadge = `<span class="status-pill ready"><i class="fa-solid fa-spinner fa-spin-slow"></i> Hazırlandı</span>`;
+			} else if (order.status === 'shipped') {
+				statusBadge = `<span class="status-pill shipped"><i class="fa-solid fa-truck-fast"></i> Kargoya Verildi</span>`;
+			} else if (order.status === 'cancelled') {
+				statusBadge = `<span class="status-pill cancelled"><i class="fa-solid fa-ban"></i> İptal Edildi</span>`;
+			}
+			
+			// İptal Butonu
+			const showCancel = order.status !== 'shipped' && order.status !== 'cancelled';
+			const cancelBtnHTML = showCancel 
+				? `<button class="btn-action-cancel" onclick="openCancelModal('${order.code}')"><i class="fa-solid fa-ban"></i> İptal</button>` 
+				: '';
+				
+			const totalFormatted = '₺' + order.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			const cityText = order.city ? ` (${escapeHTML(order.city)})` : '';
+			
+			tr.innerHTML = `
+				<td class="ledger-code-style">${escapeHTML(order.code)}</td>
+				<td>${escapeHTML(order.date.split(',')[0])}</td>
+				<td><strong>${escapeHTML(order.customer)}</strong><span style="font-size: 12px; color: var(--text-muted);">${cityText}</span></td>
+				<td>${paymentBadge}</td>
+				<td>${statusBadge}</td>
+				<td class="align-right" style="font-weight: 700; color: var(--text-primary);">${totalFormatted}</td>
+				<td style="text-align: right; padding-right: 20px;">
+					<div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
+						<button class="btn-action-detail" onclick="openDetailModal('${order.code}')"><i class="fa-solid fa-circle-info"></i> Detay</button>
+						${cancelBtnHTML}
+					</div>
+				</td>
+			`;
+			tbody.appendChild(tr);
+		});
+	}
+	
+	section.style.display = 'block';
+	if (shouldScroll) {
+		section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}
+}
+
+// Dashboard Filtreli Sipariş Tablosunu Kapat
+function closeDashboardOrdersSection() {
+	currentDashboardFilter = null;
+	const section = document.getElementById('dashboard-orders-section');
+	if (section) section.style.display = 'none';
 }
 
