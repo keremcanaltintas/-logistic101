@@ -2843,17 +2843,19 @@ function setServiceType(type) {
 		btnStandard.classList.add('active');
 		btnReturn.classList.remove('active');
 
-		// Lock sender to Nestro Depo
-		senderName.value = NESTRO_WAREHOUSE_ADDRESS.name;
-		senderName.readOnly = true;
-		senderPhone.value = NESTRO_WAREHOUSE_ADDRESS.phone;
-		senderPhone.readOnly = true;
-		senderCity.value = NESTRO_WAREHOUSE_ADDRESS.city;
-		senderCity.readOnly = true;
-		senderDistrict.value = NESTRO_WAREHOUSE_ADDRESS.district;
-		senderDistrict.readOnly = true;
-		senderAddress.value = NESTRO_WAREHOUSE_ADDRESS.address;
-		senderAddress.readOnly = true;
+		// Unlock sender and clear fields if they were locked
+		if (senderName.readOnly) {
+			senderName.value = '';
+			senderName.readOnly = false;
+			senderPhone.value = '';
+			senderPhone.readOnly = false;
+			senderCity.value = '';
+			senderCity.readOnly = false;
+			senderDistrict.value = '';
+			senderDistrict.readOnly = false;
+			senderAddress.value = '';
+			senderAddress.readOnly = false;
+		}
 
 		// Unlock receiver and clear fields if they were locked
 		if (receiverName.readOnly) {
