@@ -175,15 +175,8 @@ function transitionToDashboard() {
 	setTimeout(() => {
 		loginPage.style.display = 'none';
 		
-		// Kurulum durumuna göre yönlendir
-		const isSetupCompleted = localStorage.getItem('nestro_setup_completed');
-		if (isSetupCompleted === 'true') {
-			closeWizardUI();
-			const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
-			switchView(lastView);
-		} else {
-			startWizard1();
-		}
+		const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		switchView(lastView);
 	}, 600);
 }
 
@@ -230,15 +223,8 @@ function checkLoginAndRoute() {
 		document.getElementById('dashboard-page').style.display = 'flex';
 		showChatbot();
 		
-		// Kurulum durumuna göre yönlendirme yap
-		const isSetupCompleted = localStorage.getItem('nestro_setup_completed');
-		if (isSetupCompleted === 'true') {
-			closeWizardUI();
-			const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
-			switchView(lastView);
-		} else {
-			setTimeout(startWizard1, 400);
-		}
+		const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		switchView(lastView);
 	}
 }
 
@@ -2315,12 +2301,11 @@ function handleStoreConnectSubmit(e) {
 		submitBtn.disabled = false;
 		btnText.textContent = 'Bağlantıyı Sına & Kaydet';
 		
-		// Eğer ilk mağaza ise onboarding kurulumunu tamamla ve Dashboard'a yönlendir
+		// Eğer ilk mağaza ise envanter kurulumunu tamamla ve Dashboard'a yönlendir
 		const isSetupCompleted = localStorage.getItem('nestro_setup_completed');
 		if (isSetupCompleted !== 'true') {
 			localStorage.setItem('nestro_setup_completed', 'true');
 			switchView('dashboard');
-			startWizard2();
 		}
 	}, 2000);
 }
@@ -2538,15 +2523,7 @@ function handleSettingsNotificationChange(toggle, settingName) {
 	showNotification(`${settingName} tercihi ${status}.`, "success");
 }
 
-// Eğitimi Yeniden Başlat
-function restartTutorial() {
-	if (confirm("Kurulum eğitimini (Onboarding Wizard) yeniden başlatmak istediğinize emin misiniz?")) {
-		localStorage.removeItem('nestro_setup_completed');
-		// Aktif sayfayı da sıfırlayalım ki connect sayfasından başlasın
-		localStorage.removeItem('nestro_current_view');
-		location.reload();
-	}
-}
+
 
 // ==========================================================================
 // 17. RAPORLAR (REPORTS) DETAYLI FINANSAL VERİLER & EXCEL LOG MANTIĞI
