@@ -6174,4 +6174,155 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	gap: 14px;
 }
 
+/* ==========================================================================
+   WIN XP BUTON GÖRÜNÜMÜNÜ DÜZELTME VE MODERN BUTON TASARIMLARI
+   ========================================================================== */
+
+#verification-view button,
+#verification-view input[type="submit"],
+.btn-primary,
+.btn-secondary,
+.btn-phone-call,
+.btn-hangup,
+.btn-address-edit,
+.btn-save-outcome-btn {
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: none;
+	box-shadow: none;
+	text-shadow: none;
+	border-style: none;
+	border-width: 0;
+	outline: none;
+	font-family: var(--font-main);
+	cursor: pointer;
+}
+
+#verification-view .btn-primary,
+#btn-verification-search,
+#verification-view button[onclick="saveCallOutcome()"] {
+	background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
+	color: #ffffff !important;
+	border: none !important;
+	border-radius: var(--radius-md) !important;
+	padding: 12px 24px !important;
+	font-size: 13.5px !important;
+	font-weight: 700 !important;
+	cursor: pointer !important;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15) !important;
+	transition: var(--transition-smooth) !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	text-align: center !important;
+	text-decoration: none !important;
+	outline: none !important;
+	margin: 0 !important;
+	width: auto !important;
+	height: auto !important;
+}
+
+#verification-view .btn-primary:hover,
+#btn-verification-search:hover,
+#verification-view button[onclick="saveCallOutcome()"]:hover {
+	background: linear-gradient(135deg, var(--primary-hover), #1c7430) !important;
+	box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25) !important;
+	transform: translateY(-1.5px) !important;
+}
+
+#verification-view .btn-primary:active,
+#btn-verification-search:active,
+#verification-view button[onclick="saveCallOutcome()"]:active {
+	transform: translateY(0) !important;
+}
+
+.btn-phone-call {
+	background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
+	color: #ffffff !important;
+	border: none !important;
+	border-radius: 8px !important;
+	padding: 8px 16px !important;
+	font-size: 12px !important;
+	font-weight: 700 !important;
+	cursor: pointer !important;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15) !important;
+	display: flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	transition: var(--transition-fast) !important;
+}
+
+.btn-phone-call:hover {
+	transform: translateY(-1px) !important;
+	box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25) !important;
+}
+
+.btn-hangup {
+	background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+	color: #ffffff !important;
+	border: none !important;
+	border-radius: var(--radius-md) !important;
+	padding: 12px 32px !important;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	cursor: pointer !important;
+	box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25) !important;
+	display: flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	transition: var(--transition-fast) !important;
+}
+
+.btn-hangup:hover {
+	transform: translateY(-1px) !important;
+	box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35) !important;
+}
+
+
+/* ==========================================================================
+   GLOBAL LIQUID GLASS TEMA UYARLAMALARI (TÜM CRM GENELİ)
+   ========================================================================== */
+
+.settings-card,
+.status-card,
+.modal-box,
+.orders-section,
+.detail-box,
+.wallet-card,
+.sms-card,
+.support-card,
+.reports-card,
+.warehouse-shipment-form,
+.panel-card,
+.billing-card,
+.dashboard-section,
+.settings-form-container,
+.main-content .view-section > div,
+.main-content .view-section > form {
+	background: rgba(255, 255, 255, 0.45) !important;
+	backdrop-filter: blur(20px) saturate(180%) !important;
+	-webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+	border: 1px solid rgba(255, 255, 255, 0.55) !important;
+	border-radius: var(--radius-lg) !important;
+	box-shadow: 
+		0 8px 32px 0 rgba(31, 38, 135, 0.03) !important, 
+		inset 0 1px 2px 0 rgba(255, 255, 255, 0.85) !important,
+		0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
+	transition: var(--transition-smooth) !important;
+}
+
+/* Global Kart Hover Güçlendirmesi */
+.settings-card:hover,
+.status-card:hover,
+.wallet-card:hover,
+.main-content .view-section > div:hover,
+.main-content .view-section > form:hover {
+	background: rgba(255, 255, 255, 0.65) !important;
+	border-color: rgba(255, 255, 255, 0.8) !important;
+	box-shadow: 
+		0 12px 40px 0 rgba(40, 167, 69, 0.05) !important, 
+		inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+	transform: translateY(-2px) !important;
+}
+
 

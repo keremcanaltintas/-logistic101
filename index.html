@@ -198,10 +198,16 @@
 		<div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
 		<!-- Sağ Ana İçerik Alanı -->
-		<main class="main-content">
+		<main class="main-content" style="position: relative; overflow: hidden; min-height: 100vh;">
+			<!-- Global Ambient Liquid Glow Blobs -->
+			<div class="v-glass-ambient">
+				<div class="v-glow-blob v-glow-blob-1"></div>
+				<div class="v-glow-blob v-glow-blob-2"></div>
+				<div class="v-glow-blob v-glow-blob-3"></div>
+			</div>
 			
 			<!-- ==================== ÜST NAVİGASYON BARI (YENİ) ==================== -->
-			<div class="top-navbar">
+			<div class="top-navbar" style="position: relative; z-index: 2;">
 				<!-- Mobil Hamburger Menü Butonu -->
 				<button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileSidebar()" title="Menü">
 					<i class="fa-solid fa-bars"></i>
@@ -1332,15 +1338,8 @@
 			</div>
 
 			<!-- ========== KAPIDA ÖDEME MÜŞTERİ TEYİT VE ARAMA GÖRÜNÜMÜ ========== -->
-			<div id="verification-view" class="view-section" style="display: none; position: relative; overflow: hidden; padding: 24px; border-radius: var(--radius-xl);">
-				<!-- Ambient Liquid Glow Blobs -->
-				<div class="v-glass-ambient">
-					<div class="v-glow-blob v-glow-blob-1"></div>
-					<div class="v-glow-blob v-glow-blob-2"></div>
-					<div class="v-glow-blob v-glow-blob-3"></div>
-				</div>
-
-				<header class="content-header" style="position: relative; z-index: 2;">
+			<div id="verification-view" class="view-section" style="display: none;">
+				<header class="content-header">
 					<div class="header-welcome">
 						<h1>Kapıda Ödeme Sipariş Doğrulama</h1>
 						<p class="header-subtitle">Müşterileri doğrulayın, sipariş içeriklerini onaylayın veya adreslerini güncelleyin.</p>
