@@ -855,6 +855,7 @@ function initNavigation() {
 		'nav-dashboard': 'dashboard',
 		'nav-connect': 'connect',
 		'nav-orders': 'orders',
+		'nav-verification': 'verification',
 		'nav-products': 'products',
 		'nav-send-to-warehouse': 'send-to-warehouse',
 		'nav-wallet': 'wallet',
@@ -916,6 +917,7 @@ function switchView(viewName) {
 	const smsView = document.getElementById('sms-view');
 	const reportsView = document.getElementById('reports-view');
 	const settingsView = document.getElementById('settings-view');
+	const verificationView = document.getElementById('verification-view');
 	
 	const navDashboard = document.getElementById('nav-dashboard');
 	const navConnect = document.getElementById('nav-connect');
@@ -927,8 +929,9 @@ function switchView(viewName) {
 	const navSms = document.getElementById('nav-sms');
 	const navReports = document.getElementById('nav-reports');
 	const navSettings = document.getElementById('nav-settings');
+	const navVerification = document.getElementById('nav-verification');
 
-	if (!dashboardView || !connectView || !ordersView || !productsView || !sendToWarehouseView || !walletView || !supportView || !smsView || !reportsView || !settingsView) return;
+	if (!dashboardView || !connectView || !ordersView || !productsView || !sendToWarehouseView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView) return;
 
 	// Mobil sidebar'ı kapat (eğer aktifse)
 	const sidebar = document.querySelector('.sidebar');
@@ -942,6 +945,7 @@ function switchView(viewName) {
 	navDashboard.classList.remove('active');
 	if (navConnect) navConnect.classList.remove('active');
 	navOrders.classList.remove('active');
+	if (navVerification) navVerification.classList.remove('active');
 	if (navProducts) navProducts.classList.remove('active');
 	if (navSendToWarehouse) navSendToWarehouse.classList.remove('active');
 	if (navWallet) navWallet.classList.remove('active');
@@ -961,6 +965,7 @@ function switchView(viewName) {
 	smsView.style.display = 'none';
 	reportsView.style.display = 'none';
 	settingsView.style.display = 'none';
+	verificationView.style.display = 'none';
 
 	// İlgili görünümü aç
 	if (viewName === 'dashboard') {
@@ -1005,6 +1010,10 @@ function switchView(viewName) {
 	} else if (viewName === 'settings') {
 		settingsView.style.display = 'block';
 		if (navSettings) navSettings.classList.add('active');
+	} else if (viewName === 'verification') {
+		verificationView.style.display = 'block';
+		if (navVerification) navVerification.classList.add('active');
+		initVerificationView();
 	}
 }
 
@@ -3133,9 +3142,437 @@ function triggerManualSync(event) {
 document.addEventListener('click', function(event) {
 	const trigger = document.getElementById('store-dropdown-trigger');
 	const menu = document.getElementById('store-dropdown-menu');
+// Açılır menü dışına tıklandığında menüyü kapat
+document.addEventListener('click', function(event) {
+	const trigger = document.getElementById('store-dropdown-trigger');
+	const menu = document.getElementById('store-dropdown-menu');
 	if (trigger && menu && !trigger.contains(event.target)) {
 		menu.classList.remove('active');
 	}
 });
+
+// ==========================================================================
+// KAPIDA ÖDEME MÜŞTERİ TEYİT VE ARAMA MODÜLÜ MANTIĞI
+// ==========================================================================
+
+let activeVerificationOrder = null;
+let isAddressEditing = false;
+let callDurationSec = 0;
+let callTimerInterval = null;
+let activeCallState = 'idle'; // 'idle', 'connecting', 'active', 'ended'
+
+// Görünüm Yüklendiğinde Sıfırlama Yap
+function initVerificationView() {
+	activeVerificationOrder = null;
+	isAddressEditing = false;
+	callDurationSec = 0;
+	activeCallState = 'idle';
+	if (callTimerInterval) clearInterval(callTimerInterval);
+	
+	// Arayüz Elementlerini Temizle
+	document.getElementById('verification-search-input').value = '';
+	document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	document.getElementById('verification-order-card').style.display = 'none';
+	document.getElementById('verification-call-panel').style.display = 'none';
+	
+	const toast = document.getElementById('verification-toast');
+	if (toast) {
+		toast.style.display = 'none';
+		toast.className = 'verification-alert';
+	}
+}
+
+// Özel Toast Bildirimi Göster
+function showVerificationToast(message, type = 'error') {
+	const toast = document.getElementById('verification-toast');
+	if (!toast) return;
+	
+	toast.textContent = message;
+	toast.className = `verification-alert verification-alert-${type}`;
+	toast.style.display = 'block';
+	
+	// 5 Saniye Sonra Gizle
+	setTimeout(() => {
+		toast.style.display = 'none';
+	}, 6000);
+}
+
+// Shopify Sipariş Numarasını Sorgula
+async function handleVerificationSearch(event) {
+	event.preventDefault();
+	
+	const searchInput = document.getElementById('verification-search-input');
+	const orderNumber = searchInput.value.trim();
+	const btn = document.getElementById('btn-verification-search');
+	
+	if (!orderNumber) return;
+	
+	btn.disabled = true;
+	btn.textContent = 'Sorgulanıyor...';
+	
+	// Arayüzü temizle
+	document.getElementById('verification-order-card').style.display = 'none';
+	document.getElementById('verification-call-panel').style.display = 'none';
+	isAddressEditing = false;
+	
+	const SEARCH_COST = 0.50;
+	
+	// Öncelikli Bakiye Kontrolü
+	if (currentBalance < SEARCH_COST) {
+		showVerificationToast(`Yetersiz Bakiye! Sorgulama ücreti ₺${SEARCH_COST.toFixed(2)}'dir. Mevcut bakiyeniz: ₺${currentBalance.toFixed(2)}`, 'error');
+		btn.disabled = false;
+		btn.textContent = `Sorgula (₺${SEARCH_COST.toFixed(2)})`;
+		return;
+	}
+
+	try {
+		// API isteği at
+		const response = await fetch('/api/shopifyOrder', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				orderNumber: orderNumber,
+				userId: 'user_1'
+			})
+		});
+		
+		const data = await response.json();
+		
+		if (!response.ok) {
+			throw new Error(data.error || 'API isteği başarısız oldu.');
+		}
+		
+		// Başarılı ise verileri yerleştir
+		activeVerificationOrder = data.order;
+		currentBalance = data.balance;
+		
+		// Bakiye göstergelerini güncelle
+		updateBalanceDisplay();
+		document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		
+		renderVerificationOrderDetails();
+		showVerificationToast('Sipariş verileri Shopify üzerinden başarıyla getirildi (₺0.50 düşüldü).', 'success');
+		
+	} catch (err) {
+		console.warn('API Bağlantısı sağlanamadı veya Shopify yapılandırması eksik. Lokal veri fallback devrede.', err);
+		
+		// Fallback: Lokal "orders" dizininde ara (Müşterinin test edebilmesi için demo modu)
+		const formattedQuery = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
+		const cleanQuery = orderNumber.replace('#', '');
+		
+		const localOrder = orders.find(o => o.code === formattedQuery || o.code.replace('#', '') === cleanQuery);
+		
+		if (localOrder) {
+			// Bakiyeyi düş
+			currentBalance -= SEARCH_COST;
+			updateBalanceDisplay();
+			document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			
+			// Map localOrder to matching structure
+			activeVerificationOrder = {
+				id: Math.floor(Math.random() * 100000) + 1000,
+				order_number: localOrder.code,
+				financial_status: localOrder.status === 'ready' ? 'paid' : 'pending',
+				total_price: localOrder.total.toString(),
+				currency: 'TRY',
+				customer: {
+					first_name: localOrder.customer.split(' ')[0] || '',
+					last_name: localOrder.customer.split(' ').slice(1).join(' ') || '',
+					phone: localOrder.phone || '+90 555 123 4567'
+				},
+				shipping_address: {
+					address1: localOrder.address.split(',')[1]?.trim() || localOrder.address,
+					address2: localOrder.address.split(',')[2]?.trim() || '',
+					city: localOrder.address.split(',')[localOrder.address.split(',').length - 1]?.trim() || localOrder.city,
+					province: localOrder.city,
+					zip: '34000',
+					country: 'Turkey'
+				},
+				line_items: localOrder.products.map((p, idx) => ({
+					id: idx + 1,
+					title: p.name,
+					quantity: p.qty,
+					price: p.price.replace('₺', '').replace(',', '').trim()
+				}))
+			};
+			
+			renderVerificationOrderDetails();
+			showVerificationToast(`[DEMO MODU] Shopify bağlantısı olmadığı için lokal veri getirildi (₺0.50 Kredi Düşüldü).`, 'success');
+		} else {
+			showVerificationToast(`Girilen numaraya ait sipariş bulunamadı (${orderNumber}).`, 'error');
+		}
+	} finally {
+		btn.disabled = false;
+		btn.textContent = `Sorgula (₺${SEARCH_COST.toFixed(2)})`;
+	}
+}
+
+// Sipariş Detaylarını Ekrana Yazdır
+function renderVerificationOrderDetails() {
+	if (!activeVerificationOrder) return;
+	
+	// Kartı göster
+	document.getElementById('verification-order-card').style.display = 'grid';
+	
+	// Müşteri bilgileri
+	document.getElementById('v-customer-name').textContent = `${activeVerificationOrder.customer.first_name} ${activeVerificationOrder.customer.last_name}`;
+	document.getElementById('v-customer-phone').textContent = activeVerificationOrder.customer.phone || 'Girilmemiş';
+	
+	// Adres bilgileri
+	document.getElementById('v-address-line1').textContent = activeVerificationOrder.shipping_address.address1 || '-';
+	document.getElementById('v-address-line2').textContent = activeVerificationOrder.shipping_address.address2 || '';
+	document.getElementById('v-address-city-province-zip').textContent = `${activeVerificationOrder.shipping_address.zip || ''} - ${activeVerificationOrder.shipping_address.city || ''} / ${activeVerificationOrder.shipping_address.province || ''}`;
+	
+	// Shopify Finansal Durumu
+	const statusBadge = document.getElementById('v-financial-status');
+	statusBadge.textContent = activeVerificationOrder.financial_status;
+	statusBadge.className = `status-badge status-badge-${activeVerificationOrder.financial_status === 'paid' ? 'paid' : 'pending'}`;
+	
+	// Ürünleri Listele
+	const itemsBody = document.getElementById('v-order-items-body');
+	itemsBody.innerHTML = '';
+	
+	activeVerificationOrder.line_items.forEach(item => {
+		const row = document.createElement('tr');
+		
+		const totalPrice = (parseFloat(item.price) * item.quantity).toFixed(2);
+		
+		row.innerHTML = `
+			<td>
+				<strong>${item.title}</strong>
+				${item.variant_title ? `<br><small style="color: var(--text-muted); font-size: 11px;">${item.variant_title}</small>` : ''}
+			</td>
+			<td>${item.quantity}</td>
+			<td>₺${parseFloat(item.price).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+			<td>₺${parseFloat(totalPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2 })}</td>
+		`;
+		itemsBody.appendChild(row);
+	});
+	
+	// Toplam Fiyat
+	const totalPrice = parseFloat(activeVerificationOrder.total_price);
+	document.getElementById('v-order-total-price').textContent = '₺' + totalPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+}
+
+// Adres Düzenleme Görünümünü Aç/Kapat
+function toggleAddressEdit() {
+	const displayDiv = document.getElementById('v-address-display');
+	const editFormDiv = document.getElementById('v-address-edit-form');
+	const btn = document.getElementById('btn-toggle-address-edit');
+	
+	isAddressEditing = !isAddressEditing;
+	
+	if (isAddressEditing) {
+		btn.textContent = 'İptal Et';
+		displayDiv.style.display = 'none';
+		editFormDiv.style.display = 'flex';
+		
+		// Formu doldur
+		document.getElementById('v-edit-address1').value = activeVerificationOrder.shipping_address.address1 || '';
+		document.getElementById('v-edit-address2').value = activeVerificationOrder.shipping_address.address2 || '';
+		document.getElementById('v-edit-city').value = activeVerificationOrder.shipping_address.city || '';
+		document.getElementById('v-edit-province').value = activeVerificationOrder.shipping_address.province || '';
+		document.getElementById('v-edit-zip').value = activeVerificationOrder.shipping_address.zip || '';
+	} else {
+		btn.textContent = 'Düzenle';
+		displayDiv.style.display = 'block';
+		editFormDiv.style.display = 'none';
+	}
+}
+
+// Aramayı Başlat (Call Action)
+async function startCustomerCall() {
+	const CALL_COST = 1.00;
+	
+	const agentPhoneInput = document.getElementById('v-agent-phone-input');
+	const agentPhone = agentPhoneInput ? agentPhoneInput.value.trim() : '';
+	
+	if (!agentPhone) {
+		alert('Aramayı başlatabilmek için önce kendi dahili / cep telefon numaranızı girmelisiniz.');
+		return;
+	}
+
+	if (currentBalance < CALL_COST) {
+		showVerificationToast(`Yetersiz Bakiye! Arama başlatma bedeli ₺${CALL_COST.toFixed(2)}'dir. Mevcut bakiyeniz: ₺${currentBalance.toFixed(2)}`, 'error');
+		return;
+	}
+	
+	// Arama panelini aç ve bağlanıyor moduna geçir
+	const callPanel = document.getElementById('verification-call-panel');
+	callPanel.style.display = 'block';
+	
+	const statusDot = document.getElementById('v-call-pulse');
+	const statusText = document.getElementById('v-call-status-text');
+	const timerVal = document.getElementById('v-call-timer');
+	
+	activeCallState = 'connecting';
+	statusDot.style.background = '#f59e0b';
+	statusText.textContent = 'Bağlanıyor...';
+	timerVal.textContent = '00:00';
+	
+	callDurationSec = 0;
+	if (callTimerInterval) clearInterval(callTimerInterval);
+	
+	// API'den Netgsm Click to Call başlatma
+	try {
+		const response = await fetch('/api/netgsmCall', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: 'user_1',
+				customerPhone: activeVerificationOrder.customer.phone,
+				agentPhone: agentPhone
+			})
+		});
+		
+		const data = await response.json();
+		
+		if (!response.ok) {
+			throw new Error(data.error || 'Netgsm arama API hatası.');
+		}
+		
+		// Başarılı ise arama ID'sini sakla ve bakiyeyi güncelle
+		activeVerificationOrder.netgsmJobId = data.jobId;
+		currentBalance = data.balance;
+		
+		updateBalanceDisplay();
+		document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		
+		showVerificationToast('Netgsm arama tetiklendi! Önce kendi telefonunuza gelen aramayı yanıtlayın.', 'success');
+		
+		// 3.5 Saniye sonra görüşmenin bağlandığını simüle et/varsay (Click to Call akışı)
+		setTimeout(() => {
+			if (activeCallState === 'connecting') {
+				activeCallState = 'active';
+				statusDot.style.background = '#ef4444';
+				statusText.textContent = 'Görüşme Aktif';
+				
+				// Sayacı başlat
+				callTimerInterval = setInterval(() => {
+					callDurationSec++;
+					const mins = Math.floor(callDurationSec / 60);
+					const secs = callDurationSec % 60;
+					timerVal.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+				}, 1000);
+			}
+		}, 3500);
+
+	} catch (e) {
+		console.warn('Netgsm API araması başarısız. Arama arayüzü lokal demo modunda çalıştırılacak.', e);
+		
+		// Fallback: Lokal bakiye düşüp simülasyonu başlat
+		currentBalance -= CALL_COST;
+		updateBalanceDisplay();
+		document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		
+		activeVerificationOrder.netgsmJobId = 'demo_job_id_' + Math.floor(Math.random() * 100000);
+		showVerificationToast('[DEMO MODU] Netgsm araması başlatıldı. Önce kendi telefonunuz çalıyor (₺1.00 düşüldü).', 'success');
+		
+		setTimeout(() => {
+			if (activeCallState === 'connecting') {
+				activeCallState = 'active';
+				statusDot.style.background = '#ef4444';
+				statusText.textContent = 'Görüşme Aktif';
+				
+				callTimerInterval = setInterval(() => {
+					callDurationSec++;
+					const mins = Math.floor(callDurationSec / 60);
+					const secs = callDurationSec % 60;
+					timerVal.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+				}, 1000);
+			}
+		}, 3000);
+	}
+}
+
+// Aramayı Kapat
+function endCustomerCall() {
+	if (activeCallState === 'idle') return;
+	
+	activeCallState = 'ended';
+	if (callTimerInterval) clearInterval(callTimerInterval);
+	
+	const statusDot = document.getElementById('v-call-pulse');
+	const statusText = document.getElementById('v-call-status-text');
+	
+	statusDot.style.background = '#64748b';
+	statusText.textContent = 'Arama Kapatıldı (Log bekleniyor)';
+	
+	showVerificationToast('Arama kapatıldı. Lütfen görüşme sonucunu ve notlarınızı girerek kaydedin.', 'success');
+}
+
+// Çağrı Sonucunu Kaydet ve Siparişi Doğrula
+async function saveCallOutcome() {
+	const outcomeSelect = document.getElementById('v-call-outcome');
+	const notesTextarea = document.getElementById('v-call-notes');
+	
+	const outcome = outcomeSelect.value;
+	const notes = notesTextarea.value.trim();
+	
+	let newAddress = null;
+	
+	// Eğer adres güncellenmişse yeni adresi paketle
+	if (isAddressEditing && outcome === 'ADRES_GUNCELLEDNDI') {
+		newAddress = {
+			address1: document.getElementById('v-edit-address1').value.trim(),
+			address2: document.getElementById('v-edit-address2').value.trim(),
+			city: document.getElementById('v-edit-city').value.trim(),
+			province: document.getElementById('v-edit-province').value.trim(),
+			zip: document.getElementById('v-edit-zip').value.trim()
+		};
+		
+		if (!newAddress.address1 || !newAddress.city || !newAddress.province || !newAddress.zip) {
+			alert('Lütfen zorunlu adres alanlarını (*) doldurunuz.');
+			return;
+		}
+	}
+	
+	try {
+		// LogOutcome API'sine gönder
+		const response = await fetch('/api/logCallOutcome', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId: 'user_1',
+				orderId: activeVerificationOrder.id,
+				orderNumber: activeVerificationOrder.order_number,
+				status: outcome,
+				notes: notes,
+				duration: callDurationSec,
+				newAddress: newAddress,
+				jobId: activeVerificationOrder.netgsmJobId || ''
+			})
+		});
+		
+		const data = await response.json();
+		
+		if (!response.ok) {
+			throw new Error(data.error || 'Arama kaydı sunucuya işlenemedi.');
+		}
+		
+		currentBalance = data.balance;
+		updateBalanceDisplay();
+		
+		showNotification(`Sipariş Teyit Sonucu Kaydedildi: ${outcome}`, 'success');
+		
+	} catch (err) {
+		console.warn('API bağlantısı kurulamadığı için teyit verileri lokal simüle edildi.', err);
+		
+		// Fallback: Lokal siparişi güncelle (Lokal simülasyon)
+		const localOrderIndex = orders.findIndex(o => o.code === activeVerificationOrder.order_number);
+		if (localOrderIndex !== -1) {
+			orders[localOrderIndex].tags = `Teyit_${outcome}`;
+			if (newAddress && outcome === 'ADRES_GUNCELLEDNDI') {
+				orders[localOrderIndex].address = `${newAddress.address1}, ${newAddress.address2 ? newAddress.address2 + ', ' : ''}${newAddress.city}, ${newAddress.province}`;
+			}
+		}
+		
+		showNotification(`[DEMO MODU] Teyit sonucu kaydedildi: ${outcome}`, 'success');
+	}
+	
+	// Arayüzü sıfırla
+	initVerificationView();
+}
+
 
 

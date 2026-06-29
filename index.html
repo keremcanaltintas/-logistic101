@@ -152,6 +152,10 @@
 					<i class="fa-solid fa-boxes-stacked"></i>
 					<span>Siparişlerim</span>
 				</a>
+				<a href="#" class="menu-item" id="nav-verification">
+					<i class="fa-solid fa-phone-volume"></i>
+					<span>Kapıda Ödeme Teyit</span>
+				</a>
 				<a href="#" class="menu-item" id="nav-products">
 					<i class="fa-solid fa-box"></i>
 					<span>Ürünlerim</span>
@@ -1326,6 +1330,183 @@
 						</div>
 					</div>
 				</form>
+			</div>
+
+			<!-- ========== KAPIDA ÖDEME MÜŞTERİ TEYİT VE ARAMA GÖRÜNÜMÜ ========== -->
+			<div id="verification-view" class="view-section" style="display: none;">
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Kapıda Ödeme Sipariş Doğrulama</h1>
+						<p class="header-subtitle">Müşterileri doğrulayın, sipariş içeriklerini onaylayın veya adreslerini güncelleyin.</p>
+					</div>
+				</header>
+
+				<!-- Arama Barı ve Bakiye Bilgisi Grid -->
+				<div class="verification-top-grid">
+					<div class="verification-search-card">
+						<form id="verification-search-form" onsubmit="handleVerificationSearch(event)">
+							<div class="verification-search-input-wrapper">
+								<i class="fa-solid fa-magnifying-glass"></i>
+								<input type="text" id="verification-search-input" placeholder="Shopify Sipariş Numarası Girin (Örn: #1024 veya 1024)..." required />
+							</div>
+							<button type="submit" class="btn-primary" id="btn-verification-search">Sorgula (₺0.50)</button>
+						</form>
+					</div>
+					<div class="verification-balance-card">
+						<div class="balance-card-icon">
+							<i class="fa-solid fa-wallet"></i>
+						</div>
+						<div class="balance-card-info">
+							<span class="balance-label">Kullanılabilir Bakiye</span>
+							<h3 class="balance-value" id="verification-wallet-balance">₺0.00</h3>
+						</div>
+					</div>
+				</div>
+
+				<!-- Bildirim Toast Alanı -->
+				<div id="verification-toast" style="display:none;" class="verification-alert"></div>
+
+				<!-- Sipariş Detay Kartı (Bulunduğunda Gösterilecek) -->
+				<div id="verification-order-card" style="display: none;" class="verification-grid">
+					<!-- Sol Kolon: Müşteri Bilgileri ve Adres Güncelleme -->
+					<div class="verification-card">
+						<div class="verification-card-header">
+							<h3><i class="fa-solid fa-user"></i> Müşteri ve Teslimat Bilgileri</h3>
+							<span class="badge-cod">Kapıda Ödeme (COD)</span>
+						</div>
+						<div class="verification-card-body">
+							<div class="info-row">
+								<span class="info-title">Müşteri İsmi</span>
+								<span class="info-data" id="v-customer-name">-</span>
+							</div>
+							<div class="info-row">
+								<span class="info-title">Telefon Numarası</span>
+								<div class="info-data-action">
+									<span id="v-customer-phone">-</span>
+									<button type="button" class="btn-phone-call" id="btn-start-call" onclick="startCustomerCall()">
+										<i class="fa-solid fa-phone"></i> Ara (₺1.00)
+									</button>
+								</div>
+							</div>
+							<div class="v-agent-phone-wrapper" style="margin-top: 12px; margin-bottom: 8px; background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+								<label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 6px;">Kendi Dahili / Cep Numaranız (Netgsm)*</label>
+								<input type="text" id="v-agent-phone-input" placeholder="+90532XXXXXXX" value="+905321234567" style="width: 100%; padding: 8px 10px; font-family: var(--font-main); font-size: 12.5px; border: 1px solid rgba(0,0,0,0.12); border-radius: 6px; outline: none; background: #ffffff;" />
+								<small style="color: var(--text-muted); font-size: 10px; display: block; margin-top: 4px;">* Arama başladığında Netgsm önce bu numarayı çaldıracaktır.</small>
+							</div>
+
+							<div class="address-box-wrapper">
+								<div class="address-box-header">
+									<span class="info-title">Teslimat Adresi</span>
+									<button type="button" class="btn-address-edit" id="btn-toggle-address-edit" onclick="toggleAddressEdit()">Düzenle</button>
+								</div>
+								
+								<!-- Normal Adres Görünümü -->
+								<div class="address-display" id="v-address-display">
+									<p id="v-address-line1">-</p>
+									<p id="v-address-line2"></p>
+									<p id="v-address-city-province-zip">-</p>
+								</div>
+
+								<!-- Düzenleme Formu -->
+								<div class="address-edit-form" id="v-address-edit-form" style="display: none;">
+									<div class="v-form-group">
+										<label>Adres Satırı 1*</label>
+										<input type="text" id="v-edit-address1" />
+									</div>
+									<div class="v-form-group">
+										<label>Adres Satırı 2</label>
+										<input type="text" id="v-edit-address2" />
+									</div>
+									<div class="v-form-row">
+										<div class="v-form-group">
+											<label>İlçe/Şehir*</label>
+											<input type="text" id="v-edit-city" />
+										</div>
+										<div class="v-form-group">
+											<label>İl/Eyalet*</label>
+											<input type="text" id="v-edit-province" />
+										</div>
+									</div>
+									<div class="v-form-group">
+										<label>Posta Kodu*</label>
+										<input type="text" id="v-edit-zip" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sağ Kolon: Sipariş İçeriği -->
+					<div class="verification-card">
+						<div class="verification-card-header">
+							<h3><i class="fa-solid fa-box-open"></i> Sipariş Detayları</h3>
+							<span class="status-badge" id="v-financial-status">-</span>
+						</div>
+						<div class="verification-card-body">
+							<div class="order-details-table-wrapper">
+								<table class="order-details-table">
+									<thead>
+										<tr>
+											<th>Ürün</th>
+											<th>Adet</th>
+											<th>Birim Fiyat</th>
+											<th>Toplam</th>
+										</tr>
+									</thead>
+									<tbody id="v-order-items-body">
+										<!-- Dinamik Ürün Satırları -->
+									</tbody>
+								</table>
+							</div>
+							<div class="order-price-summary">
+								<div class="summary-row">
+									<span>Genel Toplam:</span>
+									<strong id="v-order-total-price">₺0.00</strong>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Arama Durumu Widget'ı (Görüşme Esnasında Açılır) -->
+				<div id="verification-call-panel" style="display: none;" class="verification-call-panel">
+					<div class="call-panel-header">
+						<div class="call-status-wrapper">
+							<span class="call-pulse-dot" id="v-call-pulse"></span>
+							<span id="v-call-status-text">Bağlanıyor...</span>
+						</div>
+						<div class="call-timer" id="v-call-timer">00:00</div>
+					</div>
+
+					<div class="call-panel-body">
+						<div class="call-controls">
+							<button type="button" class="btn-hangup" onclick="endCustomerCall()">
+								<i class="fa-solid fa-phone-slash"></i> Çağrıyı Kapat
+							</button>
+						</div>
+
+						<div class="call-outcome-form">
+							<div class="v-form-group">
+								<label>Arama / Doğrulama Sonucu*</label>
+								<select id="v-call-outcome">
+									<option value="TEYIT_EDILDI">İçerik Teyidi Başarılı</option>
+									<option value="ADRES_GUNCELLEDNDI">Adres Güncellendi ve Onaylandı</option>
+									<option value="ULASILAMADI">Müşteriye Ulaşılamadı</option>
+									<option value="YALNIS_NUMARA">Yanlış Telefon Numarası</option>
+									<option value="MUSTERI_IPTAL">Müşteri Siparişi İptal Etti</option>
+								</select>
+							</div>
+
+							<div class="v-form-group">
+								<label>Görüşme Notu</label>
+								<textarea id="v-call-notes" placeholder="Görüşme hakkında not alın..." rows="3"></textarea>
+							</div>
+
+							<button type="button" class="btn-primary" style="width: 100%; font-weight: 700; margin-top: 12px;" onclick="saveCallOutcome()">Teyit Sonucunu Kaydet ve Siparişi Tamamla</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 		</main>
 	</div>
