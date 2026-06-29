@@ -2211,9 +2211,9 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.4);
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
+	background: rgba(255, 255, 255, 0.18); /* Arkayı karartmadan şeffaf açık renk overlay */
+	backdrop-filter: blur(22px) saturate(140%); /* Arka plandaki bulanıklık yoğunlaştırıldı */
+	-webkit-backdrop-filter: blur(22px) saturate(140%);
 	z-index: 1000;
 	display: flex;
 	justify-content: center;
@@ -2223,12 +2223,15 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .modal-box {
-	background: rgba(255, 255, 255, 0.95);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.6);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0, 0, 0, 0.04);
+	background: rgba(255, 255, 255, 0.55) !important;
+	backdrop-filter: blur(30px) saturate(180%) !important;
+	-webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+	border: 1px solid rgba(255, 255, 255, 0.75) !important;
+	border-radius: var(--radius-xl) !important;
+	box-shadow: 
+		0 24px 64px -16px rgba(0, 0, 0, 0.08), 
+		0 12px 24px -8px rgba(0, 0, 0, 0.04), 
+		inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
 	width: 100%;
 	max-width: 580px;
 	overflow: hidden;
@@ -5473,11 +5476,15 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	right: 0;
 	width: 260px !important;
 	min-width: 260px !important;
-	background: rgba(255, 255, 255, 0.98);
-	backdrop-filter: blur(12px);
-	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: rgba(255, 255, 255, 0.55) !important;
+	backdrop-filter: blur(25px) saturate(180%) !important;
+	-webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+	border: 1px solid rgba(255, 255, 255, 0.6) !important;
 	border-radius: var(--radius-lg);
-	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	box-shadow: 
+		0 12px 32px 0 rgba(31, 38, 135, 0.05), 
+		inset 0 1px 1px 0 rgba(255, 255, 255, 0.8),
+		0 2px 8px rgba(0, 0, 0, 0.02) !important;
 	z-index: 1000;
 	padding: 16px;
 	font-family: var(--font-main);
@@ -5518,21 +5525,22 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 .dropdown-header h4 {
 	font-size: 13px;
-	font-weight: 800;
+	font-weight: 700;
 	color: var(--text-primary);
 	margin: 0;
 }
 
 .dropdown-header .active-badge {
-	font-size: 11px;
+	font-size: 10.5px;
 	font-weight: 700;
-	color: var(--primary);
-	background: var(--primary-light);
-	padding: 3px 10px;
+	color: var(--text-secondary);
+	background-color: rgba(40, 167, 73, 0.08);
+	border: 1px solid rgba(40, 167, 73, 0.15);
+	padding: 3px 8px;
 	border-radius: 50px;
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: 6px;
 }
 
 .dropdown-header .active-badge .dot {
@@ -5552,8 +5560,9 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .btn-dropdown-action {
-	background: #f8f9fa;
-	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: rgba(255, 255, 255, 0.45) !important;
+	backdrop-filter: blur(5px) !important;
+	border: 1px solid rgba(0, 0, 0, 0.08) !important;
 	color: var(--text-secondary);
 	padding: 10px;
 	border-radius: var(--radius-md);
@@ -5570,7 +5579,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .btn-dropdown-action:hover {
-	background: #f1f3f5;
+	background: rgba(255, 255, 255, 0.8) !important;
 	color: var(--text-primary);
 	border-color: rgba(0, 0, 0, 0.12);
 }
@@ -5598,7 +5607,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	align-items: center;
 	gap: 8px;
 	padding: 8px 10px;
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-sm);
 	text-decoration: none;
 	transition: all 0.2s;
 	width: 100%;
@@ -6323,6 +6332,135 @@ aside.sidebar .menu-item.wizard-highlighted i {
 		0 12px 40px 0 rgba(40, 167, 69, 0.05) !important, 
 		inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
 	transform: translateY(-2px) !important;
+}
+
+/* ==========================================================================
+   MODAL İÇİ ELEMENTLER VE DETAY KUTULARI (LİQUİD GLASS RE-STYLE)
+   ========================================================================== */
+
+/* Modal İçi Bilgi Kutuları (Örn: Stoğa Ekle Ürün Detay Alanı) */
+#restock-product-info-box,
+.modal-body > div > div[style*="background: #f8f9fa"],
+.modal-body > div > div[style*="background-color: #f8f9fa"],
+.modal-body .shipping-label-wrapper {
+	background: rgba(255, 255, 255, 0.25) !important;
+	border: 1px solid rgba(255, 255, 255, 0.55) !important;
+	backdrop-filter: blur(10px) !important;
+	-webkit-backdrop-filter: blur(10px) !important;
+	border-radius: var(--radius-md) !important;
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+	padding: 16px !important;
+	color: var(--text-primary) !important;
+}
+
+/* Modal Input & Form Giriş Alanları */
+.modal-box input[type="text"],
+.modal-box input[type="number"],
+.modal-box input[type="password"],
+.modal-box select,
+.modal-box textarea {
+	background: rgba(255, 255, 255, 0.4) !important;
+	backdrop-filter: blur(8px) !important;
+	-webkit-backdrop-filter: blur(8px) !important;
+	border: 1px solid rgba(0, 0, 0, 0.08) !important;
+	border-radius: var(--radius-md) !important;
+	padding: 12px 16px !important;
+	font-family: var(--font-main) !important;
+	font-size: 13.5px !important;
+	color: var(--text-primary) !important;
+	outline: none !important;
+	transition: var(--transition-smooth) !important;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01) !important;
+	width: 100% !important;
+	box-sizing: border-box !important;
+}
+
+.modal-box input[type="text"]:focus,
+.modal-box input[type="number"]:focus,
+.modal-box input[type="password"]:focus,
+.modal-box select:focus,
+.modal-box textarea:focus {
+	background: rgba(255, 255, 255, 0.85) !important;
+	border-color: var(--primary) !important;
+	box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.08) !important;
+}
+
+/* Modal Buton Modernizasyonu (Win XP Tarzı Çerçevelerin Giderilmesi) */
+.modal-footer button,
+.modal-box button,
+.modal-box .btn-secondary,
+.modal-box .btn-create-draft,
+.modal-box .btn-sms-confirm,
+.modal-box .btn-danger {
+	appearance: none !important;
+	-webkit-appearance: none !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+	border-style: none !important;
+	border-width: 0 !important;
+	outline: none !important;
+	border-radius: var(--radius-md) !important;
+	font-family: var(--font-main) !important;
+	font-weight: 700 !important;
+	padding: 12px 28px !important;
+	font-size: 13.5px !important;
+	cursor: pointer !important;
+	transition: var(--transition-smooth) !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	text-decoration: none !important;
+}
+
+/* Modal Birincil Onay Butonları (Stoğa Ekle, Güvenli Ödeme Yap, Paketi Onayla, Barkodu Yazdır) */
+.modal-box .btn-create-draft,
+.modal-box .btn-sms-confirm,
+.modal-box button[type="submit"],
+.modal-box button.btn-create-draft,
+.modal-box button.btn-sms-confirm,
+.modal-box button[onclick*="printBarcodeLabel"],
+.modal-box button[onclick*="confirmSmsPurchase"] {
+	background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
+	color: #ffffff !important;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15) !important;
+}
+
+.modal-box .btn-create-draft:hover,
+.modal-box .btn-sms-confirm:hover,
+.modal-box button[type="submit"]:hover,
+.modal-box button.btn-create-draft:hover,
+.modal-box button.btn-sms-confirm:hover,
+.modal-box button[onclick*="printBarcodeLabel"]:hover,
+.modal-box button[onclick*="confirmSmsPurchase"]:hover {
+	background: linear-gradient(135deg, var(--primary-hover), #1c7430) !important;
+	box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25) !important;
+	transform: translateY(-1.5px) !important;
+}
+
+/* Modal İkincil / Vazgeç / İptal Butonları */
+.modal-box .btn-secondary,
+.modal-box button[onclick*="close"],
+.modal-box button[onclick*="cancel"],
+.modal-box button.btn-secondary {
+	background: rgba(255, 255, 255, 0.45) !important;
+	color: var(--text-secondary) !important;
+	border: 1px solid rgba(0, 0, 0, 0.08) !important;
+	backdrop-filter: blur(5px) !important;
+	-webkit-backdrop-filter: blur(5px) !important;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+	padding: 11px 26px !important; /* border kalınlığı telafisi */
+}
+
+.modal-box .btn-secondary:hover,
+.modal-box button[onclick*="close"]:hover,
+.modal-box button[onclick*="cancel"]:hover,
+.modal-box button.btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.8) !important;
+	color: var(--text-primary) !important;
+	border-color: rgba(0, 0, 0, 0.15) !important;
+	transform: translateY(-1px) !important;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 
