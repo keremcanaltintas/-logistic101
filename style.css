@@ -6,7 +6,7 @@
 	--primary: #28a745;
 	--primary-hover: #218838;
 	--primary-light: rgba(40, 167, 69, 0.08);
-	--bg-dashboard: #f8f9fa;
+	--bg-dashboard: #f0f2f5;
 	--surface-card: #ffffff;
 	--text-primary: #1a1f2c;
 	--text-secondary: #4a5568;
@@ -32,6 +32,20 @@
 	/* Transitions */
 	--transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	--transition-fast: all 0.15s ease-in-out;
+	
+	/* Liquid Glass Design Tokens */
+	--glass-bg: rgba(255, 255, 255, 0.42);
+	--glass-bg-heavy: rgba(255, 255, 255, 0.58);
+	--glass-bg-light: rgba(255, 255, 255, 0.28);
+	--glass-border: rgba(255, 255, 255, 0.55);
+	--glass-border-heavy: rgba(255, 255, 255, 0.75);
+	--glass-blur: blur(20px) saturate(180%);
+	--glass-blur-heavy: blur(30px) saturate(200%);
+	--glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.85);
+	--glass-shadow-hover: 0 12px 40px rgba(40, 167, 69, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+	--glass-shadow-elevated: 0 24px 64px -16px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+	--spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	--spring-fast: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* ===== RESET & BASE ===== */
@@ -48,7 +62,7 @@ body {
 	font-family: var(--font-main);
 	min-height: 100vh;
 	overflow-x: hidden;
-	background-color: var(--bg-dashboard);
+	background: linear-gradient(135deg, #e8ecf1 0%, #f0f2f5 30%, #e4eaf0 60%, #f0f2f5 100%);
 	color: var(--text-primary);
 	-webkit-font-smoothing: antialiased;
 }
@@ -570,8 +584,10 @@ img, svg {
 	left: 0;
 	width: 260px;
 	height: 100vh;
-	background: var(--surface-card);
-	border-right: 1px solid var(--border-color);
+	background: var(--glass-bg-heavy);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
+	border-right: 1px solid var(--glass-border);
 	display: flex;
 	flex-direction: column;
 	z-index: 100;
@@ -630,7 +646,7 @@ img, svg {
 	border-radius: var(--radius-md);
 	font-size: 14px;
 	font-weight: 600;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 	border: 1px solid transparent;
 }
 
@@ -643,8 +659,11 @@ img, svg {
 }
 
 .menu-item:hover {
-	background-color: var(--bg-dashboard);
+	background: var(--glass-bg-light);
 	color: var(--primary);
+	border-color: var(--glass-border);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 .menu-item:hover i {
@@ -652,9 +671,10 @@ img, svg {
 }
 
 .menu-item.active {
-	background-color: var(--primary-light);
+	background: var(--glass-bg);
 	color: var(--primary);
-	border: 1px solid rgba(40, 167, 69, 0.08);
+	border: 1px solid rgba(40, 167, 69, 0.12);
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 .menu-item.active i {
@@ -667,29 +687,32 @@ img, svg {
 	flex-direction: column;
 	gap: 10px;
 	padding-top: 16px;
-	border-top: 1px solid var(--border-color);
+	border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .btn-logout {
-	background: #fff;
-	border: 1px solid var(--border-color);
+	background: var(--glass-bg-light);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(220, 53, 69, 0.1);
 	color: #dc3545;
 	padding: 12px 16px;
 	border-radius: var(--radius-md);
 	font-family: var(--font-main);
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 }
 
 .btn-logout:hover {
-	background: rgba(220, 53, 69, 0.05);
+	background: rgba(220, 53, 69, 0.06);
 	border-color: rgba(220, 53, 69, 0.2);
+	transform: translateY(-1px);
 }
 
 /* Main Content Area */
@@ -711,8 +734,10 @@ img, svg {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background: var(--surface-card);
-	border-bottom: 1px solid var(--border-color);
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
+	border-bottom: 1px solid var(--glass-border);
 	height: 72px;
 	padding: 0 40px;
 	margin-left: -40px;
@@ -721,7 +746,7 @@ img, svg {
 	position: sticky;
 	top: 0;
 	z-index: 95;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015);
+	box-shadow: var(--glass-shadow);
 }
 
 /* Search Bar */
@@ -945,31 +970,34 @@ img, svg {
 }
 
 .status-card {
-	background: var(--surface-card);
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
 	border-radius: var(--radius-lg);
 	padding: 24px;
-	box-shadow: var(--shadow-sm);
-	border: 1px solid var(--border-color);
+	box-shadow: var(--glass-shadow);
+	border: 1px solid var(--glass-border);
 	display: flex;
 	flex-direction: column;
 	position: relative;
 	gap: 16px;
 	cursor: pointer;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 }
 
 .status-card:hover {
 	transform: translateY(-4px);
-	box-shadow: var(--shadow-md);
-	border-color: rgba(40, 167, 69, 0.15);
+	box-shadow: var(--glass-shadow-hover);
+	border-color: var(--glass-border-heavy);
+	background: var(--glass-bg-heavy);
 }
 
 /* Aylık Ciro Vurgu Kartı */
 .status-card.revenue {
 	grid-column: span 2;
-	background: linear-gradient(135deg, #ffffff 0%, #f1fbf4 100%);
+	background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(241,251,244,0.5) 100%);
 	border: 1.5px solid rgba(40, 167, 73, 0.25);
-	box-shadow: 0 4px 20px rgba(40, 167, 73, 0.04);
+	box-shadow: 0 4px 20px rgba(40, 167, 73, 0.04), inset 0 1px 2px rgba(255,255,255,0.8);
 }
 
 .status-card.revenue:hover {
@@ -1999,22 +2027,25 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .order-card {
-	background: var(--surface-card);
-	border: 1px solid var(--border-color);
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur-light);
+	-webkit-backdrop-filter: var(--glass-blur-light);
+	border: 1px solid var(--glass-border);
 	border-radius: var(--radius-lg);
 	padding: 18px 24px;
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--glass-shadow);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 20px;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 }
 
 .order-card:hover {
 	transform: translateY(-2px);
-	box-shadow: var(--shadow-md);
-	border-color: rgba(0, 0, 0, 0.08);
+	box-shadow: var(--glass-shadow-hover);
+	border-color: var(--glass-border-heavy);
+	background: var(--glass-bg-heavy);
 }
 
 .order-card-left {
@@ -2237,7 +2268,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	animation: modalSlideUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .modal-box.modal-alert {
@@ -2250,8 +2281,8 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 @keyframes modalSlideUp {
-	from { transform: translateY(20px) scale(0.96); }
-	to { transform: translateY(0) scale(1); }
+	from { opacity: 0; transform: translateY(24px) scale(0.92); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-header {
@@ -2398,46 +2429,51 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 .modal-footer {
 	padding: 16px 24px;
-	border-top: 1px solid var(--border-color);
+	border-top: 1px solid rgba(0, 0, 0, 0.05);
 	display: flex;
 	justify-content: flex-end;
 	gap: 12px;
 }
 
 .btn-secondary {
-	background: #ffffff;
-	border: 1px solid var(--border-color);
+	background: var(--glass-bg);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	border: 1px solid rgba(0, 0, 0, 0.08);
 	color: var(--text-secondary);
 	padding: 10px 20px;
-	border-radius: var(--radius-sm);
+	border-radius: var(--radius-md);
 	font-family: var(--font-main);
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 }
 
 .btn-secondary:hover {
-	background: #f1f3f5;
+	background: var(--glass-bg-heavy);
 	color: var(--text-primary);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
 }
 
 .btn-danger {
-	background: #dc3545;
+	background: linear-gradient(135deg, #ef4444, #dc2626);
 	color: #ffffff;
 	border: none;
 	padding: 10px 20px;
-	border-radius: var(--radius-sm);
+	border-radius: var(--radius-md);
 	font-family: var(--font-main);
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 700;
 	cursor: pointer;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
+	box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 .btn-danger:hover {
-	background: #bd2130;
-	box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+	box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
+	transform: translateY(-1px);
 }
 
 /* Alert Modal Custom Body */
@@ -2659,7 +2695,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .btn-create-draft {
-	background: var(--primary);
+	background: linear-gradient(135deg, var(--primary), var(--primary-hover));
 	color: #ffffff;
 	border: none;
 	border-radius: var(--radius-md);
@@ -2672,14 +2708,14 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	transition: var(--transition-smooth);
+	transition: var(--spring-fast);
 	margin-top: 8px;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
 }
 
 .btn-create-draft:hover {
-	background: var(--primary-hover);
-	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
-	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25);
+	transform: translateY(-1.5px);
 }
 
 .btn-create-draft:active {
@@ -6292,9 +6328,10 @@ aside.sidebar .menu-item.wizard-highlighted i {
    GLOBAL LIQUID GLASS TEMA UYARLAMALARI (TÜM CRM GENELİ)
    ========================================================================== */
 
+/* status-card, order-card, modal-box zaten kaynak bloklarında cam stiline sahip.
+   Aşağıdakiler yalnızca henüz doğrudan güncellenmeyen bileşenleri hedef alır. */
+
 .settings-card,
-.status-card,
-.modal-box,
 .orders-section,
 .detail-box,
 .wallet-card,
@@ -6306,31 +6343,26 @@ aside.sidebar .menu-item.wizard-highlighted i {
 .billing-card,
 .dashboard-section,
 .settings-form-container,
+.tasks-card,
 .main-content .view-section > div,
 .main-content .view-section > form {
-	background: rgba(255, 255, 255, 0.45) !important;
-	backdrop-filter: blur(20px) saturate(180%) !important;
-	-webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-	border: 1px solid rgba(255, 255, 255, 0.55) !important;
+	background: var(--glass-bg) !important;
+	backdrop-filter: var(--glass-blur) !important;
+	-webkit-backdrop-filter: var(--glass-blur) !important;
+	border: 1px solid var(--glass-border) !important;
 	border-radius: var(--radius-lg) !important;
-	box-shadow: 
-		0 8px 32px 0 rgba(31, 38, 135, 0.03) !important, 
-		inset 0 1px 2px 0 rgba(255, 255, 255, 0.85) !important,
-		0 1px 3px 0 rgba(0, 0, 0, 0.02) !important;
-	transition: var(--transition-smooth) !important;
+	box-shadow: var(--glass-shadow) !important;
+	transition: var(--spring-fast) !important;
 }
 
-/* Global Kart Hover Güçlendirmesi */
 .settings-card:hover,
-.status-card:hover,
 .wallet-card:hover,
+.tasks-card:hover,
 .main-content .view-section > div:hover,
 .main-content .view-section > form:hover {
-	background: rgba(255, 255, 255, 0.65) !important;
-	border-color: rgba(255, 255, 255, 0.8) !important;
-	box-shadow: 
-		0 12px 40px 0 rgba(40, 167, 69, 0.05) !important, 
-		inset 0 1px 2px 0 rgba(255, 255, 255, 0.95) !important;
+	background: var(--glass-bg-heavy) !important;
+	border-color: var(--glass-border-heavy) !important;
+	box-shadow: var(--glass-shadow-hover) !important;
 	transform: translateY(-2px) !important;
 }
 
@@ -6338,13 +6370,12 @@ aside.sidebar .menu-item.wizard-highlighted i {
    MODAL İÇİ ELEMENTLER VE DETAY KUTULARI (LİQUİD GLASS RE-STYLE)
    ========================================================================== */
 
-/* Modal İçi Bilgi Kutuları (Örn: Stoğa Ekle Ürün Detay Alanı) */
 #restock-product-info-box,
 .modal-body > div > div[style*="background: #f8f9fa"],
 .modal-body > div > div[style*="background-color: #f8f9fa"],
 .modal-body .shipping-label-wrapper {
-	background: rgba(255, 255, 255, 0.25) !important;
-	border: 1px solid rgba(255, 255, 255, 0.55) !important;
+	background: var(--glass-bg-light) !important;
+	border: 1px solid var(--glass-border) !important;
 	backdrop-filter: blur(10px) !important;
 	-webkit-backdrop-filter: blur(10px) !important;
 	border-radius: var(--radius-md) !important;
@@ -6359,7 +6390,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 .modal-box input[type="password"],
 .modal-box select,
 .modal-box textarea {
-	background: rgba(255, 255, 255, 0.4) !important;
+	background: var(--glass-bg) !important;
 	backdrop-filter: blur(8px) !important;
 	-webkit-backdrop-filter: blur(8px) !important;
 	border: 1px solid rgba(0, 0, 0, 0.08) !important;
@@ -6385,7 +6416,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.08) !important;
 }
 
-/* Modal Buton Modernizasyonu (Win XP Tarzı Çerçevelerin Giderilmesi) */
+/* Modal Buton Reset (Win XP çerçeve kaldırma) */
 .modal-footer button,
 .modal-box button,
 .modal-box .btn-secondary,
@@ -6395,7 +6426,6 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	appearance: none !important;
 	-webkit-appearance: none !important;
 	background-image: none !important;
-	box-shadow: none !important;
 	text-shadow: none !important;
 	border-style: none !important;
 	border-width: 0 !important;
@@ -6406,14 +6436,14 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	padding: 12px 28px !important;
 	font-size: 13.5px !important;
 	cursor: pointer !important;
-	transition: var(--transition-smooth) !important;
+	transition: var(--spring-fast) !important;
 	display: inline-flex !important;
 	align-items: center !important;
 	justify-content: center !important;
 	text-decoration: none !important;
 }
 
-/* Modal Birincil Onay Butonları (Stoğa Ekle, Güvenli Ödeme Yap, Paketi Onayla, Barkodu Yazdır) */
+/* Modal Birincil Onay Butonları */
 .modal-box .btn-create-draft,
 .modal-box .btn-sms-confirm,
 .modal-box button[type="submit"],
@@ -6443,24 +6473,81 @@ aside.sidebar .menu-item.wizard-highlighted i {
 .modal-box button[onclick*="close"],
 .modal-box button[onclick*="cancel"],
 .modal-box button.btn-secondary {
-	background: rgba(255, 255, 255, 0.45) !important;
+	background: var(--glass-bg) !important;
 	color: var(--text-secondary) !important;
 	border: 1px solid rgba(0, 0, 0, 0.08) !important;
 	backdrop-filter: blur(5px) !important;
 	-webkit-backdrop-filter: blur(5px) !important;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
-	padding: 11px 26px !important; /* border kalınlığı telafisi */
+	padding: 11px 26px !important;
 }
 
 .modal-box .btn-secondary:hover,
 .modal-box button[onclick*="close"]:hover,
 .modal-box button[onclick*="cancel"]:hover,
 .modal-box button.btn-secondary:hover {
-	background: rgba(255, 255, 255, 0.8) !important;
+	background: var(--glass-bg-heavy) !important;
 	color: var(--text-primary) !important;
 	border-color: rgba(0, 0, 0, 0.15) !important;
 	transform: translateY(-1px) !important;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
+/* Global Search Input Glass */
+#global-search {
+	background: var(--glass-bg-light) !important;
+	backdrop-filter: blur(8px) !important;
+	-webkit-backdrop-filter: blur(8px) !important;
+	border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
 
+#global-search:focus {
+	background: rgba(255, 255, 255, 0.7) !important;
+	border-color: var(--primary) !important;
+	box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.06) !important;
+}
+
+/* Apple Spring Dropdown Animasyonu */
+@keyframes glassDropdown {
+	from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Store Dropdown Glass */
+#store-dropdown-menu {
+	background: var(--glass-bg-heavy) !important;
+	backdrop-filter: var(--glass-blur-heavy) !important;
+	-webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+	border: 1px solid var(--glass-border) !important;
+	box-shadow: var(--glass-shadow-elevated) !important;
+	animation: glassDropdown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* Ambient Glass Background Blobs */
+body::before {
+	content: '';
+	position: fixed;
+	top: -40%;
+	right: -20%;
+	width: 600px;
+	height: 600px;
+	background: radial-gradient(circle, rgba(40, 167, 69, 0.04) 0%, transparent 70%);
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+	animation: floatBlob 20s ease-in-out infinite;
+}
+
+body::after {
+	content: '';
+	position: fixed;
+	bottom: -30%;
+	left: -15%;
+	width: 500px;
+	height: 500px;
+	background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+	animation: floatBlob 25s ease-in-out infinite reverse;
+}
