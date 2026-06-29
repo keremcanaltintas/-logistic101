@@ -3137,10 +3137,6 @@ function triggerManualSync(event) {
 document.addEventListener('click', function(event) {
 	const trigger = document.getElementById('store-dropdown-trigger');
 	const menu = document.getElementById('store-dropdown-menu');
-// Açılır menü dışına tıklandığında menüyü kapat
-document.addEventListener('click', function(event) {
-	const trigger = document.getElementById('store-dropdown-trigger');
-	const menu = document.getElementById('store-dropdown-menu');
 	if (trigger && menu && !trigger.contains(event.target)) {
 		menu.classList.remove('active');
 	}
