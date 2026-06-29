@@ -74,19 +74,14 @@ if (loginForm) {
 			users = [];
 		}
 		
-		// Kullanıcı eşleşmesi kontrolü
-		const matchedUser = users.find(u => 
-			(u.email.toLowerCase() === usernameVal.toLowerCase() || u.name.toLowerCase() === usernameVal.toLowerCase()) && 
-			u.password === passwordVal
-		);
-		
-		if ((usernameVal === "123456" && passwordVal === "123456") || matchedUser) {
+		// Giriş Şifresi Kaldırıldı: Kullanıcı adı girilmesi yeterlidir.
+		if (usernameVal) {
 			// Başarılı Giriş
 			hideToast();
 			loginBtn.disabled = true;
 			loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Giriş Yapılıyor...';
 			
-			const displayName = matchedUser ? matchedUser.name : usernameVal;
+			const displayName = usernameVal;
 			
 			// 1 saniyelik şık bir bekleme animasyonu (SaaS kalitesi için)
 			setTimeout(() => {
@@ -100,8 +95,8 @@ if (loginForm) {
 				transitionToDashboard();
 			}, 1000);
 		} else {
-			// Hatalı Giriş
-			showToast('Hatalı kullanıcı adı veya şifre! (Varsayılan: 123456)');
+			// Hatalı Giriş (Kullanıcı adı boş)
+			showToast('Lütfen bir kullanıcı adı giriniz!');
 		}
 	});
 }
