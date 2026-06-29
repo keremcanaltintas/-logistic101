@@ -6523,31 +6523,90 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	animation: glassDropdown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* Ambient Glass Background Blobs */
+/* Ambient Glass Background Blobs (macOS/visionOS Mesh Gradient Style) */
+html::before {
+	content: '';
+	position: fixed;
+	top: 25%;
+	left: 40%;
+	width: 700px;
+	height: 700px;
+	background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: -1;
+	filter: blur(120px);
+	animation: floatBlob 28s ease-in-out infinite;
+}
+
 body::before {
 	content: '';
 	position: fixed;
-	top: -40%;
-	right: -20%;
-	width: 600px;
-	height: 600px;
-	background: radial-gradient(circle, rgba(40, 167, 69, 0.04) 0%, transparent 70%);
+	top: -30%;
+	right: -10%;
+	width: 900px;
+	height: 900px;
+	background: radial-gradient(circle, rgba(40, 167, 69, 0.12) 0%, transparent 70%);
 	border-radius: 50%;
 	pointer-events: none;
-	z-index: 0;
-	animation: floatBlob 20s ease-in-out infinite;
+	z-index: -1;
+	filter: blur(140px);
+	animation: floatBlob 22s ease-in-out infinite;
 }
 
 body::after {
 	content: '';
 	position: fixed;
-	bottom: -30%;
-	left: -15%;
-	width: 500px;
-	height: 500px;
-	background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+	bottom: -20%;
+	left: -10%;
+	width: 800px;
+	height: 800px;
+	background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
 	border-radius: 50%;
 	pointer-events: none;
-	z-index: 0;
+	z-index: -1;
+	filter: blur(130px);
 	animation: floatBlob 25s ease-in-out infinite reverse;
 }
+
+/* Standardized Glass Card Utility */
+.glass-card {
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--glass-shadow);
+	transition: var(--spring-fast);
+	padding: 24px;
+	position: relative;
+	overflow: hidden;
+}
+
+.glass-card:hover {
+	background: var(--glass-bg-heavy);
+	border-color: var(--glass-border-heavy);
+	box-shadow: var(--glass-shadow-hover);
+	transform: translateY(-2px);
+}
+
+/* Glass Table Header Override */
+.products-table th,
+.transactions-table th,
+.support-table th,
+.ledger-table th,
+.orders-table-new th {
+	background: rgba(255, 255, 255, 0.22) !important;
+	backdrop-filter: blur(5px) !important;
+	-webkit-backdrop-filter: blur(5px) !important;
+	border-bottom: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+	color: var(--text-primary) !important;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Ensure body has negative z-index containers behind page */
+body {
+	position: relative;
+	z-index: 1;
+}
+
