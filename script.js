@@ -876,12 +876,12 @@ function initCharts() {
 				{
 					label: 'Ciro (₺)',
 					data: [5400, 7200, 4800, 8900, 6200, 9500, 7800],
-					borderColor: '#28a745',
-					backgroundColor: 'rgba(40, 167, 69, 0.04)',
+					borderColor: '#10b981',
+					backgroundColor: 'rgba(16, 185, 129, 0.04)',
 					borderWidth: 3,
 					fill: true,
 					tension: 0.4,
-					pointBackgroundColor: '#28a745',
+					pointBackgroundColor: '#10b981',
 					pointBorderColor: '#ffffff',
 					pointBorderWidth: 2,
 					pointRadius: 4,
@@ -911,16 +911,16 @@ function initCharts() {
 					position: 'top',
 					labels: {
 						font: { family: 'Plus Jakarta Sans', weight: '700', size: 12 },
-						color: '#4a5568',
+						color: '#cbd5e1',
 						boxWidth: 14
 					}
 				},
 				tooltip: {
 					padding: 12,
-					backgroundColor: 'rgba(255, 255, 255, 0.95)',
-					titleColor: '#1a1f2c',
-					bodyColor: '#4a5568',
-					borderColor: 'rgba(0,0,0,0.06)',
+					backgroundColor: 'rgba(15, 23, 42, 0.95)',
+					titleColor: '#f8fafc',
+					bodyColor: '#cbd5e1',
+					borderColor: 'rgba(255, 255, 255, 0.1)',
 					borderWidth: 1,
 					titleFont: { family: 'Outfit', weight: '700', size: 13 },
 					bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
@@ -937,7 +937,7 @@ function initCharts() {
 					type: 'linear',
 					display: true,
 					position: 'left',
-					grid: { color: 'rgba(0, 0, 0, 0.03)' },
+					grid: { color: 'rgba(255, 255, 255, 0.05)' },
 					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
 				},
 				y1: {
@@ -959,11 +959,11 @@ function initCharts() {
 			datasets: [{
 				data: [65, 20, 15],
 				backgroundColor: [
-					'rgba(40, 167, 69, 0.75)',
-					'rgba(59, 130, 246, 0.75)',
-					'rgba(245, 158, 11, 0.75)'
+					'rgba(16, 185, 129, 0.85)',
+					'rgba(59, 130, 246, 0.85)',
+					'rgba(245, 158, 11, 0.85)'
 				],
-				borderColor: 'rgba(255, 255, 255, 0.8)',
+				borderColor: 'rgba(15, 23, 42, 0.8)',
 				borderWidth: 2,
 				hoverOffset: 6
 			}]
@@ -976,16 +976,16 @@ function initCharts() {
 					position: 'bottom',
 					labels: {
 						font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 },
-						color: '#4a5568',
+						color: '#cbd5e1',
 						boxWidth: 10,
 						padding: 10
 					}
 				},
 				tooltip: {
-					backgroundColor: 'rgba(255, 255, 255, 0.95)',
-					titleColor: '#1a1f2c',
-					bodyColor: '#4a5568',
-					borderColor: 'rgba(0,0,0,0.06)',
+					backgroundColor: 'rgba(15, 23, 42, 0.95)',
+					titleColor: '#f8fafc',
+					bodyColor: '#cbd5e1',
+					borderColor: 'rgba(255, 255, 255, 0.1)',
 					borderWidth: 1,
 					bodyFont: { family: 'Plus Jakarta Sans' }
 				}

@@ -2,48 +2,48 @@
    DESIGN SYSTEM & VARIABLES
    ========================================================================== */
 :root {
-	/* Colors */
-	--primary: #28a745;
-	--primary-hover: #218838;
-	--primary-light: rgba(40, 167, 69, 0.08);
-	--bg-dashboard: #f0f2f5;
-	--surface-card: #ffffff;
-	--text-primary: #1a1f2c;
-	--text-secondary: #4a5568;
-	--text-muted: #94a3b8;
-	--border-color: rgba(0, 0, 0, 0.06);
+	/* Colors - Apple & Stripe Dark Glassmorphism */
+	--primary: #10b981; /* Emerald Yeşil */
+	--primary-hover: #059669;
+	--primary-light: rgba(16, 185, 129, 0.1);
+	--bg-dashboard: #0f172a; /* Slate 900 */
+	--surface-card: rgba(255, 255, 255, 0.05); /* Yarı saydam cam */
+	--text-primary: #f8fafc; /* Slate 50 */
+	--text-secondary: #94a3b8; /* Slate 400 */
+	--text-muted: #64748b; /* Slate 500 */
+	--border-color: rgba(255, 255, 255, 0.08); /* İnce cam sınırı */
 	
 	/* Font Families */
 	--font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 	--font-alt: 'Outfit', sans-serif;
 	
 	/* Shadows */
-	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
-	--shadow-md: 0 8px 30px rgba(0, 0, 0, 0.04);
-	--shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
-	--shadow-highlight: 0 0 0 10px rgba(40, 167, 69, 0.15), 0 12px 30px rgba(0, 0, 0, 0.15);
+	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+	--shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
+	--shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+	--shadow-highlight: 0 0 15px rgba(16, 185, 129, 0.25);
 	
 	/* Border Radius */
 	--radius-sm: 8px;
-	--radius-md: 12px;
-	--radius-lg: 16px;
-	--radius-xl: 24px;
+	--radius-md: 14px;
+	--radius-lg: 20px;
+	--radius-xl: 28px;
 	
 	/* Transitions */
-	--transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	--transition-fast: all 0.15s ease-in-out;
+	--transition-smooth: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	--transition-fast: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	
-	/* Liquid Glass Design Tokens */
-	--glass-bg: rgba(255, 255, 255, 0.42);
-	--glass-bg-heavy: rgba(255, 255, 255, 0.58);
-	--glass-bg-light: rgba(255, 255, 255, 0.28);
-	--glass-border: rgba(255, 255, 255, 0.55);
-	--glass-border-heavy: rgba(255, 255, 255, 0.75);
-	--glass-blur: blur(20px) saturate(180%);
-	--glass-blur-heavy: blur(30px) saturate(200%);
-	--glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.85);
-	--glass-shadow-hover: 0 12px 40px rgba(40, 167, 69, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.95);
-	--glass-shadow-elevated: 0 24px 64px -16px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+	/* Liquid Glass Design Tokens (Koyu Moda Özel) */
+	--glass-bg: rgba(255, 255, 255, 0.05);
+	--glass-bg-heavy: rgba(255, 255, 255, 0.08);
+	--glass-bg-light: rgba(255, 255, 255, 0.03);
+	--glass-border: rgba(255, 255, 255, 0.1);
+	--glass-border-heavy: rgba(255, 255, 255, 0.16);
+	--glass-blur: blur(16px) saturate(180%);
+	--glass-blur-heavy: blur(28px) saturate(200%);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+	--glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+	--glass-shadow-elevated: 0 24px 64px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 	--spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	--spring-fast: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -62,7 +62,7 @@ body {
 	font-family: var(--font-main);
 	min-height: 100vh;
 	overflow-x: hidden;
-	background: linear-gradient(135deg, #e8ecf1 0%, #f0f2f5 30%, #e4eaf0 60%, #f0f2f5 100%);
+	background: radial-gradient(circle at top right, #1e293b, #0f172a 60%, #064e3b 100%) !important;
 	color: var(--text-primary);
 	-webkit-font-smoothing: antialiased;
 }
@@ -281,7 +281,7 @@ img, svg {
 #login-page button:hover {
 	background: var(--primary-hover);
 	transform: translateY(-1px);
-	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+	box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
 }
 
 #login-page button:active {
@@ -372,9 +372,9 @@ img, svg {
 }
 
 #login-page input:focus {
-	border-color: rgba(40, 167, 69, 0.4);
-	background: rgba(40, 167, 69, 0.03);
-	box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+	border-color: var(--primary);
+	background: rgba(16, 185, 129, 0.06);
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
 }
 
 /* Mobile Switch Prompts */
@@ -465,7 +465,7 @@ img, svg {
 }
 
 .overlay {
-	background: linear-gradient(135deg, #0f5132 0%, #198754 50%, var(--primary) 100%);
+	background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, var(--primary) 100%);
 	background-repeat: no-repeat;
 	background-size: cover;
 	color: #ffffff;
@@ -671,10 +671,10 @@ img, svg {
 }
 
 .menu-item.active {
-	background: var(--glass-bg);
+	background: var(--glass-bg-heavy);
 	color: var(--primary);
-	border: 1px solid rgba(40, 167, 69, 0.12);
-	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+	border: 1px solid rgba(16, 185, 129, 0.25);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 10px rgba(16, 185, 129, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
 .menu-item.active i {
@@ -767,8 +767,8 @@ img, svg {
 }
 
 #global-search {
-	background: #f1f3f5;
-	border: 1px solid transparent;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 50px;
 	padding: 10px 16px 10px 44px;
 	font-family: var(--font-main);
@@ -777,12 +777,13 @@ img, svg {
 	width: 100%;
 	outline: none;
 	transition: var(--transition-smooth);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 #global-search:focus {
-	background: #ffffff;
-	border-color: rgba(40, 167, 69, 0.4);
-	box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1), 0 4px 12px rgba(0, 0, 0, 0.03);
+	background: rgba(255, 255, 255, 0.12);
+	border-color: var(--primary);
+	box-shadow: 0 0 15px rgba(16, 185, 129, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 /* Right Navigation Section */
@@ -995,30 +996,33 @@ img, svg {
 /* Aylık Ciro Vurgu Kartı */
 .status-card.revenue {
 	grid-column: span 2;
-	background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(241,251,244,0.5) 100%);
-	border: 1.5px solid rgba(40, 167, 73, 0.25);
-	box-shadow: 0 4px 20px rgba(40, 167, 73, 0.04), inset 0 1px 2px rgba(255,255,255,0.8);
+	background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(16, 185, 129, 0.08) 100%) !important;
+	border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.15) !important;
 }
 
 .status-card.revenue:hover {
-	border-color: var(--primary);
-	box-shadow: 0 10px 25px rgba(40, 167, 73, 0.08);
+	border-color: var(--primary) !important;
+	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 25px rgba(16, 185, 129, 0.25), inset 0 1px 1px rgba(255,255,255,0.2) !important;
 }
 
 .status-card.revenue .card-icon-wrapper {
-	background: rgba(40, 167, 73, 0.12);
-	color: var(--primary);
+	background: rgba(16, 185, 129, 0.2) !important;
+	color: var(--primary) !important;
+	border: 1px solid rgba(16, 185, 129, 0.3) !important;
+	box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
 }
 
 .status-card.revenue .card-value {
-	color: var(--primary);
-	font-size: 34px;
-	font-weight: 800;
+	color: #10b981 !important;
+	font-size: 38px !important;
+	font-weight: 800 !important;
+	letter-spacing: -1px !important;
 }
 
 .status-card.revenue .card-trend {
-	background: rgba(40, 167, 73, 0.08);
-	color: #1e7e34;
+	background: rgba(16, 185, 129, 0.15) !important;
+	color: #10b981 !important;
 }
 
 .card-icon-wrapper {
@@ -1039,17 +1043,21 @@ img, svg {
 }
 
 .card-label {
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 11px;
+	font-weight: 700;
 	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 1.2px;
+	margin-bottom: 2px;
 }
 
 .card-value {
 	font-family: var(--font-alt);
-	font-size: 32px;
+	font-size: 34px;
 	font-weight: 800;
 	color: var(--text-primary);
 	line-height: 1;
+	letter-spacing: -0.8px;
 }
 
 .card-trend {
@@ -1064,43 +1072,51 @@ img, svg {
 
 /* Specific Card Theme Settings */
 .status-card.pending .card-icon-wrapper {
-	background: rgba(255, 193, 7, 0.1);
-	color: #ffc107;
+	background: rgba(245, 158, 11, 0.2) !important;
+	color: #f59e0b !important;
+	border: 1px solid rgba(245, 158, 11, 0.3) !important;
+	box-shadow: 0 0 15px rgba(245, 158, 11, 0.15) !important;
 }
 .status-card.pending .card-trend {
-	background: rgba(255, 193, 7, 0.08);
-	color: #d39e00;
+	background: rgba(245, 158, 11, 0.15) !important;
+	color: #f59e0b !important;
 }
 
 .status-card.processing .card-icon-wrapper {
-	background: rgba(0, 123, 255, 0.1);
-	color: #007bff;
+	background: rgba(59, 130, 246, 0.2) !important;
+	color: #3b82f6 !important;
+	border: 1px solid rgba(59, 130, 246, 0.3) !important;
+	box-shadow: 0 0 15px rgba(59, 130, 246, 0.15) !important;
 }
 .status-card.processing .card-trend {
-	background: rgba(0, 123, 255, 0.08);
-	color: #0056b3;
+	background: rgba(59, 130, 246, 0.15) !important;
+	color: #3b82f6 !important;
 }
 
 .status-card.shipped .card-icon-wrapper {
-	background: var(--primary-light);
-	color: var(--primary);
+	background: rgba(16, 185, 129, 0.2) !important;
+	color: var(--primary) !important;
+	border: 1px solid rgba(16, 185, 129, 0.3) !important;
+	box-shadow: 0 0 15px rgba(16, 185, 129, 0.15) !important;
 }
 .status-card.shipped .card-trend {
-	background: rgba(40, 167, 69, 0.08);
-	color: #1e7e34;
+	background: rgba(16, 185, 129, 0.15) !important;
+	color: #10b981 !important;
 }
 
 .status-card.problem .card-icon-wrapper {
-	background: rgba(220, 53, 69, 0.1);
-	color: #dc3545;
+	background: rgba(239, 68, 68, 0.2) !important;
+	color: #ef4444 !important;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+	box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
 }
 .status-card.problem .card-trend {
-	background: rgba(40, 167, 69, 0.08);
-	color: var(--primary);
+	background: rgba(239, 68, 68, 0.15) !important;
+	color: #ef4444 !important;
 }
 .status-card.problem .card-trend.ok {
-	background: rgba(40, 167, 69, 0.08);
-	color: var(--primary);
+	background: rgba(16, 185, 129, 0.15) !important;
+	color: #10b981 !important;
 }
 
 .fa-spin-slow {
@@ -2668,8 +2684,8 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 .form-group-draft input,
 .form-group-draft textarea {
-	background: #ffffff;
-	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: var(--radius-md);
 	padding: 10px 14px;
 	font-family: var(--font-main);
@@ -2678,11 +2694,12 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	width: 100%;
 	outline: none;
 	transition: var(--transition-smooth);
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .form-group-draft input[readonly] {
-	background: #f1f3f5;
-	border-color: rgba(0, 0, 0, 0.08);
+	background: rgba(255, 255, 255, 0.02);
+	border-color: rgba(255, 255, 255, 0.05);
 	color: var(--text-muted);
 	font-weight: 700;
 	cursor: not-allowed;
@@ -2690,8 +2707,9 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 .form-group-draft input:focus:not([readonly]),
 .form-group-draft textarea:focus {
+	background: rgba(255, 255, 255, 0.08);
 	border-color: var(--primary);
-	box-shadow: 0 0 0 3px var(--primary-light);
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
 }
 
 .btn-create-draft {
@@ -6390,10 +6408,10 @@ aside.sidebar .menu-item.wizard-highlighted i {
 .modal-box input[type="password"],
 .modal-box select,
 .modal-box textarea {
-	background: var(--glass-bg) !important;
+	background: rgba(255, 255, 255, 0.04) !important;
 	backdrop-filter: blur(8px) !important;
 	-webkit-backdrop-filter: blur(8px) !important;
-	border: 1px solid rgba(0, 0, 0, 0.08) !important;
+	border: 1px solid rgba(255, 255, 255, 0.08) !important;
 	border-radius: var(--radius-md) !important;
 	padding: 12px 16px !important;
 	font-family: var(--font-main) !important;
@@ -6401,7 +6419,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	color: var(--text-primary) !important;
 	outline: none !important;
 	transition: var(--transition-smooth) !important;
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01) !important;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 	width: 100% !important;
 	box-sizing: border-box !important;
 }
@@ -6411,9 +6429,9 @@ aside.sidebar .menu-item.wizard-highlighted i {
 .modal-box input[type="password"]:focus,
 .modal-box select:focus,
 .modal-box textarea:focus {
-	background: rgba(255, 255, 255, 0.85) !important;
+	background: rgba(255, 255, 255, 0.08) !important;
 	border-color: var(--primary) !important;
-	box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.08) !important;
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.25) !important;
 }
 
 /* Modal Buton Reset (Win XP çerçeve kaldırma) */
@@ -6583,6 +6601,19 @@ body::after {
 	overflow: hidden;
 }
 
+.glass-card::before,
+.status-card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 1.5px;
+	background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent);
+	z-index: 2;
+	pointer-events: none;
+}
+
 .glass-card:hover {
 	background: var(--glass-bg-heavy);
 	border-color: var(--glass-border-heavy);
@@ -6596,12 +6627,12 @@ body::after {
 .support-table th,
 .ledger-table th,
 .orders-table-new th {
-	background: rgba(255, 255, 255, 0.22) !important;
+	background: rgba(255, 255, 255, 0.05) !important;
 	backdrop-filter: blur(5px) !important;
 	-webkit-backdrop-filter: blur(5px) !important;
-	border-bottom: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+	border-bottom: 1.5px solid rgba(255, 255, 255, 0.1) !important;
 	color: var(--text-primary) !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+	text-shadow: none !important;
 }
 
 /* Ensure body has negative z-index containers behind page */
