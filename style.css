@@ -2,26 +2,26 @@
    DESIGN SYSTEM & VARIABLES
    ========================================================================== */
 :root {
-	/* Colors - Apple & Stripe Dark Glassmorphism */
+	/* Colors - Apple & Stripe Premium Light Glassmorphism */
 	--primary: #10b981; /* Emerald Yeşil */
 	--primary-hover: #059669;
-	--primary-light: rgba(16, 185, 129, 0.1);
-	--bg-dashboard: #0f172a; /* Slate 900 */
-	--surface-card: rgba(255, 255, 255, 0.05); /* Yarı saydam cam */
-	--text-primary: #f8fafc; /* Slate 50 */
-	--text-secondary: #94a3b8; /* Slate 400 */
-	--text-muted: #64748b; /* Slate 500 */
-	--border-color: rgba(255, 255, 255, 0.08); /* İnce cam sınırı */
+	--primary-light: rgba(16, 185, 129, 0.08);
+	--bg-dashboard: #f8fafc; /* Slate 50 */
+	--surface-card: rgba(255, 255, 255, 0.45); /* Buzlu cam */
+	--text-primary: #1e293b; /* Slate 800 */
+	--text-secondary: #475569; /* Slate 600 */
+	--text-muted: #94a3b8; /* Slate 400 */
+	--border-color: rgba(0, 0, 0, 0.06); /* İnce koyu cam sınırı */
 	
 	/* Font Families */
 	--font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 	--font-alt: 'Outfit', sans-serif;
 	
 	/* Shadows */
-	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-	--shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
-	--shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
-	--shadow-highlight: 0 0 15px rgba(16, 185, 129, 0.25);
+	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
+	--shadow-md: 0 8px 30px rgba(0, 0, 0, 0.04);
+	--shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+	--shadow-highlight: 0 0 15px rgba(16, 185, 129, 0.15);
 	
 	/* Border Radius */
 	--radius-sm: 8px;
@@ -33,17 +33,17 @@
 	--transition-smooth: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	--transition-fast: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	
-	/* Liquid Glass Design Tokens (Koyu Moda Özel) */
-	--glass-bg: rgba(255, 255, 255, 0.05);
-	--glass-bg-heavy: rgba(255, 255, 255, 0.08);
-	--glass-bg-light: rgba(255, 255, 255, 0.03);
-	--glass-border: rgba(255, 255, 255, 0.1);
-	--glass-border-heavy: rgba(255, 255, 255, 0.16);
-	--glass-blur: blur(16px) saturate(180%);
-	--glass-blur-heavy: blur(28px) saturate(200%);
-	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-	--glass-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-	--glass-shadow-elevated: 0 24px 64px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+	/* Liquid Glass Design Tokens (Aydınlık Moda Özel) */
+	--glass-bg: rgba(255, 255, 255, 0.45);
+	--glass-bg-heavy: rgba(255, 255, 255, 0.65);
+	--glass-bg-light: rgba(255, 255, 255, 0.25);
+	--glass-border: rgba(255, 255, 255, 0.65);
+	--glass-border-heavy: rgba(255, 255, 255, 0.85);
+	--glass-blur: blur(20px) saturate(190%);
+	--glass-blur-heavy: blur(30px) saturate(210%);
+	--glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+	--glass-shadow-hover: 0 16px 40px rgba(16, 185, 129, 0.06), 0 0 15px rgba(16, 185, 129, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+	--glass-shadow-elevated: 0 24px 64px rgba(31, 38, 135, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.95);
 	--spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	--spring-fast: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -62,7 +62,7 @@ body {
 	font-family: var(--font-main);
 	min-height: 100vh;
 	overflow-x: hidden;
-	background: radial-gradient(circle at top right, #1e293b, #0f172a 60%, #064e3b 100%) !important;
+	background: radial-gradient(circle at top right, #f8fafc, #f1f5f9 60%, #e2e8f0 100%) !important;
 	color: var(--text-primary);
 	-webkit-font-smoothing: antialiased;
 }
@@ -584,10 +584,10 @@ img, svg {
 	left: 0;
 	width: 260px;
 	height: 100vh;
-	background: var(--glass-bg-heavy);
+	background: rgba(11, 46, 36, 0.96) !important;
 	backdrop-filter: var(--glass-blur);
 	-webkit-backdrop-filter: var(--glass-blur);
-	border-right: 1px solid var(--glass-border);
+	border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
 	display: flex;
 	flex-direction: column;
 	z-index: 100;
@@ -613,7 +613,7 @@ img, svg {
 	font-family: var(--font-alt);
 	font-size: 20px;
 	font-weight: 800;
-	color: var(--text-primary);
+	color: #ffffff !important;
 	letter-spacing: -0.02em;
 }
 
@@ -641,7 +641,7 @@ img, svg {
 	align-items: center;
 	gap: 12px;
 	padding: 12px 16px;
-	color: var(--text-secondary);
+	color: rgba(255, 255, 255, 0.75) !important;
 	text-decoration: none;
 	border-radius: var(--radius-md);
 	font-size: 14px;
@@ -654,31 +654,31 @@ img, svg {
 	font-size: 16px;
 	width: 20px;
 	text-align: center;
-	color: var(--text-secondary);
+	color: rgba(255, 255, 255, 0.6) !important;
 	transition: var(--transition-smooth);
 }
 
 .menu-item:hover {
-	background: var(--glass-bg-light);
-	color: var(--primary);
-	border-color: var(--glass-border);
+	background: rgba(255, 255, 255, 0.08) !important;
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.15) !important;
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
 }
 
 .menu-item:hover i {
-	color: var(--primary);
+	color: #ffffff !important;
 }
 
 .menu-item.active {
-	background: var(--glass-bg-heavy);
-	color: var(--primary);
-	border: 1px solid rgba(16, 185, 129, 0.25);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 10px rgba(16, 185, 129, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+	background: rgba(16, 185, 129, 0.25) !important;
+	color: #ffffff !important;
+	border: 1px solid rgba(16, 185, 129, 0.45) !important;
+	box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25) !important;
 }
 
 .menu-item.active i {
-	color: var(--primary);
+	color: #ffffff !important;
 }
 
 /* Sidebar Footer */
@@ -687,15 +687,15 @@ img, svg {
 	flex-direction: column;
 	gap: 10px;
 	padding-top: 16px;
-	border-top: 1px solid rgba(0, 0, 0, 0.05);
+	border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .btn-logout {
-	background: var(--glass-bg-light);
+	background: rgba(239, 68, 68, 0.15) !important;
 	backdrop-filter: blur(8px);
 	-webkit-backdrop-filter: blur(8px);
-	border: 1px solid rgba(220, 53, 69, 0.1);
-	color: #dc3545;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+	color: #fca5a5 !important;
 	padding: 12px 16px;
 	border-radius: var(--radius-md);
 	font-family: var(--font-main);
@@ -710,8 +710,8 @@ img, svg {
 }
 
 .btn-logout:hover {
-	background: rgba(220, 53, 69, 0.06);
-	border-color: rgba(220, 53, 69, 0.2);
+	background: rgba(239, 68, 68, 0.25) !important;
+	border-color: rgba(239, 68, 68, 0.5) !important;
 	transform: translateY(-1px);
 }
 
@@ -996,14 +996,14 @@ img, svg {
 /* Aylık Ciro Vurgu Kartı */
 .status-card.revenue {
 	grid-column: span 2;
-	background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(16, 185, 129, 0.08) 100%) !important;
-	border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
-	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.15) !important;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(16, 185, 129, 0.12) 100%) !important;
+	border: 1.5px solid rgba(16, 185, 129, 0.25) !important;
+	box-shadow: 0 8px 30px rgba(16, 185, 129, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
 }
 
 .status-card.revenue:hover {
 	border-color: var(--primary) !important;
-	box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 25px rgba(16, 185, 129, 0.25), inset 0 1px 1px rgba(255,255,255,0.2) !important;
+	box-shadow: 0 12px 40px rgba(16, 185, 129, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.95) !important;
 }
 
 .status-card.revenue .card-icon-wrapper {
@@ -6541,49 +6541,56 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	animation: glassDropdown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-/* Ambient Glass Background Blobs (macOS/visionOS Mesh Gradient Style) */
+/* Ambient Glass Background Panes (macOS/visionOS Glass Pane Style) */
 html::before {
 	content: '';
 	position: fixed;
-	top: 25%;
-	left: 40%;
-	width: 700px;
-	height: 700px;
-	background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
-	border-radius: 50%;
+	top: 15%;
+	left: 45%;
+	width: 550px;
+	height: 380px;
+	background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, rgba(59, 130, 246, 0.04) 100%);
+	border-radius: 40px;
+	border: 1.5px solid rgba(255, 255, 255, 0.5);
+	backdrop-filter: blur(12px);
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02);
+	transform: rotate(-12deg);
 	pointer-events: none;
 	z-index: -1;
-	filter: blur(120px);
 	animation: floatBlob 28s ease-in-out infinite;
 }
 
 body::before {
 	content: '';
 	position: fixed;
-	top: -30%;
-	right: -10%;
-	width: 900px;
-	height: 900px;
-	background: radial-gradient(circle, rgba(40, 167, 69, 0.12) 0%, transparent 70%);
-	border-radius: 50%;
+	top: -5%;
+	right: -5%;
+	width: 480px;
+	height: 480px;
+	background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(16, 185, 129, 0.01) 100%);
+	border-radius: 60px;
+	border: 1.5px solid rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(12px);
+	transform: rotate(15deg);
 	pointer-events: none;
 	z-index: -1;
-	filter: blur(140px);
 	animation: floatBlob 22s ease-in-out infinite;
 }
 
 body::after {
 	content: '';
 	position: fixed;
-	bottom: -20%;
-	left: -10%;
-	width: 800px;
-	height: 800px;
-	background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-	border-radius: 50%;
+	bottom: -5%;
+	left: -5%;
+	width: 450px;
+	height: 450px;
+	background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(16, 185, 129, 0.03) 100%);
+	border-radius: 50px;
+	border: 1.5px solid rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(12px);
+	transform: rotate(-8deg);
 	pointer-events: none;
 	z-index: -1;
-	filter: blur(130px);
 	animation: floatBlob 25s ease-in-out infinite reverse;
 }
 
@@ -6627,10 +6634,10 @@ body::after {
 .support-table th,
 .ledger-table th,
 .orders-table-new th {
-	background: rgba(255, 255, 255, 0.05) !important;
+	background: rgba(0, 0, 0, 0.02) !important;
 	backdrop-filter: blur(5px) !important;
 	-webkit-backdrop-filter: blur(5px) !important;
-	border-bottom: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+	border-bottom: 1.5px solid rgba(0, 0, 0, 0.06) !important;
 	color: var(--text-primary) !important;
 	text-shadow: none !important;
 }

@@ -911,16 +911,16 @@ function initCharts() {
 					position: 'top',
 					labels: {
 						font: { family: 'Plus Jakarta Sans', weight: '700', size: 12 },
-						color: '#cbd5e1',
+						color: '#475569',
 						boxWidth: 14
 					}
 				},
 				tooltip: {
 					padding: 12,
-					backgroundColor: 'rgba(15, 23, 42, 0.95)',
-					titleColor: '#f8fafc',
-					bodyColor: '#cbd5e1',
-					borderColor: 'rgba(255, 255, 255, 0.1)',
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					titleColor: '#1e293b',
+					bodyColor: '#475569',
+					borderColor: 'rgba(0, 0, 0, 0.06)',
 					borderWidth: 1,
 					titleFont: { family: 'Outfit', weight: '700', size: 13 },
 					bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
@@ -931,21 +931,21 @@ function initCharts() {
 			scales: {
 				x: {
 					grid: { display: false },
-					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+					ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', size: 11 } }
 				},
 				y: {
 					type: 'linear',
 					display: true,
 					position: 'left',
-					grid: { color: 'rgba(255, 255, 255, 0.05)' },
-					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+					grid: { color: 'rgba(0, 0, 0, 0.05)' },
+					ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', size: 11 } }
 				},
 				y1: {
 					type: 'linear',
 					display: true,
 					position: 'right',
 					grid: { drawOnChartArea: false },
-					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+					ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', size: 11 } }
 				}
 			}
 		}
@@ -963,7 +963,7 @@ function initCharts() {
 					'rgba(59, 130, 246, 0.85)',
 					'rgba(245, 158, 11, 0.85)'
 				],
-				borderColor: 'rgba(15, 23, 42, 0.8)',
+				borderColor: '#ffffff',
 				borderWidth: 2,
 				hoverOffset: 6
 			}]
@@ -976,16 +976,16 @@ function initCharts() {
 					position: 'bottom',
 					labels: {
 						font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 },
-						color: '#cbd5e1',
+						color: '#475569',
 						boxWidth: 10,
 						padding: 10
 					}
 				},
 				tooltip: {
-					backgroundColor: 'rgba(15, 23, 42, 0.95)',
-					titleColor: '#f8fafc',
-					bodyColor: '#cbd5e1',
-					borderColor: 'rgba(255, 255, 255, 0.1)',
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					titleColor: '#1e293b',
+					bodyColor: '#475569',
+					borderColor: 'rgba(0, 0, 0, 0.06)',
 					borderWidth: 1,
 					bodyFont: { family: 'Plus Jakarta Sans' }
 				}
