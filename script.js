@@ -1179,8 +1179,8 @@ function switchView(viewName) {
 	} else if (viewName === 'send-to-warehouse') {
 		sendToWarehouseView.style.display = 'block';
 		if (navSendToWarehouse) navSendToWarehouse.classList.add('active');
-		// default to return service type when entering
-		setServiceType('return');
+		// default to standard service type when entering
+		setServiceType('standard');
 	} else if (viewName === 'wallet') {
 		walletView.style.display = 'block';
 		if (navWallet) navWallet.classList.add('active');
@@ -2970,7 +2970,7 @@ const NESTRO_WAREHOUSE_ADDRESS = {
 	address: "Orta Mahalle, Üniversite Caddesi No:15, Nestro Lojistik Merkezi, Tuzla / İstanbul"
 };
 
-let currentServiceType = 'return';
+let currentServiceType = 'standard';
 
 // Hizmet Türü Değişimi ve Adres Otomatik Doldurma / Kitleme
 function setServiceType(type) {
@@ -2992,7 +2992,16 @@ function setServiceType(type) {
 	const receiverDistrict = document.getElementById('receiver-district');
 	const receiverAddress = document.getElementById('receiver-address');
 
-	if (!btnReturn || !btnStandard || !senderName || !receiverName) return;
+	if (!senderName || !receiverName) return;
+
+	if (btnReturn) {
+		if (type === 'return') btnReturn.classList.add('active');
+		else btnReturn.classList.remove('active');
+	}
+	if (btnStandard) {
+		if (type === 'standard') btnStandard.classList.add('active');
+		else btnStandard.classList.remove('active');
+	}
 
 	if (type === 'return') {
 		// Toggle buttons active classes
@@ -3154,7 +3163,7 @@ function resetWarehouseShipmentForm() {
 	const form = document.getElementById('warehouse-shipment-form');
 	if (form) {
 		form.reset();
-		setServiceType('return');
+		setServiceType('standard');
 	}
 }
 
