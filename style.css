@@ -6610,3 +6610,110 @@ body {
 	z-index: 1;
 }
 
+/* ==========================================================================
+   DASHBOARD VE DİNAMİK GRAFİK STİLLERİ
+   ========================================================================== */
+.chart-grid {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 20px;
+	margin-top: 16px;
+	width: 100%;
+}
+
+@media (max-width: 992px) {
+	.chart-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.chart-card {
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.chart-card h3 {
+	font-family: var(--font-alt);
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--text-primary);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.chart-container-wrapper {
+	position: relative;
+	width: 100%;
+	height: 240px;
+}
+
+/* ==========================================================================
+   İADE VE KALİTE KONTROL (REVERSE LOGISTICS) MODÜLÜ STİLLERİ
+   ========================================================================== */
+.simulated-upload-box {
+	border: 2px dashed rgba(255, 255, 255, 0.6) !important;
+	background: rgba(255, 255, 255, 0.12) !important;
+	border-radius: var(--radius-md);
+	padding: 24px 18px;
+	text-align: center;
+	cursor: pointer;
+	transition: var(--spring-fast) !important;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.simulated-upload-box:hover {
+	background: rgba(255, 255, 255, 0.22) !important;
+	border-color: var(--primary) !important;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.05);
+	transform: translateY(-1px);
+}
+
+.simulated-upload-box i {
+	transition: var(--spring-fast);
+}
+
+.simulated-upload-box:hover i {
+	transform: translateY(-2px);
+	color: var(--primary) !important;
+}
+
+/* İade Durum Rozetleri */
+.status-pill.returned-pending {
+	background: rgba(255, 193, 7, 0.12) !important;
+	color: #b58100 !important;
+	border: 1px solid rgba(255, 193, 7, 0.15) !important;
+}
+
+.status-pill.returned-restocked {
+	background: rgba(40, 167, 69, 0.12) !important;
+	color: #1e7e34 !important;
+	border: 1px solid rgba(40, 167, 69, 0.18) !important;
+}
+
+.status-pill.returned-damaged {
+	background: rgba(239, 68, 68, 0.1) !important;
+	color: #dc2626 !important;
+	border: 1px solid rgba(239, 68, 68, 0.15) !important;
+}
+
+.status-pill.returned-missing {
+	background: rgba(245, 158, 11, 0.1) !important;
+	color: #d97706 !important;
+	border: 1px solid rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Micro Interactions: spring hover transitions for interactive rows & forms */
+.orders-table-new tbody tr {
+	transition: var(--spring-fast);
+}
+
+.orders-table-new tbody tr:hover {
+	background: rgba(255, 255, 255, 0.18);
+	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+

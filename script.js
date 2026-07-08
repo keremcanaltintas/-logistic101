@@ -273,6 +273,9 @@ function initDashboard(username) {
 
 	// Entegre mağazaların durumlarını başlat
 	initConnectedStores();
+
+	// Dashboard Grafiklerini Başlat
+	setTimeout(initCharts, 100);
 }
 
 
@@ -844,6 +847,193 @@ let orders = [
 	}
 ];
 
+// ==========================================================================
+// DİNAMİK GRAFİK BİLEŞENLERİ (CHART.JS)
+// ==========================================================================
+let ciroChartInst = null;
+let channelsChartInst = null;
+
+function initCharts() {
+	const ciroCtx = document.getElementById('ciroChart');
+	const channelsCtx = document.getElementById('channelsChart');
+	
+	if (!ciroCtx || !channelsCtx) return;
+	if (typeof Chart === 'undefined') {
+		console.warn('Chart.js kütüphanesi henüz yüklenmedi.');
+		return;
+	}
+
+	// Overlapping önlemek için eski grafikleri yok et
+	if (ciroChartInst) ciroChartInst.destroy();
+	if (channelsChartInst) channelsChartInst.destroy();
+
+	// Line Chart: Sipariş & Ciro Dağılımı
+	ciroChartInst = new Chart(ciroCtx.getContext('2d'), {
+		type: 'line',
+		data: {
+			labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+			datasets: [
+				{
+					label: 'Ciro (₺)',
+					data: [5400, 7200, 4800, 8900, 6200, 9500, 7800],
+					borderColor: '#28a745',
+					backgroundColor: 'rgba(40, 167, 69, 0.04)',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.4,
+					pointBackgroundColor: '#28a745',
+					pointBorderColor: '#ffffff',
+					pointBorderWidth: 2,
+					pointRadius: 4,
+					pointHoverRadius: 7
+				},
+				{
+					label: 'Sipariş (Adet)',
+					data: [8, 12, 6, 15, 10, 18, 13],
+					borderColor: '#3b82f6',
+					backgroundColor: 'transparent',
+					borderWidth: 2,
+					tension: 0.4,
+					pointBackgroundColor: '#3b82f6',
+					pointBorderColor: '#ffffff',
+					pointBorderWidth: 2,
+					pointRadius: 4,
+					pointHoverRadius: 6,
+					yAxisID: 'y1'
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {
+					position: 'top',
+					labels: {
+						font: { family: 'Plus Jakarta Sans', weight: '700', size: 12 },
+						color: '#4a5568',
+						boxWidth: 14
+					}
+				},
+				tooltip: {
+					padding: 12,
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					titleColor: '#1a1f2c',
+					bodyColor: '#4a5568',
+					borderColor: 'rgba(0,0,0,0.06)',
+					borderWidth: 1,
+					titleFont: { family: 'Outfit', weight: '700', size: 13 },
+					bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+					boxPadding: 6,
+					usePointStyle: true
+				}
+			},
+			scales: {
+				x: {
+					grid: { display: false },
+					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+				},
+				y: {
+					type: 'linear',
+					display: true,
+					position: 'left',
+					grid: { color: 'rgba(0, 0, 0, 0.03)' },
+					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+				},
+				y1: {
+					type: 'linear',
+					display: true,
+					position: 'right',
+					grid: { drawOnChartArea: false },
+					ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } }
+				}
+			}
+		}
+	});
+
+	// Doughnut Chart: Sipariş Kanalları
+	channelsChartInst = new Chart(channelsCtx.getContext('2d'), {
+		type: 'doughnut',
+		data: {
+			labels: ['Shopify', 'Manuel', 'Excel'],
+			datasets: [{
+				data: [65, 20, 15],
+				backgroundColor: [
+					'rgba(40, 167, 69, 0.75)',
+					'rgba(59, 130, 246, 0.75)',
+					'rgba(245, 158, 11, 0.75)'
+				],
+				borderColor: 'rgba(255, 255, 255, 0.8)',
+				borderWidth: 2,
+				hoverOffset: 6
+			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {
+					position: 'bottom',
+					labels: {
+						font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 },
+						color: '#4a5568',
+						boxWidth: 10,
+						padding: 10
+					}
+				},
+				tooltip: {
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					titleColor: '#1a1f2c',
+					bodyColor: '#4a5568',
+					borderColor: 'rgba(0,0,0,0.06)',
+					borderWidth: 1,
+					bodyFont: { family: 'Plus Jakarta Sans' }
+				}
+			},
+			cutout: '70%'
+		}
+	});
+}
+
+// ==========================================================================
+// İADE VE KALİTE KONTROL MOCK VERİ SETİ (REVERSE LOGISTICS)
+// ==========================================================================
+let mockReturns = [
+	{
+		id: 'RET1024',
+		orderCode: '#1024',
+		customer: 'Kerem Yılmaz',
+		product: 'Wireless Ergonomik Mouse',
+		trackingCode: 'RET-TRK-749102',
+		status: 'PENDING', // PENDING, RESTOCKED, DAMAGED, MISSING
+		date: '24 Mayıs 2026, 14:30',
+		notes: 'Müşteri rengini beğenmediği için iade etmek istedi.',
+		photo: ''
+	},
+	{
+		id: 'RET1023',
+		orderCode: '#1023',
+		customer: 'Aysun Demir',
+		product: 'Deri Laptop Kılıfı 15.6"',
+		trackingCode: 'RET-TRK-830219',
+		status: 'PENDING',
+		date: '25 Mayıs 2026, 09:10',
+		notes: 'Dikiş hatası var, ürün hasarlı gibi görünüyor.',
+		photo: ''
+	},
+	{
+		id: 'RET1022',
+		orderCode: '#1022',
+		customer: 'Murat Şahin',
+		product: 'USB-C Hub Adaptör 7 in 1',
+		trackingCode: 'RET-TRK-109283',
+		status: 'PENDING',
+		date: '26 Mayıs 2026, 11:20',
+		notes: 'Hub adaptörün HDMI portu çalışmıyor dedi.',
+		photo: ''
+	}
+];
+
 // Menü Geçişleri ve Olay Dinleyicileri
 function initNavigation() {
 	const menuItems = {
@@ -851,6 +1041,7 @@ function initNavigation() {
 		'nav-connect': 'connect',
 		'nav-orders': 'orders',
 		'nav-verification': 'verification',
+		'nav-returns': 'returns',
 		'nav-products': 'products',
 		'nav-send-to-warehouse': 'send-to-warehouse',
 		'nav-wallet': 'wallet',
@@ -913,6 +1104,7 @@ function switchView(viewName) {
 	const reportsView = document.getElementById('reports-view');
 	const settingsView = document.getElementById('settings-view');
 	const verificationView = document.getElementById('verification-view');
+	const returnsView = document.getElementById('returns-view');
 	
 	const navDashboard = document.getElementById('nav-dashboard');
 	const navConnect = document.getElementById('nav-connect');
@@ -925,8 +1117,9 @@ function switchView(viewName) {
 	const navReports = document.getElementById('nav-reports');
 	const navSettings = document.getElementById('nav-settings');
 	const navVerification = document.getElementById('nav-verification');
+	const navReturns = document.getElementById('nav-returns');
 
-	if (!dashboardView || !connectView || !ordersView || !productsView || !sendToWarehouseView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView) return;
+	if (!dashboardView || !connectView || !ordersView || !productsView || !sendToWarehouseView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView || !returnsView) return;
 
 	// Mobil sidebar'ı kapat (eğer aktifse)
 	const sidebar = document.querySelector('.sidebar');
@@ -941,6 +1134,7 @@ function switchView(viewName) {
 	if (navConnect) navConnect.classList.remove('active');
 	navOrders.classList.remove('active');
 	if (navVerification) navVerification.classList.remove('active');
+	if (navReturns) navReturns.classList.remove('active');
 	if (navProducts) navProducts.classList.remove('active');
 	if (navSendToWarehouse) navSendToWarehouse.classList.remove('active');
 	if (navWallet) navWallet.classList.remove('active');
@@ -961,11 +1155,13 @@ function switchView(viewName) {
 	reportsView.style.display = 'none';
 	settingsView.style.display = 'none';
 	verificationView.style.display = 'none';
+	returnsView.style.display = 'none';
 
 	// İlgili görünümü aç
 	if (viewName === 'dashboard') {
 		dashboardView.style.display = 'block';
 		navDashboard.classList.add('active');
+		setTimeout(initCharts, 50); // DOM render süresi için kısa gecikme
 	} else if (viewName === 'connect') {
 		connectView.style.display = 'block';
 		if (navConnect) navConnect.classList.add('active');
@@ -1009,6 +1205,10 @@ function switchView(viewName) {
 		verificationView.style.display = 'block';
 		if (navVerification) navVerification.classList.add('active');
 		initVerificationView();
+	} else if (viewName === 'returns') {
+		returnsView.style.display = 'block';
+		if (navReturns) navReturns.classList.add('active');
+		renderReturns();
 	}
 }
 
@@ -3564,6 +3764,226 @@ async function saveCallOutcome() {
 	// Arayüzü sıfırla
 	initVerificationView();
 }
+
+// ==========================================================================
+// İADE VE KALİTE KONTROL MANTIK FONKSİYONLARI (REVERSE LOGISTICS)
+// ==========================================================================
+let activeReturnItem = null;
+
+function renderReturns(searchQuery = '') {
+	const tbody = document.getElementById('returns-list-tbody');
+	const pendingCountBadge = document.getElementById('returns-pending-count');
+	if (!tbody) return;
+
+	tbody.innerHTML = '';
+	let filtered = mockReturns;
+
+	if (searchQuery) {
+		const q = searchQuery.toLowerCase().trim();
+		filtered = mockReturns.filter(item => 
+			item.id.toLowerCase().includes(q) || 
+			item.orderCode.toLowerCase().includes(q) || 
+			item.customer.toLowerCase().includes(q) || 
+			item.trackingCode.toLowerCase().includes(q)
+		);
+	}
+
+	if (filtered.length === 0) {
+		tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Eşleşen iade kaydı bulunamadı.</td></tr>`;
+		return;
+	}
+
+	filtered.forEach(item => {
+		let badgeHtml = '';
+		if (item.status === 'PENDING') {
+			badgeHtml = `<span class="status-pill returned-pending"><i class="fa-solid fa-clock"></i> İncelenecek</span>`;
+		} else if (item.status === 'RESTOCKED') {
+			badgeHtml = `<span class="status-pill returned-restocked"><i class="fa-solid fa-check"></i> Rafa Kondu</span>`;
+		} else if (item.status === 'DAMAGED') {
+			badgeHtml = `<span class="status-pill returned-damaged"><i class="fa-solid fa-trash-can"></i> İmha Edildi</span>`;
+		} else if (item.status === 'MISSING') {
+			badgeHtml = `<span class="status-pill returned-missing"><i class="fa-solid fa-triangle-exclamation"></i> Eksik Parça</span>`;
+		}
+
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+			<td><strong>${item.id}</strong></td>
+			<td><span class="code-highlight">${item.orderCode}</span></td>
+			<td>${item.customer}</td>
+			<td>${item.product}</td>
+			<td>${badgeHtml}</td>
+			<td>
+				<button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="inspectReturn('${item.id}')">
+					<i class="fa-solid fa-magnifying-glass"></i> İncele
+				</button>
+			</td>
+		`;
+		tbody.appendChild(tr);
+	});
+
+	// Bekleyen İade Sayısını Güncelle
+	const pendingCount = mockReturns.filter(i => i.status === 'PENDING').length;
+	if (pendingCountBadge) {
+		pendingCountBadge.textContent = pendingCount;
+	}
+}
+
+function handleReturnSearch(event) {
+	event.preventDefault();
+	const val = document.getElementById('returns-search-input').value;
+	renderReturns(val);
+}
+
+function inspectReturn(returnId) {
+	const item = mockReturns.find(r => r.id === returnId);
+	if (!item) return;
+
+	activeReturnItem = item;
+	const panel = document.getElementById('returns-report-panel');
+	const panelTitle = document.getElementById('returns-panel-title');
+	const infoBox = document.getElementById('returns-product-info-box');
+
+	if (panelTitle) panelTitle.textContent = `İade İnceleme: ${item.id}`;
+
+	if (infoBox) {
+		infoBox.innerHTML = `
+			<div class="product-info-box" style="padding: 12px; background: rgba(255,255,255,0.15); border-radius: var(--radius-md); border: 1.5px solid var(--glass-border); line-height: 1.6;">
+				<p><strong>Müşteri:</strong> ${item.customer}</p>
+				<p><strong>Sipariş No:</strong> ${item.orderCode}</p>
+				<p><strong>Ürün:</strong> ${item.product}</p>
+				<p><strong>İade Kargo No:</strong> ${item.trackingCode}</p>
+				<p style="margin-top: 6px; border-top: 1px dashed rgba(0,0,0,0.06); padding-top: 6px;">
+					<strong>Müşteri İade Notu:</strong> <br>
+					<span style="font-style: italic; color: var(--text-secondary); font-size: 13px;">"${item.notes}"</span>
+				</p>
+			</div>
+		`;
+	}
+
+	// Formu sıfırla
+	document.getElementById('return-qc-status').value = 'SAGLAM';
+	document.getElementById('return-qc-notes').value = '';
+	removeReturnPhoto();
+
+	// Paneli aç
+	if (panel) {
+		panel.style.display = 'block';
+		panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	}
+}
+
+function closeReturnReportPanel() {
+	const panel = document.getElementById('returns-report-panel');
+	if (panel) panel.style.display = 'none';
+	activeReturnItem = null;
+}
+
+function handleReturnQcStatusChange() {
+	const status = document.getElementById('return-qc-status').value;
+	const notesField = document.getElementById('return-qc-notes');
+	if (notesField && notesField.value === '') {
+		if (status === 'SAGLAM') {
+			notesField.placeholder = "Ürün sağlam durumda, yeniden raflara aktarılabilir...";
+		} else if (status === 'HASARLI') {
+			notesField.placeholder = "Ürün kutusu ezilmiş, elektronik devre hasarlı. İmhaya ayrılacak...";
+		} else if (status === 'EKSIK') {
+			notesField.placeholder = "Ürün kutusundan şarj adaptörü ve kablosu çıkmadı...";
+		}
+	}
+}
+
+function handleReturnPhotoUpload(event) {
+	const file = event.target.files[0];
+	if (!file) return;
+
+	const reader = new FileReader();
+	reader.onload = function(e) {
+		const previewContainer = document.getElementById('qc-photo-preview-container');
+		const previewImg = document.getElementById('qc-photo-preview');
+		const uploadWrapper = document.getElementById('qc-photo-upload-wrapper');
+
+		if (previewImg && previewContainer) {
+			previewImg.src = e.target.result;
+			previewContainer.style.display = 'block';
+			if (uploadWrapper) {
+				uploadWrapper.style.borderColor = 'var(--primary)';
+			}
+		}
+	};
+	reader.readAsDataURL(file);
+}
+
+function removeReturnPhoto() {
+	const fileInput = document.getElementById('return-photo-input');
+	const previewContainer = document.getElementById('qc-photo-preview-container');
+	const previewImg = document.getElementById('qc-photo-preview');
+	const uploadWrapper = document.getElementById('qc-photo-upload-wrapper');
+
+	if (fileInput) fileInput.value = '';
+	if (previewImg) previewImg.src = '';
+	if (previewContainer) previewContainer.style.display = 'none';
+	if (uploadWrapper) {
+		uploadWrapper.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+	}
+}
+
+function submitReturnReport() {
+	if (!activeReturnItem) return;
+
+	const qcStatus = document.getElementById('return-qc-status').value;
+	const qcNotes = document.getElementById('return-qc-notes').value.trim();
+
+	if (!qcNotes) {
+		alert('Lütfen iade inceleme notunu yazın!');
+		return;
+	}
+
+	// İade mock durumunu güncelle
+	let targetStatus = 'PENDING';
+	if (qcStatus === 'SAGLAM') {
+		targetStatus = 'RESTOCKED';
+		// Stok seviyesini lokal simüle et (varsayılan ürünü bulup stok ekle)
+		if (typeof products !== 'undefined') {
+			const matchedProd = products.find(p => p.name === activeReturnItem.product);
+			if (matchedProd) {
+				matchedProd.stock += 1;
+				if (typeof renderProducts === 'function') renderProducts();
+			}
+		}
+	} else if (qcStatus === 'HASARLI') {
+		targetStatus = 'DAMAGED';
+	} else if (qcStatus === 'EKSIK') {
+		targetStatus = 'MISSING';
+	}
+
+	activeReturnItem.status = targetStatus;
+	activeReturnItem.qcNotes = qcNotes;
+
+	// Yüklenen görsel base64'ünü kaydet (simülasyon)
+	const previewImg = document.getElementById('qc-photo-preview');
+	if (previewImg && previewImg.src) {
+		activeReturnItem.photo = previewImg.src;
+	}
+
+	// Başarı bildirimi ve animasyon
+	showNotification(`İade Raporu Başarıyla Kaydedildi: ${activeReturnItem.id} (${targetStatus})`, 'success');
+
+	// Konfeti fırlat
+	if (typeof triggerConfetti === 'function') {
+		triggerConfetti();
+	} else {
+		const conf = document.getElementById('confetti-container');
+		if (conf) {
+			conf.style.display = 'block';
+			setTimeout(() => { conf.style.display = 'none'; }, 2000);
+		}
+	}
+
+	// Arayüzü güncelle ve kapat
+	closeReturnReportPanel();
+	renderReturns();
+}
+
 
 
 
