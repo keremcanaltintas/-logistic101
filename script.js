@@ -170,7 +170,8 @@ function transitionToDashboard() {
 	setTimeout(() => {
 		loginPage.style.display = 'none';
 		
-		const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		let lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		if (lastView === 'send-to-warehouse') lastView = 'dashboard';
 		switchView(lastView);
 	}, 600);
 }
@@ -217,7 +218,8 @@ function checkLoginAndRoute() {
 		document.getElementById('login-page').style.display = 'none';
 		document.getElementById('dashboard-page').style.display = 'flex';
 		showChatbot();
-		const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		let lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
+		if (lastView === 'send-to-warehouse') lastView = 'dashboard';
 		switchView(lastView);
 	}
 	setupModalScrollBlocker();
@@ -1142,10 +1144,11 @@ function toggleMobileSidebar() {
 }
 
 function switchView(viewName) {
-	// Sayfa yenilemelerinde aktif sayfayı korumak için kaydet
-	if (viewName !== 'send-to-warehouse') {
-		localStorage.setItem('nestro_current_view', viewName);
+	if (viewName === 'send-to-warehouse') {
+		viewName = 'dashboard';
 	}
+	// Sayfa yenilemelerinde aktif sayfayı korumak için kaydet
+	localStorage.setItem('nestro_current_view', viewName);
 
 	const dashboardView = document.getElementById('dashboard-view');
 	const connectView = document.getElementById('connect-view');
