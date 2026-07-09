@@ -3775,10 +3775,12 @@ function endCustomerCall() {
 
 // Arama Modalını Kapat (Kullanıcı çarpıya bastığında tetiklenir)
 function closeCallModal() {
-	closeModalWithAnimation('verification-call-panel');
-	// Eğer görüşme hala aktifse aramayı sonlandır
 	if (activeCallState === 'connecting' || activeCallState === 'active') {
+		// Arama aktifse çarpıya basıldığında sadece aramayı kapatıp sonuç formunu gösteriyoruz
 		endCustomerCall();
+	} else {
+		// Arama zaten bittiyse modalı tamamen kapatıyoruz
+		closeModalWithAnimation('verification-call-panel');
 	}
 }
 
