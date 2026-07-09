@@ -6862,4 +6862,23 @@ body {
 	box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
+/* Depoya Ürün Gönder Modalı Spring Slide-Down Stilleri */
+.spring-out-element {
+	opacity: 0;
+	transform: translateY(-30px) scale(0.96);
+	max-height: 0;
+	overflow: hidden;
+	transition: all 0.5s cubic-bezier(0.34, 1.6, 0.64, 1) !important;
+	margin-bottom: 0 !important;
+	pointer-events: none;
+}
+
+.spring-out-element.show {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	max-height: 800px;
+	margin-bottom: 24px !important;
+	pointer-events: auto;
+}
+
 

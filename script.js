@@ -1122,7 +1122,11 @@ function initNavigation() {
 			el.parentNode.replaceChild(newEl, el);
 			newEl.addEventListener('click', (e) => {
 				e.preventDefault();
-				switchView(menuItems[id]);
+				if (menuItems[id] === 'send-to-warehouse') {
+					openSendToWarehouseModal();
+				} else {
+					switchView(menuItems[id]);
+				}
 			});
 		}
 	});
@@ -1139,13 +1143,14 @@ function toggleMobileSidebar() {
 
 function switchView(viewName) {
 	// Sayfa yenilemelerinde aktif sayfayı korumak için kaydet
-	localStorage.setItem('nestro_current_view', viewName);
+	if (viewName !== 'send-to-warehouse') {
+		localStorage.setItem('nestro_current_view', viewName);
+	}
 
 	const dashboardView = document.getElementById('dashboard-view');
 	const connectView = document.getElementById('connect-view');
 	const ordersView = document.getElementById('orders-view');
 	const productsView = document.getElementById('products-view');
-	const sendToWarehouseView = document.getElementById('send-to-warehouse-view');
 	const walletView = document.getElementById('wallet-view');
 	const supportView = document.getElementById('support-view');
 	const smsView = document.getElementById('sms-view');
@@ -1165,7 +1170,7 @@ function switchView(viewName) {
 	const navSettings = document.getElementById('nav-settings');
 	const navVerification = document.getElementById('nav-verification');
 
-	if (!dashboardView || !connectView || !ordersView || !productsView || !sendToWarehouseView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView) return;
+	if (!dashboardView || !connectView || !ordersView || !productsView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView) return;
 
 	// Mobil sidebar'ı kapat (eğer aktifse)
 	const sidebar = document.querySelector('.sidebar');
@@ -1193,7 +1198,6 @@ function switchView(viewName) {
 	connectView.style.display = 'none';
 	ordersView.style.display = 'none';
 	productsView.style.display = 'none';
-	sendToWarehouseView.style.display = 'none';
 	walletView.style.display = 'none';
 	supportView.style.display = 'none';
 	smsView.style.display = 'none';
@@ -1220,11 +1224,6 @@ function switchView(viewName) {
 		productsView.style.display = 'block';
 		if (navProducts) navProducts.classList.add('active');
 		renderProducts();
-	} else if (viewName === 'send-to-warehouse') {
-		sendToWarehouseView.style.display = 'block';
-		if (navSendToWarehouse) navSendToWarehouse.classList.add('active');
-		// default to return service type when entering
-		setServiceType('return');
 	} else if (viewName === 'wallet') {
 		walletView.style.display = 'block';
 		if (navWallet) navWallet.classList.add('active');
@@ -3227,14 +3226,32 @@ const NESTRO_WAREHOUSE_ADDRESS = {
 	address: "Orta Mahalle, Üniversite Caddesi No:15, Nestro Lojistik Merkezi, Tuzla / İstanbul"
 };
 
-let currentServiceType = 'standard';
+let currentServiceType = 'return';
 
-// Hizmet Türü Değişimi ve Adres Otomatik Doldurma / Kitleme
+// Depoya Ürün Gönder Modalı Helper Fonksiyonları
+function openSendToWarehouseModal() {
+	const modal = document.getElementById('send-to-warehouse-modal');
+	if (modal) {
+		modal.style.display = 'flex';
+		// default to return service type when opening
+		setServiceType('return');
+	}
+}
+
+function closeSendToWarehouseModal() {
+	closeModalWithAnimation('send-to-warehouse-modal');
+}
+
+// Hizmet Türü Değişimi ve Adres Otomatik Doldurma / Kitleme / Yaylanarak Fırlama (Spring) Animasyonu
 function setServiceType(type) {
 	currentServiceType = type;
 	
 	const btnReturn = document.getElementById('btn-service-return');
 	const btnStandard = document.getElementById('btn-service-standard');
+	
+	const senderCard = document.getElementById('sender-info-card');
+	const receiverCard = document.getElementById('receiver-info-card');
+	const paymentCard = document.getElementById('shipment-payment-card');
 	
 	// Form input elements
 	const senderName = document.getElementById('sender-name');
@@ -3248,8 +3265,10 @@ function setServiceType(type) {
 	const receiverCity = document.getElementById('receiver-city');
 	const receiverDistrict = document.getElementById('receiver-district');
 	const receiverAddress = document.getElementById('receiver-address');
-
-	if (!senderName || !receiverName) return;
+	
+	const desi = document.getElementById('shipment-desi');
+	const packages = document.getElementById('shipment-packages');
+	const paymentMethod = document.getElementById('shipment-payment-method');
 
 	if (btnReturn) {
 		if (type === 'return') btnReturn.classList.add('active');
@@ -3260,68 +3279,38 @@ function setServiceType(type) {
 		else btnStandard.classList.remove('active');
 	}
 
+	const animatedCards = [senderCard, receiverCard, paymentCard];
+	const formFields = [
+		senderName, senderPhone, senderCity, senderDistrict, senderAddress,
+		receiverName, receiverPhone, receiverCity, receiverDistrict, receiverAddress,
+		desi, packages
+	];
+
 	if (type === 'return') {
-		// Toggle buttons active classes
-		btnReturn.classList.add('active');
-		btnStandard.classList.remove('active');
+		// Kartları gizle (Yaylanarak kapanma animasyonu)
+		animatedCards.forEach(card => {
+			if (card) card.classList.remove('show');
+		});
 
-		// Lock receiver to Nestro Depo
-		receiverName.value = NESTRO_WAREHOUSE_ADDRESS.name;
-		receiverName.readOnly = true;
-		receiverPhone.value = NESTRO_WAREHOUSE_ADDRESS.phone;
-		receiverPhone.readOnly = true;
-		receiverCity.value = NESTRO_WAREHOUSE_ADDRESS.city;
-		receiverCity.readOnly = true;
-		receiverDistrict.value = NESTRO_WAREHOUSE_ADDRESS.district;
-		receiverDistrict.readOnly = true;
-		receiverAddress.value = NESTRO_WAREHOUSE_ADDRESS.address;
-		receiverAddress.readOnly = true;
-
-		// Unlock sender and clear fields if they were locked
-		if (senderName.readOnly) {
-			senderName.value = '';
-			senderName.readOnly = false;
-			senderPhone.value = '';
-			senderPhone.readOnly = false;
-			senderCity.value = '';
-			senderCity.readOnly = false;
-			senderDistrict.value = '';
-			senderDistrict.readOnly = false;
-			senderAddress.value = '';
-			senderAddress.readOnly = false;
-		}
+		// Browser validasyon hatası vermemesi için required özniteliklerini kaldır
+		formFields.forEach(field => {
+			if (field) {
+				field.removeAttribute('required');
+				field.value = ''; // temizle
+			}
+		});
 	} else if (type === 'standard') {
-		// Toggle buttons active classes
-		btnStandard.classList.add('active');
-		btnReturn.classList.remove('active');
+		// Kartları göster (Yaylanarak fırlama animasyonu)
+		animatedCards.forEach(card => {
+			if (card) card.classList.add('show');
+		});
 
-		// Unlock sender and clear fields if they were locked
-		if (senderName.readOnly) {
-			senderName.value = '';
-			senderName.readOnly = false;
-			senderPhone.value = '';
-			senderPhone.readOnly = false;
-			senderCity.value = '';
-			senderCity.readOnly = false;
-			senderDistrict.value = '';
-			senderDistrict.readOnly = false;
-			senderAddress.value = '';
-			senderAddress.readOnly = false;
-		}
-
-		// Unlock receiver and clear fields if they were locked
-		if (receiverName.readOnly) {
-			receiverName.value = '';
-			receiverName.readOnly = false;
-			receiverPhone.value = '';
-			receiverPhone.readOnly = false;
-			receiverCity.value = '';
-			receiverCity.readOnly = false;
-			receiverDistrict.value = '';
-			receiverDistrict.readOnly = false;
-			receiverAddress.value = '';
-			receiverAddress.readOnly = false;
-		}
+		// Inputları required yap
+		formFields.forEach(field => {
+			if (field) {
+				field.setAttribute('required', 'true');
+			}
+		});
 	}
 }
 
@@ -3331,32 +3320,62 @@ function handleCreateWarehouseShipment(event) {
 	
 	const carrier = document.getElementById('shipment-carrier').value;
 	const refId = document.getElementById('shipment-ref-id').value || '-';
+	const serviceType = currentServiceType;
 	
-	const senderName = document.getElementById('sender-name').value;
-	const senderPhone = document.getElementById('sender-phone').value;
-	const senderCity = document.getElementById('sender-city').value;
-	const senderDistrict = document.getElementById('sender-district').value;
-	const senderAddress = document.getElementById('sender-address').value;
+	let senderNameVal, senderPhoneVal, senderCityVal, senderDistrictVal, senderAddressVal;
+	let receiverNameVal, receiverPhoneVal, receiverCityVal, receiverDistrictVal, receiverAddressVal;
+	let desiVal, packagesVal, noteVal, paymentMethodVal;
 	
-	const receiverName = document.getElementById('receiver-name').value;
-	const receiverPhone = document.getElementById('receiver-phone').value;
-	const receiverCity = document.getElementById('receiver-city').value;
-	const receiverDistrict = document.getElementById('receiver-district').value;
-	const receiverAddress = document.getElementById('receiver-address').value;
+	if (serviceType === 'return') {
+		// İade (Depoya Gönderim) Modu: Alıcı Nestro Deposudur (Formda doldurulmasına gerek yok)
+		senderNameVal = 'emin çeri (Mağaza Sahibi)';
+		senderPhoneVal = '0555 123 45 67';
+		senderCityVal = 'İstanbul';
+		senderDistrictVal = 'Kadıköy';
+		senderAddressVal = 'Caferağa Mah. Moda Cad. No:82';
+		
+		receiverNameVal = NESTRO_WAREHOUSE_ADDRESS.name;
+		receiverPhoneVal = NESTRO_WAREHOUSE_ADDRESS.phone;
+		receiverCityVal = NESTRO_WAREHOUSE_ADDRESS.city;
+		receiverDistrictVal = NESTRO_WAREHOUSE_ADDRESS.district;
+		receiverAddressVal = NESTRO_WAREHOUSE_ADDRESS.address;
+		
+		desiVal = '2';
+		packagesVal = '1';
+		noteVal = document.getElementById('shipment-note').value || '-';
+		paymentMethodVal = 'cari';
+	} else {
+		// Standart Teslimat Modu: Formdan bilgileri al
+		senderNameVal = document.getElementById('sender-name').value;
+		senderPhoneVal = document.getElementById('sender-phone').value;
+		senderCityVal = document.getElementById('sender-city').value;
+		senderDistrictVal = document.getElementById('sender-district').value;
+		senderAddressVal = document.getElementById('sender-address').value;
+		
+		receiverNameVal = document.getElementById('receiver-name').value;
+		receiverPhoneVal = document.getElementById('receiver-phone').value;
+		receiverCityVal = document.getElementById('receiver-city').value;
+		receiverDistrictVal = document.getElementById('receiver-district').value;
+		receiverAddressVal = document.getElementById('receiver-address').value;
+		
+		desiVal = document.getElementById('shipment-desi').value;
+		packagesVal = document.getElementById('shipment-packages').value;
+		noteVal = document.getElementById('shipment-note').value || '-';
+		paymentMethodVal = document.getElementById('shipment-payment-method').value;
+		
+		if (!senderNameVal || !senderPhoneVal || !senderCityVal || !senderDistrictVal || !senderAddressVal || 
+			!receiverNameVal || !receiverPhoneVal || !receiverCityVal || !receiverDistrictVal || !receiverAddressVal || !desiVal || !packagesVal) {
+			showNotification('Lütfen zorunlu alanları doldurun.', 'error');
+			return;
+		}
+	}
 	
-	const desi = document.getElementById('shipment-desi').value;
-	const packages = document.getElementById('shipment-packages').value;
-	const note = document.getElementById('shipment-note').value || '-';
-	const paymentMethod = document.getElementById('shipment-payment-method').value;
-
-	if (!carrier || !senderName || !senderPhone || !senderCity || !senderDistrict || !senderAddress || 
-		!receiverName || !receiverPhone || !receiverCity || !receiverDistrict || !receiverAddress || !desi || !packages) {
-		showNotification('Lütfen zorunlu alanları doldurun.', 'error');
+	if (!carrier) {
+		showNotification('Lütfen bir taşıyıcı firma seçiniz.', 'error');
 		return;
 	}
 
 	const btnSubmit = document.getElementById('btn-create-warehouse-shipment');
-	
 	if (!btnSubmit) return;
 
 	// Spinner & Pulse Efekti
@@ -3368,39 +3387,42 @@ function handleCreateWarehouseShipment(event) {
 		btnSubmit.classList.remove('loading-pulse');
 		btnSubmit.innerHTML = oldBtnHtml;
 
+		// Depo modalını kapat
+		closeSendToWarehouseModal();
+
 		// Takip Numarası Oluşturma (Mock)
 		const randomTracking = 'NT' + Math.floor(100000000 + Math.random() * 900000000);
 		const today = new Date().toLocaleDateString('tr-TR');
 
-		// Modal Alanlarını Doldurma
+		// Başarı Label Kart Değerleri
 		document.getElementById('label-carrier').textContent = carrier;
-		document.getElementById('label-service-type').textContent = currentServiceType === 'return' ? 'İADE' : 'STANDART';
+		document.getElementById('label-service-type').textContent = serviceType === 'return' ? 'İADE' : 'STANDART';
 		
-		document.getElementById('label-sender-name').textContent = senderName;
-		document.getElementById('label-sender-phone').textContent = senderPhone;
-		document.getElementById('label-sender-address').textContent = `${senderAddress} ${senderDistrict}/${senderCity}`;
+		document.getElementById('label-sender-name').textContent = senderNameVal;
+		document.getElementById('label-sender-phone').textContent = senderPhoneVal;
+		document.getElementById('label-sender-address').textContent = `${senderAddressVal} ${senderDistrictVal}/${senderCityVal}`;
 		
-		document.getElementById('label-receiver-name').textContent = receiverName;
-		document.getElementById('label-receiver-phone').textContent = receiverPhone;
-		document.getElementById('label-receiver-address').textContent = `${receiverAddress} ${receiverDistrict}/${receiverCity}`;
+		document.getElementById('label-receiver-name').textContent = receiverNameVal;
+		document.getElementById('label-receiver-phone').textContent = receiverPhoneVal;
+		document.getElementById('label-receiver-address').textContent = `${receiverAddressVal} ${receiverDistrictVal}/${receiverCityVal}`;
 		
 		document.getElementById('label-date').textContent = today;
-		document.getElementById('label-desi-qty').textContent = `${desi} Desi / ${packages} Pk`;
+		document.getElementById('label-desi-qty').textContent = `${desiVal} Desi / ${packagesVal} Pk`;
 		document.getElementById('label-ref-id').textContent = refId;
 		document.getElementById('label-tracking-code').textContent = randomTracking;
-		document.getElementById('label-shipment-note').textContent = note;
+		document.getElementById('label-shipment-note').textContent = noteVal;
 
 		// Not satırını göster/gizle
 		const labelNoteContainer = document.getElementById('label-note-container');
-		if (note === '-') {
+		if (noteVal === '-') {
 			if (labelNoteContainer) labelNoteContainer.style.display = 'none';
 		} else {
 			if (labelNoteContainer) labelNoteContainer.style.display = 'block';
 		}
 
-		// Modal Aç
-		const modal = document.getElementById('shipment-success-modal');
-		if (modal) modal.style.display = 'flex';
+		// Rapor / Barkod Modalını Aç
+		const successModal = document.getElementById('shipment-success-modal');
+		if (successModal) successModal.style.display = 'flex';
 
 		showNotification('Gönderi başarıyla oluşturuldu ve etiket hazırlandı.', 'success');
 		
@@ -3409,7 +3431,7 @@ function handleCreateWarehouseShipment(event) {
 	}, 1500);
 }
 
-// Modal Kapatma
+// Barkod Modalı Kapatma
 function closeShipmentSuccessModal() {
 	const modal = document.getElementById('shipment-success-modal');
 	if (modal) modal.style.display = 'none';
@@ -3420,7 +3442,7 @@ function resetWarehouseShipmentForm() {
 	const form = document.getElementById('warehouse-shipment-form');
 	if (form) {
 		form.reset();
-		setServiceType('standard');
+		setServiceType('return');
 	}
 }
 
