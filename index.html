@@ -609,9 +609,12 @@
 							<h1>Siparişlerim</h1>
 							<p class="header-subtitle">Tüm siparişlerini buradan kolayca yönetebilirsin</p>
 						</div>
-						<div class="orders-search-wrapper" style="position: relative; max-width: 280px; width: 100%;">
-							<i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13.5px;"></i>
-							<input type="text" id="orders-local-search" placeholder="Siparişlerde Ara..." style="width: 100%; padding: 10px 14px 10px 38px; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius-md); font-family: var(--font-main); font-size: 13.5px; outline: none; transition: var(--transition-smooth);" oninput="handleLocalOrderSearch()">
+						<div style="display: flex; align-items: center; gap: 12px; max-width: 500px; width: 100%; justify-content: flex-end; flex-wrap: wrap;">
+							<div class="orders-search-wrapper" style="position: relative; max-width: 240px; width: 100%;">
+								<i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13.5px;"></i>
+								<input type="text" id="orders-local-search" placeholder="Siparişlerde Ara..." style="width: 100%; height: 38px; padding: 0 14px 0 38px; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius-md); font-family: var(--font-main); font-size: 13.5px; outline: none; transition: var(--transition-smooth);" oninput="handleLocalOrderSearch()">
+							</div>
+							<button class="btn-create-draft-trigger" onclick="openDraftOrderModal()"><i class="fa-solid fa-circle-plus"></i> Taslak Sipariş Oluştur</button>
 						</div>
 					</div>
 				</header>
@@ -709,45 +712,7 @@
 						</div>
 					</div>
 
-					<!-- Sağ Sütun: Taslak Sipariş Paneli -->
-					<div class="draft-order-panel">
-						<div class="draft-card">
-							<h3 class="draft-title"><i class="fa-solid fa-circle-plus"></i> Taslak Sipariş Oluştur</h3>
-							<form id="draft-order-form" onsubmit="handleCreateDraftOrder(event)">
-								<!-- Sipariş Kodu (Read-only) -->
-								<div class="form-group-draft">
-									<label for="draft-order-code">Sipariş Kodu</label>
-									<input type="text" id="draft-order-code" readonly value="#1025">
-								</div>
-								<div class="form-group-draft">
-									<label for="draft-customer-name">Müşteri Bilgisi</label>
-									<input type="text" id="draft-customer-name" placeholder="Müşterinin Adı Soyadı" required>
-								</div>
-								<div class="form-group-draft">
-									<label for="draft-product-name">Ürün</label>
-									<input type="text" id="draft-product-name" placeholder="Örn: Wireless Ergonomik Mouse" required>
-								</div>
-								<div class="form-group-draft">
-									<label for="draft-customer-phone">Telefon Numarası</label>
-									<input type="text" id="draft-customer-phone" placeholder="Örn: +90 532 123 4567" required>
-								</div>
-								<div class="form-group-draft">
-									<label for="draft-payment-type">Ödeme Tipi</label>
-									<div class="priority-select-group" style="width: 100%;">
-										<select id="draft-payment-type" style="width: 100%;">
-											<option value="paid" selected>Ödendi (Kredi Kartı / EFT)</option>
-											<option value="cod">Kapıda Ödeme (CoD)</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group-draft">
-									<label for="draft-customer-address">Teslimat Adresi</label>
-									<textarea id="draft-customer-address" placeholder="Detaylı Teslimat Adresi" required rows="3"></textarea>
-								</div>
-								<button type="submit" class="btn-create-draft">Oluştur</button>
-							</form>
-						</div>
-					</div>
+
 				</div>
 			</div>
 
@@ -1552,6 +1517,54 @@
 	<div id="confetti-container" class="confetti-container"></div>
 
 	<!-- ==================== MODAL BİLEŞENLERİ ==================== -->
+	<!-- Taslak Sipariş Oluştur Modalı -->
+	<div id="draft-order-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box vertical-rectangle-modal">
+			<div class="modal-header">
+				<h3 class="modal-title"><i class="fa-solid fa-circle-plus"></i> Taslak Sipariş Oluştur</h3>
+				<button class="modal-close-btn" onclick="closeDraftOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="draft-order-form" onsubmit="handleCreateDraftOrder(event)">
+				<div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+					<!-- Sipariş Kodu (Read-only) -->
+					<div class="form-group-draft">
+						<label for="draft-order-code">Sipariş Kodu</label>
+						<input type="text" id="draft-order-code" readonly value="#1025">
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-customer-name">Müşteri Bilgisi</label>
+						<input type="text" id="draft-customer-name" placeholder="Müşterinin Adı Soyadı" required>
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-product-name">Ürün</label>
+						<input type="text" id="draft-product-name" placeholder="Örn: Wireless Ergonomik Mouse" required>
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-customer-phone">Telefon Numarası</label>
+						<input type="text" id="draft-customer-phone" placeholder="Örn: +90 532 123 4567" required>
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-payment-type">Ödeme Tipi</label>
+						<div class="priority-select-group" style="width: 100%;">
+							<select id="draft-payment-type" style="width: 100%;">
+								<option value="paid" selected>Ödendi (Kredi Kartı / EFT)</option>
+								<option value="cod">Kapıda Ödeme (CoD)</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-customer-address">Teslimat Adresi</label>
+						<textarea id="draft-customer-address" placeholder="Detaylı Teslimat Adresi" required rows="3"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color);">
+					<button type="button" class="btn-secondary" onclick="closeDraftOrderModal()">Vazgeç</button>
+					<button type="submit" class="btn-create-draft" style="margin-top: 0; width: auto; padding: 10px 24px;">Oluştur</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
 	<!-- Dinamik Mağaza Bağlantı Modalı -->
 	<div id="store-connect-modal" class="modal-backdrop" style="display: none;">
 		<div class="modal-box" style="max-width: 480px;">

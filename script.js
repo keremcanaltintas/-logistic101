@@ -1576,6 +1576,22 @@ function updateNextOrderCodeField() {
 	}
 }
 
+// Taslak Sipariş Modalı Aç/Kapat
+function openDraftOrderModal() {
+	const modal = document.getElementById('draft-order-modal');
+	if (modal) {
+		modal.style.display = 'flex';
+		updateNextOrderCodeField();
+	}
+}
+
+function closeDraftOrderModal() {
+	const modal = document.getElementById('draft-order-modal');
+	if (modal) {
+		modal.style.display = 'none';
+	}
+}
+
 // Taslak Sipariş Oluşturma Olayı
 function handleCreateDraftOrder(e) {
 	e.preventDefault();
@@ -1641,6 +1657,9 @@ function handleCreateDraftOrder(e) {
 	
 	// Formu sıfırla
 	document.getElementById('draft-order-form').reset();
+	
+	// Modalı Kapat
+	closeDraftOrderModal();
 	
 	// Arayüzü güncelle
 	renderOrders(currentFilter, currentSearchQuery);

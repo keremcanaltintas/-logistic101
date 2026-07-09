@@ -2777,6 +2777,49 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	transform: translateY(0);
 }
 
+.btn-create-draft-trigger {
+	height: 38px;
+	padding: 0 16px;
+	border-radius: var(--radius-md);
+	font-family: var(--font-main);
+	font-size: 13px;
+	font-weight: 700;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	white-space: nowrap;
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	background: rgba(16, 185, 129, 0.1);
+	color: var(--primary);
+	cursor: pointer;
+	transition: var(--spring-fast);
+}
+
+.btn-create-draft-trigger:hover {
+	background: var(--primary);
+	color: #ffffff;
+	box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+	transform: translateY(-1.5px);
+}
+
+.vertical-rectangle-modal {
+	max-width: 440px !important;
+	width: 100% !important;
+	border-radius: var(--radius-lg) !important;
+	background: var(--glass-bg-heavy) !important;
+	backdrop-filter: var(--glass-blur-heavy) !important;
+	-webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+	border: 1px solid var(--glass-border-heavy) !important;
+	box-shadow: var(--glass-shadow-elevated) !important;
+}
+
+#draft-order-modal .form-group-draft {
+	margin-bottom: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
 /* Toast Bildirim Sistemi */
 .toast-container {
 	position: fixed;
