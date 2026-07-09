@@ -1656,7 +1656,8 @@ function handleCreateDraftOrder(e) {
 	orders.unshift(newOrder);
 	
 	// Formu sıfırla
-	document.getElementById('draft-order-form').reset();
+	const modalForm = document.getElementById('modal-draft-order-form');
+	if (modalForm) modalForm.reset();
 	
 	// Modalı Kapat
 	closeDraftOrderModal();

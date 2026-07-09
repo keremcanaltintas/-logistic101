@@ -2685,11 +2685,11 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	color: var(--primary);
 }
 
-#draft-order-form {
-	display: grid;
-	grid-template-columns: repeat(12, 1fr);
+#modal-draft-order-form {
+	display: flex;
+	flex-direction: column;
 	gap: 16px;
-	align-items: end;
+	width: 100%;
 }
 
 .form-group-draft {
@@ -2740,15 +2740,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	box-shadow: 0 0 12px rgba(16, 185, 129, 0.15) !important;
 }
 
-#draft-order-form .form-group-draft:nth-child(1) { grid-column: span 2; } /* Sipariş Kodu */
-#draft-order-form .form-group-draft:nth-child(2) { grid-column: span 3; } /* Müşteri Bilgisi */
-#draft-order-form .form-group-draft:nth-child(3) { grid-column: span 3; } /* Ürün */
-#draft-order-form .form-group-draft:nth-child(4) { grid-column: span 2; } /* Telefon */
-#draft-order-form .form-group-draft:nth-child(5) { grid-column: span 2; } /* Ödeme Tipi */
-#draft-order-form .form-group-draft:nth-child(6) { grid-column: span 10; } /* Teslimat Adresi */
-
 .btn-create-draft {
-	grid-column: span 2;
 	background: linear-gradient(135deg, var(--primary), var(--primary-hover));
 	color: #ffffff;
 	border: none;
@@ -2862,22 +2854,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	opacity: 0;
 }
 
-/* Responsive Düzenlemeler */
-@media (max-width: 1024px) {
-	#draft-order-form {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		align-items: stretch;
-	}
-	#draft-order-form .form-group-draft {
-		grid-column: span 12 !important;
-	}
-	#draft-order-form .btn-create-draft {
-		grid-column: span 12 !important;
-		margin-top: 10px;
-	}
-}
+
 
 /* ==========================================================================
    10. ÜRÜNLERİM (PRODUCTS / INVENTORY) PANELİ STİLLERİ
