@@ -1466,41 +1466,52 @@
 					</div>
 				</div>
 
-				<!-- Arama Durumu Widget'ı (Görüşme Esnasında Açılır) -->
-				<div id="verification-call-panel" style="display: none;" class="verification-call-panel">
-					<div class="call-panel-header">
-						<div class="call-status-wrapper">
-							<span class="call-pulse-dot" id="v-call-pulse"></span>
-							<span id="v-call-status-text">Bağlanıyor...</span>
+				<!-- Arama Durumu Modalı (Görüşme Esnasında Açılır) -->
+				<div id="verification-call-panel" style="display: none;" class="modal-backdrop">
+					<div class="modal-box vertical-rectangle-modal" style="max-width: 460px;">
+						<div class="modal-header">
+							<h3 class="modal-title"><i class="fa-solid fa-phone-volume"></i> Aktif Görüşme</h3>
+							<button class="modal-close-btn" onclick="endCustomerCall()"><i class="fa-solid fa-xmark"></i></button>
 						</div>
-						<div class="call-timer" id="v-call-timer">00:00</div>
-					</div>
-
-					<div class="call-panel-body">
-						<div class="call-controls">
-							<button type="button" class="btn-hangup" onclick="endCustomerCall()">
-								<i class="fa-solid fa-phone-slash"></i> Çağrıyı Kapat
-							</button>
-						</div>
-
-						<div class="call-outcome-form">
-							<div class="v-form-group">
-								<label>Arama / Doğrulama Sonucu*</label>
-								<select id="v-call-outcome">
-									<option value="TEYIT_EDILDI">İçerik Teyidi Başarılı</option>
-									<option value="ADRES_GUNCELLEDNDI">Adres Güncellendi ve Onaylandı</option>
-									<option value="ULASILAMADI">Müşteriye Ulaşılamadı</option>
-									<option value="YALNIS_NUMARA">Yanlış Telefon Numarası</option>
-									<option value="MUSTERI_IPTAL">Müşteri Siparişi İptal Etti</option>
-								</select>
+						<div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+							<div class="call-panel-header" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 14px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+								<div class="call-status-wrapper" style="display: flex; align-items: center; gap: 8px;">
+									<span class="call-pulse-dot" id="v-call-pulse"></span>
+									<span id="v-call-status-text" style="font-weight: 600; font-size: 13.5px;">Bağlanıyor...</span>
+								</div>
+								<div class="call-timer" id="v-call-timer" style="font-weight: 700; font-size: 15px; font-family: monospace;">00:00</div>
 							</div>
 
-							<div class="v-form-group">
-								<label>Görüşme Notu</label>
-								<textarea id="v-call-notes" placeholder="Görüşme hakkında not alın..." rows="3"></textarea>
-							</div>
+							<div class="call-panel-body" style="display: flex; flex-direction: column; gap: 16px;">
+								<div class="call-controls" style="display: flex; justify-content: center;">
+									<button type="button" class="btn-hangup" onclick="endCustomerCall()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ef4444; color: white; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer;">
+										<i class="fa-solid fa-phone-slash"></i> Çağrıyı Kapat
+									</button>
+								</div>
 
-							<button type="button" class="btn-primary" style="width: 100%; font-weight: 700; margin-top: 12px;" onclick="saveCallOutcome()">Teyit Sonucunu Kaydet ve Siparişi Tamamla</button>
+								<div class="call-outcome-form" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+									<div class="v-form-group" style="display: flex; flex-direction: column; gap: 6px;">
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Arama / Doğrulama Sonucu*</label>
+										<div class="priority-select-group" style="width: 100%;">
+											<select id="v-call-outcome" style="width: 100%;">
+												<option value="TEYIT_EDILDI">İçerik Teyidi Başarılı</option>
+												<option value="ADRES_GUNCELLEDNDI">Adres Güncellendi ve Onaylandı</option>
+												<option value="ULASILAMADI">Müşteriye Ulaşılamadı</option>
+												<option value="YALNIS_NUMARA">Yanlış Telefon Numarası</option>
+												<option value="MUSTERI_IPTAL">Müşteri Siparişi İptal Etti</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="v-form-group" style="display: flex; flex-direction: column; gap: 6px;">
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Görüşme Notu</label>
+										<textarea id="v-call-notes" placeholder="Görüşme hakkında not alın..." rows="3" style="width: 100%; background: rgba(255,255,255,0.65); border: 1px solid rgba(0,0,0,0.08); border-radius: var(--radius-md); padding: 10px; outline: none; resize: none;"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color);">
+							<button type="button" class="btn-primary" style="margin-top: 0; width: 100%; font-weight: 700; padding: 12px;" onclick="saveCallOutcome()">Teyit Sonucunu Kaydet ve Siparişi Tamamla</button>
 						</div>
 					</div>
 				</div>
@@ -1549,6 +1560,18 @@
 							<select id="draft-payment-type" style="width: 100%;">
 								<option value="paid" selected>Ödendi (Kredi Kartı / EFT)</option>
 								<option value="cod">Kapıda Ödeme (CoD)</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group-draft">
+						<label for="draft-carrier-select">Kargo Firması</label>
+						<div class="priority-select-group" style="width: 100%;">
+							<select id="draft-carrier-select" style="width: 100%;">
+								<option value="Yurtiçi Kargo" selected>Yurtiçi Kargo</option>
+								<option value="Aras Kargo">Aras Kargo</option>
+								<option value="MNG Kargo">MNG Kargo</option>
+								<option value="Sürat Kargo">Sürat Kargo</option>
+								<option value="PTT Kargo">PTT Kargo</option>
 							</select>
 						</div>
 					</div>

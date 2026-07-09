@@ -1644,10 +1644,9 @@ function handleCreateDraftOrder(e) {
 	
 	if (!customer || !product || !phone || !address) return;
 	
-	// Kargo firmasını ayarlardan dinamik olarak çek
-	const selectedCarrier = paymentType === 'paid'
-		? (localStorage.getItem('nestro_carrier_paid') || 'Yurtiçi Kargo')
-		: (localStorage.getItem('nestro_carrier_cod') || 'Aras Kargo');
+	// Kargo firmasını modal seçeneğinden al
+	const carrierInput = document.getElementById('draft-carrier-select');
+	const selectedCarrier = carrierInput ? carrierInput.value : 'Yurtiçi Kargo';
 
 	// Adresten ili ayıklamaya çalış (veya varsayılan olarak İstanbul set et)
 	let city = 'İstanbul';
@@ -3434,7 +3433,7 @@ function initVerificationView() {
 	document.getElementById('verification-search-input').value = '';
 	document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	document.getElementById('verification-order-card').style.display = 'none';
-	document.getElementById('verification-call-panel').style.display = 'none';
+	closeModalWithAnimation('verification-call-panel');
 	
 	const toast = document.getElementById('verification-toast');
 	if (toast) {
@@ -3473,7 +3472,7 @@ async function handleVerificationSearch(event) {
 	
 	// Arayüzü temizle
 	document.getElementById('verification-order-card').style.display = 'none';
-	document.getElementById('verification-call-panel').style.display = 'none';
+	closeModalWithAnimation('verification-call-panel');
 	isAddressEditing = false;
 	
 	const SEARCH_COST = 0.50;
@@ -3660,7 +3659,7 @@ async function startCustomerCall() {
 	
 	// Arama panelini aç ve bağlanıyor moduna geçir
 	const callPanel = document.getElementById('verification-call-panel');
-	callPanel.style.display = 'block';
+	callPanel.style.display = 'flex';
 	
 	const statusDot = document.getElementById('v-call-pulse');
 	const statusText = document.getElementById('v-call-status-text');
