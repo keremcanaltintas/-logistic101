@@ -217,10 +217,46 @@ function checkLoginAndRoute() {
 		document.getElementById('login-page').style.display = 'none';
 		document.getElementById('dashboard-page').style.display = 'flex';
 		showChatbot();
-		
 		const lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
 		switchView(lastView);
 	}
+	setupModalScrollBlocker();
+}
+
+// Modal açıldığında arka sayfa kaymasını engelleme (Blokaj)
+function setupModalScrollBlocker() {
+	const modalObserver = new MutationObserver(() => {
+		const activeModals = document.querySelectorAll('.modal-backdrop');
+		let anyOpen = false;
+		activeModals.forEach(m => {
+			if (m.style.display && m.style.display !== 'none') {
+				anyOpen = true;
+			}
+		});
+		if (anyOpen) {
+			document.body.classList.add('modal-open');
+		} else {
+			document.body.classList.remove('modal-open');
+		}
+	});
+
+	document.querySelectorAll('.modal-backdrop').forEach(modal => {
+		modalObserver.observe(modal, { attributes: true, attributeFilter: ['style'] });
+	});
+}
+
+// Modalı animasyonlu (Fade Out) şekilde kapatan yardımcı fonksiyon
+function closeModalWithAnimation(modalId, onFinished = null) {
+	const modal = document.getElementById(modalId);
+	if (!modal) return;
+	
+	modal.classList.add('closing');
+	
+	setTimeout(() => {
+		modal.style.display = 'none';
+		modal.classList.remove('closing');
+		if (onFinished) onFinished();
+	}, 240);
 }
 
 if (document.readyState === 'loading') {
@@ -1416,8 +1452,6 @@ function openDetailModal(code) {
 		statusBadge.classList.add('preparing');
 		statusBadge.textContent = 'Hazırlanıyor';
 	} else if (order.status === 'ready') {
-		statusBadge.classList.add('ready');
-		statusBadge.textContent = 'Hazırlandı';
 	} else if (order.status === 'shipped') {
 		statusBadge.classList.add('shipped');
 		statusBadge.textContent = 'Kargoya Verildi';
@@ -1443,7 +1477,7 @@ function openDetailModal(code) {
 }
 
 function closeDetailModal() {
-	document.getElementById('order-detail-modal').style.display = 'none';
+	closeModalWithAnimation('order-detail-modal');
 }
 
 // İptal Modalı Aç/Kapat
@@ -1454,10 +1488,11 @@ function openCancelModal(code) {
 }
 
 function closeCancelModal() {
-	document.getElementById('order-cancel-modal').style.display = 'none';
-	const reasonInput = document.getElementById('cancel-reason-input');
-	if (reasonInput) reasonInput.value = '';
-	orderCodeToCancel = null;
+	closeModalWithAnimation('order-cancel-modal', () => {
+		const reasonInput = document.getElementById('cancel-reason-input');
+		if (reasonInput) reasonInput.value = '';
+		orderCodeToCancel = null;
+	});
 }
 
 // İptal İşlemini Onayla
@@ -1586,10 +1621,7 @@ function openDraftOrderModal() {
 }
 
 function closeDraftOrderModal() {
-	const modal = document.getElementById('draft-order-modal');
-	if (modal) {
-		modal.style.display = 'none';
-	}
+	closeModalWithAnimation('draft-order-modal');
 }
 
 // Taslak Sipariş Oluşturma Olayı
@@ -1787,9 +1819,10 @@ function handleRestockProduct(id) {
 }
 
 function closeRestockModal() {
-	document.getElementById('modal-restock-product').style.display = 'none';
-	document.getElementById('restock-product-form').reset();
-	productIdToRestock = null;
+	closeModalWithAnimation('modal-restock-product', () => {
+		document.getElementById('restock-product-form').reset();
+		productIdToRestock = null;
+	});
 }
 
 function submitRestockProduct(e) {
@@ -1822,8 +1855,9 @@ function handleAddProductPrompt() {
 }
 
 function closeAddProductModal() {
-	document.getElementById('modal-add-product').style.display = 'none';
-	document.getElementById('add-product-form').reset();
+	closeModalWithAnimation('modal-add-product', () => {
+		document.getElementById('add-product-form').reset();
+	});
 }
 
 function submitAddProduct(e) {
@@ -2455,12 +2489,10 @@ function openConnectModal(platform) {
 
 // Modalı Kapat
 function closeConnectModal() {
-	const modal = document.getElementById('store-connect-modal');
-	if (modal) {
-		modal.style.display = 'none';
-	}
-	const form = document.getElementById('store-credentials-form');
-	if (form) form.reset();
+	closeModalWithAnimation('store-connect-modal', () => {
+		const form = document.getElementById('store-credentials-form');
+		if (form) form.reset();
+	});
 }
 
 // Bağlantıyı Sına & Kaydet Formu Gönderildiğinde
