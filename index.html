@@ -1471,7 +1471,7 @@
 					<div class="modal-box vertical-rectangle-modal" style="max-width: 460px;">
 						<div class="modal-header">
 							<h3 class="modal-title"><i class="fa-solid fa-phone-volume"></i> Aktif Görüşme</h3>
-							<button class="modal-close-btn" onclick="endCustomerCall()"><i class="fa-solid fa-xmark"></i></button>
+							<button class="modal-close-btn" onclick="closeCallModal()"><i class="fa-solid fa-xmark"></i></button>
 						</div>
 						<div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
 							<div class="call-panel-header" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 14px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
@@ -1483,13 +1483,15 @@
 							</div>
 
 							<div class="call-panel-body" style="display: flex; flex-direction: column; gap: 16px;">
-								<div class="call-controls" style="display: flex; justify-content: center;">
-									<button type="button" class="btn-hangup" onclick="endCustomerCall()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ef4444; color: white; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer;">
-										<i class="fa-solid fa-phone-slash"></i> Çağrıyı Kapat
-									</button>
+								<div id="v-call-active-section" style="display: block;">
+									<div class="call-controls" style="display: flex; justify-content: center;">
+										<button type="button" class="btn-hangup" onclick="endCustomerCall()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ef4444; color: white; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer;">
+											<i class="fa-solid fa-phone-slash"></i> Çağrıyı Kapat
+										</button>
+									</div>
 								</div>
 
-								<div class="call-outcome-form" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+								<div id="v-call-outcome-section" style="display: none; flex-direction: column; gap: 12px; border-top: 1px solid var(--border-color); padding-top: 16px;">
 									<div class="v-form-group" style="display: flex; flex-direction: column; gap: 6px;">
 										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Arama / Doğrulama Sonucu*</label>
 										<div class="priority-select-group" style="width: 100%;">
@@ -1510,7 +1512,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color);">
+						<div id="v-call-footer-section" class="modal-footer" style="display: none; padding: 16px 24px; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color);">
 							<button type="button" class="btn-primary" style="margin-top: 0; width: 100%; font-weight: 700; padding: 12px;" onclick="saveCallOutcome()">Teyit Sonucunu Kaydet ve Siparişi Tamamla</button>
 						</div>
 					</div>

@@ -3444,17 +3444,7 @@ function initVerificationView() {
 
 // Özel Toast Bildirimi Göster
 function showVerificationToast(message, type = 'error') {
-	const toast = document.getElementById('verification-toast');
-	if (!toast) return;
-	
-	toast.textContent = message;
-	toast.className = `verification-alert verification-alert-${type}`;
-	toast.style.display = 'block';
-	
-	// 5 Saniye Sonra Gizle
-	setTimeout(() => {
-		toast.style.display = 'none';
-	}, 6000);
+	showNotification(message, type);
 }
 
 // Shopify Sipariş Numarasını Sorgula
@@ -3659,16 +3649,30 @@ async function startCustomerCall() {
 	
 	// Arama panelini aç ve bağlanıyor moduna geçir
 	const callPanel = document.getElementById('verification-call-panel');
-	callPanel.style.display = 'flex';
+	if (callPanel) callPanel.style.display = 'flex';
 	
+	// Arama esnasında form alanlarını gizle, sadece kapatma butonunu göster
+	const callActiveSec = document.getElementById('v-call-active-section');
+	const callOutcomeSec = document.getElementById('v-call-outcome-section');
+	const callFooterSec = document.getElementById('v-call-footer-section');
+	if (callActiveSec) callActiveSec.style.display = 'block';
+	if (callOutcomeSec) callOutcomeSec.style.display = 'none';
+	if (callFooterSec) callFooterSec.style.display = 'none';
+	
+	// Form elemanlarını sıfırla
+	const notesTextarea = document.getElementById('v-call-notes');
+	if (notesTextarea) notesTextarea.value = '';
+	const outcomeSelect = document.getElementById('v-call-outcome');
+	if (outcomeSelect) outcomeSelect.selectedIndex = 0;
+
 	const statusDot = document.getElementById('v-call-pulse');
 	const statusText = document.getElementById('v-call-status-text');
 	const timerVal = document.getElementById('v-call-timer');
 	
 	activeCallState = 'connecting';
-	statusDot.style.background = '#f59e0b';
-	statusText.textContent = 'Bağlanıyor...';
-	timerVal.textContent = '00:00';
+	if (statusDot) statusDot.style.background = '#f59e0b';
+	if (statusText) statusText.textContent = 'Bağlanıyor...';
+	if (timerVal) timerVal.textContent = '00:00';
 	
 	callDurationSec = 0;
 	if (callTimerInterval) clearInterval(callTimerInterval);
@@ -3755,10 +3759,27 @@ function endCustomerCall() {
 	const statusDot = document.getElementById('v-call-pulse');
 	const statusText = document.getElementById('v-call-status-text');
 	
-	statusDot.style.background = '#64748b';
-	statusText.textContent = 'Arama Kapatıldı (Log bekleniyor)';
+	if (statusDot) statusDot.style.background = '#64748b';
+	if (statusText) statusText.textContent = 'Arama Kapatıldı';
+	
+	// Arama bittiğinde kapatma butonunu gizle, form alanlarını ve footer'ı göster
+	const callActiveSec = document.getElementById('v-call-active-section');
+	const callOutcomeSec = document.getElementById('v-call-outcome-section');
+	const callFooterSec = document.getElementById('v-call-footer-section');
+	if (callActiveSec) callActiveSec.style.display = 'none';
+	if (callOutcomeSec) callOutcomeSec.style.display = 'flex';
+	if (callFooterSec) callFooterSec.style.display = 'flex';
 	
 	showVerificationToast('Arama kapatıldı. Lütfen görüşme sonucunu ve notlarınızı girerek kaydedin.', 'success');
+}
+
+// Arama Modalını Kapat (Kullanıcı çarpıya bastığında tetiklenir)
+function closeCallModal() {
+	closeModalWithAnimation('verification-call-panel');
+	// Eğer görüşme hala aktifse aramayı sonlandır
+	if (activeCallState === 'connecting' || activeCallState === 'active') {
+		endCustomerCall();
+	}
 }
 
 // Çağrı Sonucunu Kaydet ve Siparişi Doğrula
