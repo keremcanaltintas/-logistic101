@@ -293,6 +293,7 @@ function initDashboard(username) {
 
 	// Ürünleri render et
 	renderProducts();
+	renderStockRecordsHistory();
 
 	// Cüzdan verilerini render et ve bakiyeyi güncelle
 	renderTransactions();
@@ -1762,6 +1763,9 @@ function renderProducts() {
 		const assignedUser = product.assignedUser || 'emin çeri';
 
 		tr.innerHTML = `
+			<td class="col-checkbox" style="text-align: center; padding: 18px 12px;">
+				<input type="checkbox" class="product-select-chk" value="${product.id}" onchange="checkSelectAllState()">
+			</td>
 			<td>
 				<div style="font-weight: 700; color: var(--text-primary); font-size: 13.5px; text-align: left;">${escapeHTML(product.name)}</div>
 			</td>
@@ -1783,6 +1787,193 @@ function renderProducts() {
 		`;
 		tbody.appendChild(tr);
 	});
+}
+
+// Seçim Modu Değişimi
+function toggleSelectionMode(checkbox) {
+	const productsView = document.getElementById('products-view');
+	const btnGetRecords = document.getElementById('btn-get-stock-records');
+	
+	if (!productsView || !btnGetRecords) return;
+	
+	if (checkbox.checked) {
+		productsView.classList.add('selection-active');
+		btnGetRecords.style.display = 'inline-flex';
+	} else {
+		productsView.classList.remove('selection-active');
+		btnGetRecords.style.display = 'none';
+		
+		// Tüm seçilmişleri temizle
+		const chks = document.querySelectorAll('.product-select-chk');
+		chks.forEach(c => c.checked = false);
+		const selectAll = document.getElementById('select-all-products');
+		if (selectAll) selectAll.checked = false;
+	}
+}
+
+// Tümünü Seç Olayı
+function toggleSelectAllProducts(headerCheckbox) {
+	const chks = document.querySelectorAll('.product-select-chk');
+	chks.forEach(c => {
+		c.checked = headerCheckbox.checked;
+	});
+}
+
+// Checkbox'ların Seçim Durumuna Göre Üst Seçimi Ayarla
+function checkSelectAllState() {
+	const allChks = document.querySelectorAll('.product-select-chk');
+	const checkedChks = document.querySelectorAll('.product-select-chk:checked');
+	const selectAll = document.getElementById('select-all-products');
+	if (selectAll && allChks.length > 0) {
+		selectAll.checked = (allChks.length === checkedChks.length);
+	}
+}
+
+// Geçmiş Kayıtlar Kümesi (localStorage'dan oku)
+let stockRecordsHistory = JSON.parse(localStorage.getItem('nestro_stock_records_history')) || [];
+
+// Seçilen Ürünlerin Stok Kayıtlarını Al
+function handleGetStockRecords() {
+	const chks = document.querySelectorAll('.product-select-chk:checked');
+	if (chks.length === 0) {
+		showNotification('Lütfen en az bir ürün seçiniz.', 'error');
+		return;
+	}
+	
+	const selectedItems = [];
+	let totalStock = 0;
+	
+	chks.forEach(chk => {
+		const productId = chk.value;
+		const product = products.find(p => p.id === productId);
+		if (product) {
+			selectedItems.push({
+				id: product.id,
+				name: product.name,
+				sku: product.sku,
+				stock: product.stock
+			});
+			totalStock += product.stock;
+		}
+	});
+	
+	const reportCode = 'SR-' + Math.floor(100000 + Math.random() * 900000);
+	
+	const now = new Date();
+	const dateStr = now.toLocaleString('tr-TR', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit'
+	});
+	
+	const newRecord = {
+		id: reportCode,
+		date: dateStr,
+		count: selectedItems.length,
+		totalStock: totalStock,
+		items: selectedItems
+	};
+	
+	stockRecordsHistory.unshift(newRecord);
+	localStorage.setItem('nestro_stock_records_history', JSON.stringify(stockRecordsHistory));
+	
+	renderStockRecordsHistory();
+	showNotification(`Stok kayıtları başarıyla alındı! Rapor Kodu: ${reportCode}`, 'success');
+	
+	// Temizle
+	const allChks = document.querySelectorAll('.product-select-chk');
+	allChks.forEach(c => c.checked = false);
+	const selectAll = document.getElementById('select-all-products');
+	if (selectAll) selectAll.checked = false;
+}
+
+// Geçmiş Raporları Tabloya Ekle
+function renderStockRecordsHistory() {
+	const tbody = document.getElementById('stock-records-history-tbody');
+	if (!tbody) return;
+	
+	tbody.innerHTML = '';
+	
+	if (stockRecordsHistory.length === 0) {
+		tbody.innerHTML = `
+			<tr>
+				<td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Henüz kaydedilmiş stok raporu bulunmamaktadır.</td>
+			</tr>
+		`;
+		return;
+	}
+	
+	stockRecordsHistory.forEach(record => {
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+			<td>
+				<div style="font-weight: 600; color: var(--text-primary); text-align: left;">${escapeHTML(record.date)}</div>
+			</td>
+			<td>
+				<div style="font-family: monospace; font-weight: 700; color: var(--text-secondary); text-align: left;">${escapeHTML(record.id)}</div>
+			</td>
+			<td>
+				<div style="font-weight: 600; color: var(--text-secondary); text-align: left;">${record.count} ürün</div>
+			</td>
+			<td>
+				<div style="display: flex; justify-content: flex-start;">
+					<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 12px;">${record.totalStock} adet</span>
+				</div>
+			</td>
+			<td style="text-align: right; padding-right: 24px;">
+				<button class="btn-secondary" style="padding: 6px 12px; font-size: 12px; margin: 0;" onclick="viewStockRecordDetail('${record.id}')">
+					<i class="fa-solid fa-eye"></i> Detay Göster
+				</button>
+			</td>
+		`;
+		tbody.appendChild(tr);
+	});
+}
+
+// Detay Penceresi Aç
+function viewStockRecordDetail(recordId) {
+	const record = stockRecordsHistory.find(r => r.id === recordId);
+	if (!record) return;
+	
+	document.getElementById('record-detail-code').textContent = record.id;
+	document.getElementById('record-detail-date').textContent = record.date;
+	
+	const tbody = document.getElementById('record-detail-tbody');
+	if (tbody) {
+		tbody.innerHTML = '';
+		record.items.forEach(item => {
+			const tr = document.createElement('tr');
+			tr.innerHTML = `
+				<td style="padding: 10px 14px; font-weight: 600; color: var(--text-primary); text-align: left;">${escapeHTML(item.name)}</td>
+				<td style="padding: 10px 14px; font-family: monospace; font-size: 12px; color: var(--text-secondary); text-align: left;">${escapeHTML(item.sku)}</td>
+				<td style="padding: 10px 14px; text-align: right; font-weight: 700; color: var(--text-primary);">${item.stock} adet</td>
+			`;
+			tbody.appendChild(tr);
+		});
+	}
+	
+	const modal = document.getElementById('stock-record-detail-modal');
+	if (modal) {
+		modal.style.display = 'flex';
+	}
+}
+
+// Detay Modalı Kapat
+function closeStockRecordDetailModal() {
+	closeModalWithAnimation('stock-record-detail-modal');
+}
+
+// Rapor Geçmişini Temizle
+function clearStockRecordsHistory() {
+	if (confirm('Geçmiş tüm stok rapor kayıtlarını silmek istediğinizden emin misiniz?')) {
+		stockRecordsHistory = [];
+		localStorage.removeItem('nestro_stock_records_history');
+		renderStockRecordsHistory();
+		showNotification('Stok rapor geçmişi temizlendi.', 'success');
+	}
 }
 
 // Ürün Silme Olayı

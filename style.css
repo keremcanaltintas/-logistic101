@@ -2947,6 +2947,14 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	border-bottom: none;
 }
 
+/* Seçim Modu ve Checkbox Alanları */
+#products-view .col-checkbox {
+	display: none;
+}
+#products-view.selection-active .col-checkbox {
+	display: table-cell !important;
+}
+
 /* Ürün Görseli */
 .product-img-thumbnail {
 	width: 44px;

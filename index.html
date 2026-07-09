@@ -743,11 +743,14 @@
 						</div>
 						<div style="display: flex; align-items: center; gap: 8px;">
 							<label class="toggle-switch" style="transform: scale(0.85); margin-bottom: 0;">
-								<input type="checkbox" id="toggle-selection-mode">
+								<input type="checkbox" id="toggle-selection-mode" onchange="toggleSelectionMode(this)">
 								<span class="slider"></span>
 							</label>
 							<span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Seçim Modu</span>
 						</div>
+						<button id="btn-get-stock-records" class="btn-primary" style="display: none; padding: 8px 16px; font-size: 13px; margin-top: 0; background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;" onclick="handleGetStockRecords()">
+							<i class="fa-solid fa-file-invoice"></i> Stok Kayıtlarını Al
+						</button>
 					</div>
 					<div class="toolbar-right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
 						<button class="btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="showNotification('Ürün raporu Excel dosyası olarak indiriliyor...', 'success')">
@@ -768,6 +771,7 @@
 						<table class="products-table">
 							<thead>
 								<tr>
+									<th class="col-checkbox" style="width: 40px; text-align: center; padding: 16px 12px;"><input type="checkbox" id="select-all-products" onchange="toggleSelectAllProducts(this)"></th>
 									<th>ÜRÜN</th>
 									<th>SKU</th>
 									<th>STOK</th>
@@ -778,6 +782,34 @@
 							</thead>
 							<tbody id="products-list-tbody">
 								<!-- JavaScript ile doldurulacak -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<!-- Geçmiş Stok Kayıtları Bölümü -->
+				<div id="stock-records-history-card" class="products-card" style="margin-top: 24px; padding: 24px; text-align: left;">
+					<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+						<h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+							<i class="fa-solid fa-clock-rotate-left"></i> Geçmiş Stok Kayıtları & Raporları
+						</h3>
+						<button class="btn-secondary" style="padding: 6px 12px; font-size: 12px; margin: 0;" onclick="clearStockRecordsHistory()">Geçmişi Temizle</button>
+					</div>
+					<div class="table-responsive">
+						<table class="products-table" style="font-size: 13px;">
+							<thead>
+								<tr>
+									<th>Tarih / Saat</th>
+									<th>Rapor Kodu</th>
+									<th>Seçilen Ürün</th>
+									<th>Toplam Stok</th>
+									<th style="text-align: right; padding-right: 24px;">Detay</th>
+								</tr>
+							</thead>
+							<tbody id="stock-records-history-tbody">
+								<tr>
+									<td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Henüz kaydedilmiş stok raporu bulunmamaktadır.</td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -1561,6 +1593,43 @@
 	<div id="confetti-container" class="confetti-container"></div>
 
 	<!-- ==================== MODAL BİLEŞENLERİ ==================== -->
+	<!-- Stok Kayıt Detay Modalı -->
+	<div id="stock-record-detail-modal" class="modal-backdrop" style="display: none;">
+		<div class="modal-box vertical-rectangle-modal" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title"><i class="fa-solid fa-file-invoice"></i> Stok Kayıt Detayı</h3>
+				<button class="modal-close-btn" onclick="closeStockRecordDetailModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+				<div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 14px; border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary);">
+					<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+						<strong>Rapor Kodu:</strong> <span id="record-detail-code" style="font-family: monospace; font-weight: 700;">-</span>
+					</div>
+					<div style="display: flex; justify-content: space-between;">
+						<strong>Kayıt Tarihi:</strong> <span id="record-detail-date">-</span>
+					</div>
+				</div>
+				<div class="table-responsive" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+					<table class="products-table" style="font-size: 12.5px;">
+						<thead>
+							<tr>
+								<th style="padding: 10px 14px;">Ürün</th>
+								<th style="padding: 10px 14px;">SKU</th>
+								<th style="padding: 10px 14px; text-align: right;">Stok</th>
+							</tr>
+						</thead>
+						<tbody id="record-detail-tbody">
+							<!-- Dinamik doldurulacak -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: center; border-top: 1px solid var(--border-color);">
+				<button type="button" class="btn-primary" style="margin-top: 0; width: 100%; font-weight: 700; padding: 12px;" onclick="closeStockRecordDetailModal()">Kapat</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Taslak Sipariş Oluştur Modalı -->
 	<div id="draft-order-modal" class="modal-backdrop" style="display: none;">
 		<div class="modal-box vertical-rectangle-modal">
