@@ -844,6 +844,57 @@ let orders = [
 		products: [
 			{ name: 'Akıllı Saat Active Pro', qty: 1, price: '₺4,200.00' }
 		]
+	},
+	{
+		code: '#1019',
+		customer: 'Hale Soygazi',
+		city: 'Yalova',
+		payment: 'card',
+		date: '20 Mayıs 2026, 15:40',
+		status: 'returned',
+		phone: '+90 532 999 8877',
+		email: 'hale@example.com',
+		address: 'Yalova Merkez, Hürriyet Cad. No:5',
+		carrier: 'Aras Kargo',
+		tracking: 'AR984129845',
+		total: 1250.00,
+		products: [
+			{ name: 'Deri Laptop Kılıfı 15.6"', qty: 1, price: '₺1,250.00' }
+		]
+	},
+	{
+		code: '#1018',
+		customer: 'Ferit Aslan',
+		city: 'İstanbul',
+		payment: 'cod',
+		date: '19 Mayıs 2026, 11:20',
+		status: 'returned',
+		phone: '+90 541 222 3344',
+		email: 'ferit@example.com',
+		address: 'Beşiktaş, Barbaros Bulvarı No:90',
+		carrier: 'Yurtiçi Kargo',
+		tracking: 'YT491028374',
+		total: 1400.00,
+		products: [
+			{ name: 'USB-C Hub Adaptör 7 in 1', qty: 1, price: '₺1,400.00' }
+		]
+	},
+	{
+		code: '#1017',
+		customer: 'Selin Şen',
+		city: 'Ankara',
+		payment: 'card',
+		date: '18 Mayıs 2026, 16:30',
+		status: 'returned',
+		phone: '+90 553 444 5566',
+		email: 'selin@example.com',
+		address: 'Etimesgut, İstasyon Cad. No:120',
+		carrier: 'MNG Kargo',
+		tracking: 'MN94810235',
+		total: 3100.00,
+		products: [
+			{ name: 'Kablosuz Kulak Üstü Kulaklık', qty: 1, price: '₺3,100.00' }
+		]
 	}
 ];
 
@@ -1190,13 +1241,15 @@ function renderOrders(filter = 'all', searchQuery = '') {
 	// Siparişleri süz
 	let filteredOrders = orders;
 
-	// Tab Filtreleri (card, cod, cancelled)
+	// Tab Filtreleri (card, cod, cancelled, returned)
 	if (filter === 'card') {
-		filteredOrders = filteredOrders.filter(o => o.payment === 'card' && o.status !== 'cancelled');
+		filteredOrders = filteredOrders.filter(o => o.payment === 'card' && o.status !== 'cancelled' && o.status !== 'returned');
 	} else if (filter === 'cod') {
-		filteredOrders = filteredOrders.filter(o => o.payment === 'cod' && o.status !== 'cancelled');
+		filteredOrders = filteredOrders.filter(o => o.payment === 'cod' && o.status !== 'cancelled' && o.status !== 'returned');
 	} else if (filter === 'cancelled') {
 		filteredOrders = filteredOrders.filter(o => o.status === 'cancelled');
+	} else if (filter === 'returned') {
+		filteredOrders = filteredOrders.filter(o => o.status === 'returned');
 	}
 
 	// Arama süzgeci (Sipariş Kodu, Müşteri Adı, Şehir)
@@ -1242,10 +1295,12 @@ function renderOrders(filter = 'all', searchQuery = '') {
 			statusBadge = `<span class="status-pill shipped"><i class="fa-solid fa-truck-fast"></i> Kargoya Verildi</span>`;
 		} else if (order.status === 'cancelled') {
 			statusBadge = `<span class="status-pill cancelled"><i class="fa-solid fa-ban"></i> İptal Edildi</span>`;
+		} else if (order.status === 'returned') {
+			statusBadge = `<span class="status-pill returned-pending"><i class="fa-solid fa-rotate-left"></i> İade Edildi</span>`;
 		}
 		
-		// İptal Et butonu sadece Kargoya Verildi (shipped) ve İptal Edildi değilse gösterilir
-		const showCancel = order.status !== 'shipped' && order.status !== 'cancelled';
+		// İptal Et butonu sadece Kargoya Verildi (shipped), İade Edildi (returned) ve İptal Edildi değilse gösterilir
+		const showCancel = order.status !== 'shipped' && order.status !== 'cancelled' && order.status !== 'returned';
 		const cancelBtnHTML = showCancel 
 			? `<button class="btn-action-cancel" onclick="openCancelModal('${order.code}')"><i class="fa-solid fa-ban"></i> İptal</button>` 
 			: '';
@@ -1294,7 +1349,8 @@ function filterOrdersNew(filterType) {
 		'all': 'tab-orders-all',
 		'card': 'tab-orders-paid',
 		'cod': 'tab-orders-cod',
-		'cancelled': 'tab-orders-cancelled'
+		'cancelled': 'tab-orders-cancelled',
+		'returned': 'tab-orders-returned'
 	};
 
 	Object.keys(tabs).forEach(key => {
@@ -1329,14 +1385,15 @@ function updateOrdersSubDashboard() {
 
 	if (!statPaid || !statCod || !statCancelled) return;
 
-	const paidCount = orders.filter(o => o.payment === 'card' && o.status !== 'cancelled').length;
-	const codCount = orders.filter(o => o.payment === 'cod' && o.status !== 'cancelled').length;
+	const paidCount = orders.filter(o => o.payment === 'card' && o.status !== 'cancelled' && o.status !== 'returned').length;
+	const codCount = orders.filter(o => o.payment === 'cod' && o.status !== 'cancelled' && o.status !== 'returned').length;
 	const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+	const returnedCount = orders.filter(o => o.status === 'returned').length;
 
 	statPaid.textContent = paidCount;
 	statCod.textContent = codCount;
 	statCancelled.textContent = cancelledCount;
-	if (statReturned) statReturned.textContent = 3; // Mock İadeler
+	if (statReturned) statReturned.textContent = returnedCount;
 }
 
 // Detay Modalı Aç/Kapat

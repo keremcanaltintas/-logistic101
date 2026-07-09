@@ -2626,10 +2626,9 @@ aside.sidebar .menu-item.wizard-highlighted i {
    ========================================================================== */
 
 .orders-page-layout {
-	display: grid;
-	grid-template-columns: 1.8fr 1.2fr;
+	display: flex;
+	flex-direction: column;
 	gap: 28px;
-	align-items: start;
 	width: 100%;
 }
 
@@ -2637,21 +2636,38 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	width: 100%;
 	min-width: 0;
 }
 
 .draft-order-panel {
-	position: sticky;
-	top: 92px;
+	position: static;
+	width: 100%;
 	min-width: 0;
 }
 
 .draft-card {
-	background: #ffffff;
-	border: 1px solid var(--border-color);
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
+	border: 1px solid var(--glass-border);
 	border-radius: var(--radius-lg);
 	padding: 24px;
-	box-shadow: var(--shadow-sm);
+	box-shadow: var(--glass-shadow);
+	position: relative;
+	overflow: hidden;
+}
+
+.draft-card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 1.5px;
+	background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25), transparent);
+	z-index: 2;
+	pointer-events: none;
 }
 
 .draft-title {
@@ -2669,55 +2685,75 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	color: var(--primary);
 }
 
+#draft-order-form {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: 16px;
+	align-items: end;
+}
+
 .form-group-draft {
-	margin-bottom: 16px;
+	margin-bottom: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
 }
 
 .form-group-draft label {
-	font-size: 12.5px;
+	font-size: 12px;
 	font-weight: 700;
 	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
 }
 
 .form-group-draft input,
-.form-group-draft textarea {
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: var(--radius-md);
-	padding: 10px 14px;
-	font-family: var(--font-main);
-	font-size: 13.5px;
-	color: var(--text-primary);
-	width: 100%;
-	outline: none;
-	transition: var(--transition-smooth);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+.form-group-draft textarea,
+.form-group-draft select {
+	background: rgba(255, 255, 255, 0.65) !important;
+	border: 1px solid rgba(0, 0, 0, 0.08) !important;
+	border-radius: var(--radius-md) !important;
+	padding: 10px 14px !important;
+	font-family: var(--font-main) !important;
+	font-size: 13.5px !important;
+	color: var(--text-primary) !important;
+	width: 100% !important;
+	outline: none !important;
+	transition: var(--transition-smooth) !important;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+	box-sizing: border-box !important;
 }
 
 .form-group-draft input[readonly] {
-	background: rgba(255, 255, 255, 0.02);
-	border-color: rgba(255, 255, 255, 0.05);
-	color: var(--text-muted);
-	font-weight: 700;
-	cursor: not-allowed;
+	background: rgba(0, 0, 0, 0.03) !important;
+	border-color: rgba(0, 0, 0, 0.06) !important;
+	color: var(--text-muted) !important;
+	font-weight: 700 !important;
+	cursor: not-allowed !important;
 }
 
 .form-group-draft input:focus:not([readonly]),
-.form-group-draft textarea:focus {
-	background: rgba(255, 255, 255, 0.08);
-	border-color: var(--primary);
-	box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+.form-group-draft textarea:focus,
+.form-group-draft select:focus {
+	background: #ffffff !important;
+	border-color: var(--primary) !important;
+	box-shadow: 0 0 12px rgba(16, 185, 129, 0.15) !important;
 }
 
+#draft-order-form .form-group-draft:nth-child(1) { grid-column: span 2; } /* Sipariş Kodu */
+#draft-order-form .form-group-draft:nth-child(2) { grid-column: span 3; } /* Müşteri Bilgisi */
+#draft-order-form .form-group-draft:nth-child(3) { grid-column: span 3; } /* Ürün */
+#draft-order-form .form-group-draft:nth-child(4) { grid-column: span 2; } /* Telefon */
+#draft-order-form .form-group-draft:nth-child(5) { grid-column: span 2; } /* Ödeme Tipi */
+#draft-order-form .form-group-draft:nth-child(6) { grid-column: span 10; } /* Teslimat Adresi */
+
 .btn-create-draft {
+	grid-column: span 2;
 	background: linear-gradient(135deg, var(--primary), var(--primary-hover));
 	color: #ffffff;
 	border: none;
 	border-radius: var(--radius-md);
-	padding: 12px 24px;
+	padding: 10px 24px;
 	font-family: var(--font-main);
 	font-size: 14px;
 	font-weight: 700;
@@ -2727,12 +2763,13 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	justify-content: center;
 	align-items: center;
 	transition: var(--spring-fast);
-	margin-top: 8px;
-	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+	margin-top: 0;
+	height: 40px;
+	box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .btn-create-draft:hover {
-	box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25);
+	box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 	transform: translateY(-1.5px);
 }
 
@@ -2784,12 +2821,17 @@ aside.sidebar .menu-item.wizard-highlighted i {
 
 /* Responsive Düzenlemeler */
 @media (max-width: 1024px) {
-	.orders-page-layout {
-		grid-template-columns: 1fr;
+	#draft-order-form {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		align-items: stretch;
 	}
-	
-	.draft-order-panel {
-		position: static;
+	#draft-order-form .form-group-draft {
+		grid-column: span 12 !important;
+	}
+	#draft-order-form .btn-create-draft {
+		grid-column: span 12 !important;
 		margin-top: 10px;
 	}
 }

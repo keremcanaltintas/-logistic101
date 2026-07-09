@@ -619,7 +619,7 @@
 				<!-- Sipariş Alt Göstergeleri (Sub-Dashboard) -->
 				<div class="orders-sub-dashboard">
 					<!-- Ödenen Siparişler -->
-					<div class="orders-mini-card">
+					<div class="orders-mini-card" onclick="filterOrdersNew('card')" style="cursor: pointer;">
 						<div class="orders-mini-card-icon paid">
 							<i class="fa-solid fa-circle-check"></i>
 						</div>
@@ -630,7 +630,7 @@
 						</div>
 					</div>
 					<!-- Kapıda Ödeme -->
-					<div class="orders-mini-card">
+					<div class="orders-mini-card" onclick="filterOrdersNew('cod')" style="cursor: pointer;">
 						<div class="orders-mini-card-icon cod">
 							<i class="fa-solid fa-clock-rotate-left"></i>
 						</div>
@@ -641,7 +641,7 @@
 						</div>
 					</div>
 					<!-- İptal Edilenler -->
-					<div class="orders-mini-card">
+					<div class="orders-mini-card" onclick="filterOrdersNew('cancelled')" style="cursor: pointer;">
 						<div class="orders-mini-card-icon cancelled">
 							<i class="fa-solid fa-circle-xmark"></i>
 						</div>
@@ -652,13 +652,13 @@
 						</div>
 					</div>
 					<!-- İade Talepleri -->
-					<div class="orders-mini-card">
+					<div class="orders-mini-card" onclick="filterOrdersNew('returned')" style="cursor: pointer;">
 						<div class="orders-mini-card-icon returned">
 							<i class="fa-solid fa-rotate-left"></i>
 						</div>
 						<div class="orders-mini-card-info">
 							<span class="orders-mini-card-label">İade Talepleri</span>
-							<h3 class="orders-mini-card-value" id="orders-stat-returned">3</h3>
+							<h3 class="orders-mini-card-value" id="orders-stat-returned">0</h3>
 							<span class="orders-mini-card-sub">İnceleme Bekliyor</span>
 						</div>
 					</div>
@@ -674,6 +674,7 @@
 							<button class="orders-tab-btn" id="tab-orders-paid" onclick="filterOrdersNew('card')">Ödendi</button>
 							<button class="orders-tab-btn" id="tab-orders-cod" onclick="filterOrdersNew('cod')">Kapıda Ödeme</button>
 							<button class="orders-tab-btn" id="tab-orders-cancelled" onclick="filterOrdersNew('cancelled')">İptal Edildi</button>
+							<button class="orders-tab-btn" id="tab-orders-returned" onclick="filterOrdersNew('returned')">İade Talepleri</button>
 						</div>
 
 						<!-- Sipariş Tablo Yapısı -->
