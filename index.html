@@ -725,11 +725,42 @@
 							<h1>Ürünlerim</h1>
 							<p class="header-subtitle">Depodaki stok durumunu ve raf konumlarını takip et</p>
 						</div>
-						<button class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 20px;" onclick="handleAddProductPrompt()">
-							<i class="fa-solid fa-plus"></i> Yeni Ürün Ekle
-						</button>
 					</div>
 				</header>
+
+				<!-- Raporlama ve Kontrol Araç Çubuğu (Görsel 2'deki gibi) -->
+				<div class="products-toolbar" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 16px; padding: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); flex-wrap: wrap; text-align: left;">
+					<div class="toolbar-left" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+						<button class="btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="showNotification('Barkod oluşturma işlemi başlatıldı.', 'success')">
+							<i class="fa-solid fa-barcode"></i> Barkod Oluştur
+						</button>
+						<div style="display: flex; align-items: center; gap: 8px;">
+							<label class="toggle-switch" style="transform: scale(0.85); margin-bottom: 0;">
+								<input type="checkbox" id="toggle-passive-products">
+								<span class="slider"></span>
+							</label>
+							<span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Pasif Ürünler</span>
+						</div>
+						<div style="display: flex; align-items: center; gap: 8px;">
+							<label class="toggle-switch" style="transform: scale(0.85); margin-bottom: 0;">
+								<input type="checkbox" id="toggle-selection-mode">
+								<span class="slider"></span>
+							</label>
+							<span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Seçim Modu</span>
+						</div>
+					</div>
+					<div class="toolbar-right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+						<button class="btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="showNotification('Ürün raporu Excel dosyası olarak indiriliyor...', 'success')">
+							<i class="fa-solid fa-download"></i> Excel İndir
+						</button>
+						<button class="btn-secondary" style="padding: 8px 16px; font-size: 13px;" onclick="showNotification('Yeni ürün analiz raporu oluşturuluyor...', 'success')">
+							<i class="fa-solid fa-chart-line"></i> Rapor Oluştur
+						</button>
+						<div style="background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); padding: 8px 14px; border-radius: var(--radius-md); font-size: 12px; font-weight: 700; color: var(--text-secondary);">
+							<span id="product-count-text">8 ürün gösteriliyor</span> • emin çeri
+						</div>
+					</div>
+				</div>
 
 				<!-- Ürünler Tablosu Konteyneri -->
 				<div class="products-card" style="margin-top: 10px;">
@@ -737,12 +768,12 @@
 						<table class="products-table">
 							<thead>
 								<tr>
-									<th>Görsel</th>
-									<th>Ürün Adı & SKU</th>
-									<th>Stok Adedi</th>
-									<th>İade Adedi</th>
-									<th>Raf Konumu</th>
-									<th style="text-align: right; padding-right: 24px;">Aksiyonlar</th>
+									<th>ÜRÜN</th>
+									<th>SKU</th>
+									<th>STOK</th>
+									<th>KATEGORİ</th>
+									<th>ATANAN KULLANICI</th>
+									<th>DURUM</th>
 								</tr>
 							</thead>
 							<tbody id="products-list-tbody">
@@ -1512,7 +1543,7 @@
 								</div>
 							</div>
 						</div>
-						<div id="v-call-footer-section" class="modal-footer" style="display: none; padding: 16px 24px; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-color);">
+						<div id="v-call-footer-section" class="modal-footer" style="display: none; padding: 16px 24px; justify-content: center; gap: 12px; border-top: 1px solid var(--border-color);">
 							<button type="button" class="btn-primary" style="margin-top: 0; width: 100%; font-weight: 700; padding: 12px;" onclick="saveCallOutcome()">Teyit Sonucunu Kaydet ve Siparişi Tamamla</button>
 						</div>
 					</div>

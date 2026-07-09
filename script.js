@@ -1708,14 +1708,14 @@ function handleCreateDraftOrder(e) {
 
 // Örnek Ürün Veri Kümesi (8 Adet Ürün)
 let products = [
-	{ id: 'p-1', name: 'Nestro Klasik Pamuklu T-Shirt - Siyah', sku: 'NST-TSH-BLK-S', stock: 120, returned: 3, shelf: 'A-12', photo: '' },
-	{ id: 'p-2', name: 'Nestro Klasik Pamuklu T-Shirt - Beyaz', sku: 'NST-TSH-WHT-M', stock: 8, returned: 1, shelf: 'A-13', photo: '' },
-	{ id: 'p-3', name: 'Premium Wireless Kulaklık (Gürültü Önleyici)', sku: 'NST-EAR-ANC-01', stock: 45, returned: 0, shelf: 'B-04', photo: '' },
-	{ id: 'p-4', name: 'Ultra İnce Laptop Kılıfı 13"', sku: 'NST-LAP-SLV-13', stock: 5, returned: 2, shelf: 'C-08', photo: '' },
-	{ id: 'p-5', name: 'Ergonomik Jel Mouse Pad', sku: 'NST-PAD-GEL-02', stock: 85, returned: 4, shelf: 'B-15', photo: '' },
-	{ id: 'p-6', name: 'USB-C Çoklu Dağıtıcı Hub (6 in 1)', sku: 'NST-HUB-USBC-6', stock: 2, returned: 0, shelf: 'C-12', photo: '' },
-	{ id: 'p-7', name: 'Akıllı Ev Termostatı (Dokunmatik)', sku: 'NST-THR-SMT-99', stock: 14, returned: 1, shelf: 'D-02', photo: '' },
-	{ id: 'p-8', name: 'Minimalist Deri Kartlık Cüzdan', sku: 'NST-WLT-MIN-03', stock: 60, returned: 5, shelf: 'B-22', photo: '' }
+	{ id: 'p-1', name: 'Nestro Klasik Pamuklu T-Shirt - Siyah', sku: 'NST-TSH-BLK-S', stock: 120, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 3, shelf: 'A-12', photo: '' },
+	{ id: 'p-2', name: 'Nestro Klasik Pamuklu T-Shirt - Beyaz', sku: 'NST-TSH-WHT-M', stock: 8, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 1, shelf: 'A-13', photo: '' },
+	{ id: 'p-3', name: 'Premium Wireless Kulaklık (Gürültü Önleyici)', sku: 'NST-EAR-ANC-01', stock: 45, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 0, shelf: 'B-04', photo: '' },
+	{ id: 'p-4', name: 'Ultra İnce Laptop Kılıfı 13"', sku: 'NST-LAP-SLV-13', stock: 5, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 2, shelf: 'C-08', photo: '' },
+	{ id: 'p-5', name: 'Ergonomik Jel Mouse Pad', sku: 'NST-PAD-GEL-02', stock: 85, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 4, shelf: 'B-15', photo: '' },
+	{ id: 'p-6', name: 'USB-C Çoklu Dağıtıcı Hub (6 in 1)', sku: 'NST-HUB-USBC-6', stock: 2, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 0, shelf: 'C-12', photo: '' },
+	{ id: 'p-7', name: 'Akıllı Ev Termostatı (Dokunmatik)', sku: 'NST-THR-SMT-99', stock: 14, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 1, shelf: 'D-02', photo: '' },
+	{ id: 'p-8', name: 'Minimalist Deri Kartlık Cüzdan', sku: 'NST-WLT-MIN-03', stock: 60, category: 'Underbros', assignedUser: 'emin çeri', status: 'Aktif', returned: 5, shelf: 'B-22', photo: '' }
 ];
 
 // Ürün Listesini Render Et
@@ -1724,55 +1724,61 @@ function renderProducts() {
 	if (!tbody) return;
 
 	tbody.innerHTML = '';
+	
+	// Ürün sayısını dinamik güncelle
+	const countText = document.getElementById('product-count-text');
+	if (countText) {
+		countText.textContent = `${products.length} ürün gösteriliyor`;
+	}
+
 	products.forEach(product => {
 		const tr = document.createElement('tr');
 		tr.setAttribute('id', `row-${product.id}`);
 
-		// Kritik Stok Kontrolü
+		// Kritik Stok Kontrolü & Stok Rozeti Tasarımı (Görsel 2 gibi)
 		const isLowStock = product.stock < 10;
-		const stockClass = isLowStock ? 'product-stock-num low-stock' : 'product-stock-num';
-		const badgeHTML = isLowStock 
-			? `<span class="badge-low-stock"><i class="fa-solid fa-triangle-exclamation"></i> Kritik Stok</span>` 
-			: '';
+		
+		let stockBadgeHTML = '';
+		if (isLowStock) {
+			stockBadgeHTML = `
+				<div style="display: inline-flex; align-items: center; gap: 8px;">
+					<span style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #d97706; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 12.5px;">${product.stock} adet</span>
+					<span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+						<i class="fa-solid fa-triangle-exclamation"></i> Kritik Stok
+					</span>
+				</div>
+			`;
+		} else {
+			stockBadgeHTML = `
+				<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 12.5px;">${product.stock} adet</span>
+			`;
+		}
 
-		// Ürün Görsel Önizleme
-		const photoHTML = product.photo 
-			? `<img src="${product.photo}" alt="${product.name}">` 
-			: `<i class="fa-solid fa-box" style="color: var(--text-muted);"></i>`;
+		// Durum Rozeti (Görsel 2 gibi)
+		const statusHTML = `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;">Aktif</span>`;
+
+		// Kategori ve Atanan Kullanıcı
+		const category = product.category || 'Underbros';
+		const assignedUser = product.assignedUser || 'emin çeri';
 
 		tr.innerHTML = `
 			<td>
-				<div class="product-img-thumbnail">
-					${photoHTML}
-				</div>
+				<div style="font-weight: 700; color: var(--text-primary); font-size: 13.5px; text-align: left;">${escapeHTML(product.name)}</div>
 			</td>
 			<td>
-				<div class="product-name-sku">
-					<span class="product-name-title">${escapeHTML(product.name)}</span>
-					<span class="product-sku-code">${escapeHTML(product.sku)}</span>
-				</div>
+				<div style="font-family: monospace; font-size: 13px; color: var(--text-secondary); font-weight: 600; text-align: left;">${escapeHTML(product.sku)}</div>
 			</td>
 			<td>
-				<div class="product-stock-wrapper">
-					<span class="${stockClass}">${product.stock} adet</span>
-					${badgeHTML}
-				</div>
+				<div style="display: flex; justify-content: flex-start;">${stockBadgeHTML}</div>
 			</td>
 			<td>
-				<span>${product.returned} adet</span>
+				<div style="font-weight: 600; color: var(--text-secondary); font-size: 13px; text-align: left;">${escapeHTML(category)}</div>
 			</td>
 			<td>
-				<span class="product-shelf-badge">Raf: ${escapeHTML(product.shelf)}</span>
+				<div style="font-weight: 600; color: var(--text-secondary); font-size: 13px; text-align: left;">${escapeHTML(assignedUser)}</div>
 			</td>
 			<td>
-				<div class="product-row-actions">
-					<button class="btn-restock-item" onclick="handleRestockProduct('${product.id}')" title="Stoğa Ekle">
-						<i class="fa-solid fa-plus"></i> Stoğa Ekle
-					</button>
-					<button class="btn-delete-item" onclick="handleDeleteProduct('${product.id}')" title="Ürünü Sil">
-						<i class="fa-solid fa-trash-can"></i>
-					</button>
-				</div>
+				<div style="display: flex; justify-content: flex-start;">${statusHTML}</div>
 			</td>
 		`;
 		tbody.appendChild(tr);
