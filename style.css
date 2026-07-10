@@ -6881,38 +6881,88 @@ body {
 	pointer-events: auto;
 }
 
-/* Clean flat list styling for Send to Warehouse page */
-.send-to-warehouse-list {
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	width: 100%;
-	max-width: 850px;
-	margin: 24px auto 0 auto;
-}
-
-.send-to-warehouse-list .settings-card {
+/* Clean flat form layout styling for Send to Warehouse page */
+.flat-form-container {
 	background: #ffffff !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
 	border: 1px solid var(--border-color) !important;
 	border-radius: var(--radius-md) !important;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-	transition: none !important;
-	transform: none !important;
-	margin-bottom: 0 !important;
-	padding: 20px !important;
+	padding: 32px !important;
+	max-width: 900px;
+	margin: 24px auto 0 auto;
 }
 
-.send-to-warehouse-list .settings-card:hover {
-	background: #ffffff !important;
-	border-color: var(--border-color) !important;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+.flat-section-header {
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--text-primary);
+	padding: 16px 0 8px 0;
+	border-bottom: 2px solid var(--primary-light);
+	margin-bottom: 12px;
+	margin-top: 16px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.flat-form-row {
+	display: grid;
+	grid-template-columns: 200px 1fr;
+	gap: 24px;
+	padding: 12px 0;
+	align-items: center;
+	border-bottom: 1px solid #f1f3f5;
+}
+
+@media (max-width: 768px) {
+	.flat-form-row {
+		grid-template-columns: 1fr;
+		gap: 8px;
+		align-items: flex-start;
+	}
+}
+
+.flat-form-label {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--text-secondary);
+}
+
+.flat-form-input {
+	width: 100%;
+}
+
+.flat-form-input input[type="text"],
+.flat-form-input input[type="number"],
+.flat-form-input select,
+.flat-form-input textarea {
+	width: 100%;
+	padding: 10px 14px;
+	font-size: 13.5px;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-sm);
+	background: #f8f9fa;
+	color: var(--text-primary);
+	box-sizing: border-box;
+	transition: all 0.2s ease;
+	outline: none;
+}
+
+.flat-form-input input[type="text"]:focus,
+.flat-form-input input[type="number"]:focus,
+.flat-form-input select:focus,
+.flat-form-input textarea:focus {
+	background: #ffffff;
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+/* Remove hover scale or animations for the container */
+.flat-form-container:hover {
 	transform: none !important;
 }
 
-/* Remove slide transition and use clean display block/none for hidden elements inside the list */
-.send-to-warehouse-list .spring-out-element {
+/* Toggle visibility instantly without height transitions in the flat page */
+#send-to-warehouse-view .spring-out-element {
 	display: none !important;
 	opacity: 1 !important;
 	transform: none !important;
@@ -6923,7 +6973,7 @@ body {
 	margin-bottom: 0 !important;
 }
 
-.send-to-warehouse-list .spring-out-element.show {
+#send-to-warehouse-view .spring-out-element.show {
 	display: block !important;
 }
 
