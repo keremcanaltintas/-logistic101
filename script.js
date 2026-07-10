@@ -1094,6 +1094,7 @@ function initNavigation() {
 		'nav-send-to-warehouse': 'send-to-warehouse',
 		'nav-wallet': 'wallet',
 		'nav-sms': 'sms',
+		'nav-address-book': 'address-book',
 		'nav-support': 'support',
 		'nav-reports': 'reports',
 		'nav-settings': 'settings'
@@ -1148,6 +1149,7 @@ function switchView(viewName) {
 	const walletView = document.getElementById('wallet-view');
 	const supportView = document.getElementById('support-view');
 	const smsView = document.getElementById('sms-view');
+	const addressBookView = document.getElementById('address-book-view');
 	const reportsView = document.getElementById('reports-view');
 	const settingsView = document.getElementById('settings-view');
 	const verificationView = document.getElementById('verification-view');
@@ -1161,11 +1163,12 @@ function switchView(viewName) {
 	const navWallet = document.getElementById('nav-wallet');
 	const navSupport = document.getElementById('nav-support');
 	const navSms = document.getElementById('nav-sms');
+	const navAddressBook = document.getElementById('nav-address-book');
 	const navReports = document.getElementById('nav-reports');
 	const navSettings = document.getElementById('nav-settings');
 	const navVerification = document.getElementById('nav-verification');
 
-	if (!dashboardView || !connectView || !ordersView || !productsView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView || !sendToWarehouseView) return;
+	if (!dashboardView || !connectView || !ordersView || !productsView || !walletView || !supportView || !smsView || !addressBookView || !reportsView || !settingsView || !verificationView || !sendToWarehouseView) return;
 
 	// Mobil sidebar'ı kapat (eğer aktifse)
 	const sidebar = document.querySelector('.sidebar');
@@ -1185,6 +1188,7 @@ function switchView(viewName) {
 	if (navWallet) navWallet.classList.remove('active');
 	if (navSupport) navSupport.classList.remove('active');
 	if (navSms) navSms.classList.remove('active');
+	if (navAddressBook) navAddressBook.classList.remove('active');
 	if (navReports) navReports.classList.remove('active');
 	if (navSettings) navSettings.classList.remove('active');
 
@@ -1196,6 +1200,7 @@ function switchView(viewName) {
 	walletView.style.display = 'none';
 	supportView.style.display = 'none';
 	smsView.style.display = 'none';
+	addressBookView.style.display = 'none';
 	reportsView.style.display = 'none';
 	settingsView.style.display = 'none';
 	verificationView.style.display = 'none';
@@ -1233,6 +1238,10 @@ function switchView(viewName) {
 		smsView.style.display = 'block';
 		if (navSms) navSms.classList.add('active');
 		initSmsView();
+	} else if (viewName === 'address-book') {
+		addressBookView.style.display = 'block';
+		if (navAddressBook) navAddressBook.classList.add('active');
+		initAddressBookView();
 	} else if (viewName === 'reports') {
 		reportsView.style.display = 'block';
 		if (navReports) navReports.classList.add('active');
@@ -4145,6 +4154,401 @@ function openFaqModal() {
 function closeFaqModal() {
 	const modal = document.getElementById('faq-modal');
 	if (modal) modal.style.display = 'none';
+}
+
+// ==========================================================================
+// 24. ADRES DEFTERİ MANTIĞI (ADDRESS BOOK LOGIC)
+// ==========================================================================
+
+const savedSenderAddresses = [
+	{ name: 'Nestro Teknoloji A.Ş.', phone: '0212 555 1234', city: 'İstanbul', district: 'Kağıthane', address: 'Merkez Mah. Ayazma Cad. No:12 Kat:4' },
+	{ name: 'Kerem Can Altıntaş', phone: '0532 111 2233', city: 'Ankara', district: 'Çankaya', address: 'Atatürk Bulvarı No:85 Daire:12' },
+	{ name: 'Lojistik Depo Yönetimi', phone: '0216 777 8899', city: 'Kocaeli', district: 'Gebze', address: 'Güzeller OSB Cumhuriyet Cad. No:50' }
+];
+
+const savedReceiverAddresses = [
+	{ name: 'Nestro Depo Kağıthane', phone: '0212 999 5678', city: 'İstanbul', district: 'Kağıthane', address: 'Cendere Cad. No:105 Depo No:3' },
+	{ name: 'Nestro Lojistik Tuzla', phone: '0216 444 9876', city: 'İstanbul', district: 'Tuzla', address: 'Orhanlı Org. San. Bölgesi 3. Cad. No:20' },
+	{ name: 'Merkez Dağıtım Acentesi', phone: '0312 333 4455', city: 'Ankara', district: 'Yenimahalle', address: 'Macun Mah. 250. Sokak No:15/A' }
+];
+
+function openAddressBookModal(type) {
+	const modal = document.getElementById('address-book-modal');
+	const title = document.getElementById('address-book-title');
+	const targetInput = document.getElementById('address-book-target-type');
+	const listContainer = document.getElementById('address-book-list');
+	
+	if (!modal || !title || !targetInput || !listContainer) return;
+	
+	targetInput.value = type;
+	title.innerHTML = `<i class="fa-solid fa-address-book"></i> Adres Defteri - ${type === 'sender' ? 'Gönderici' : 'Alıcı'} Seçimi`;
+	
+	const addresses = type === 'sender' ? savedSenderAddresses : savedReceiverAddresses;
+	listContainer.innerHTML = '';
+	
+	addresses.forEach((addr, idx) => {
+		const item = document.createElement('div');
+		item.className = 'address-book-item';
+		item.style.cssText = `
+			border: 1px solid var(--border-color);
+			border-radius: var(--radius-md);
+			padding: 14px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			transition: all 0.2s;
+			cursor: pointer;
+			background: #ffffff;
+			margin-bottom: 8px;
+		`;
+		
+		item.innerHTML = `
+			<div style="text-align: left; padding-right: 12px;">
+				<h4 style="margin: 0 0 4px 0; font-size: 13.5px; font-weight: 700; color: var(--text-primary);">${escapeHTML(addr.name)}</h4>
+				<div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 2px;">
+					<i class="fa-solid fa-phone" style="font-size: 10px; color: var(--primary); margin-right: 4px;"></i> ${escapeHTML(addr.phone)}
+				</div>
+				<div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+					${escapeHTML(addr.address)}, ${escapeHTML(addr.district)}/${escapeHTML(addr.city)}
+				</div>
+			</div>
+			<button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; margin: 0; background: var(--primary-light) !important; color: var(--primary) !important; border-color: transparent !important; font-weight: 700; flex-shrink: 0;">Seç</button>
+		`;
+		
+		item.onclick = () => selectAddressBookItem(idx);
+		listContainer.appendChild(item);
+	});
+	
+	modal.style.display = 'flex';
+}
+
+function closeAddressBookModal() {
+	const modal = document.getElementById('address-book-modal');
+	if (modal) modal.style.display = 'none';
+}
+
+function selectAddressBookItem(idx) {
+	const type = document.getElementById('address-book-target-type').value;
+	const addresses = type === 'sender' ? savedSenderAddresses : savedReceiverAddresses;
+	const addr = addresses[idx];
+	
+	if (!addr) return;
+	
+	if (type === 'sender') {
+		const nameInput = document.getElementById('sender-name');
+		const phoneInput = document.getElementById('sender-phone');
+		const cityInput = document.getElementById('sender-city');
+		const distInput = document.getElementById('sender-district');
+		const addrInput = document.getElementById('sender-address');
+		
+		if (nameInput) nameInput.value = addr.name;
+		if (phoneInput) phoneInput.value = addr.phone;
+		if (cityInput) cityInput.value = addr.city;
+		if (distInput) distInput.value = addr.district;
+		if (addrInput) addrInput.value = addr.address;
+	} else {
+		const nameInput = document.getElementById('receiver-name');
+		const phoneInput = document.getElementById('receiver-phone');
+		const cityInput = document.getElementById('receiver-city');
+		const distInput = document.getElementById('receiver-district');
+		const addrInput = document.getElementById('receiver-address');
+		
+		if (nameInput) nameInput.value = addr.name;
+		if (phoneInput) phoneInput.value = addr.phone;
+		if (cityInput) cityInput.value = addr.city;
+		if (distInput) distInput.value = addr.district;
+		if (addrInput) addrInput.value = addr.address;
+	}
+	
+	closeAddressBookModal();
+	showNotification(`${type === 'sender' ? 'Gönderici' : 'Alıcı'} adresi başarıyla yüklendi.`, 'success');
+}
+
+// ==========================================================================
+// 25. DETAYLI ADRES DEFTERİ YÖNETİM SAYFASI (ADDRESS BOOK PAGE MANAGEMENT)
+// ==========================================================================
+
+let addressBookTab = 'depot'; // 'depot' veya 'receiver'
+let addressBookSearchQuery = '';
+
+let addressBookAddresses = [
+	{
+		id: 'addr-1',
+		type: 'depot',
+		title: 'Veliora Depo',
+		addressNo: '46220',
+		name: 'Veliora',
+		phone: '+90 505 091 62 28',
+		email: 'ahmetkutsimuhsinoglu@gmail.com',
+		country: 'TR',
+		city: 'Aydın',
+		district: 'Söke',
+		address: 'Konak Mahallesi Yıldırım Sokak No:32B',
+		isMain: true
+	},
+	{
+		id: 'addr-2',
+		type: 'depot',
+		title: 'giyimkent aras',
+		addressNo: '75408',
+		name: 'Veliora',
+		phone: '+90 539 824 53 93',
+		email: '',
+		country: 'TR',
+		city: 'İstanbul',
+		district: 'Esenler',
+		address: 'Oruçreis Mah., Giyimkent 16. Sk. No: 38',
+		isMain: false
+	},
+	{
+		id: 'addr-3',
+		type: 'depot',
+		title: 'tekstilkent aras',
+		addressNo: '75391',
+		name: 'Veliora',
+		phone: '+90 539 824 53 93',
+		email: '',
+		country: 'TR',
+		city: 'İstanbul',
+		district: 'Esenler',
+		address: 'Oruçreis Mahallesi, Tekstilkent Caddesi, No: 10 Tekstilkent Sitesi (A14 Blok), No: H/106, Aras Kargo Massit Şubesi',
+		isMain: false
+	},
+	{
+		id: 'addr-4',
+		type: 'receiver',
+		title: 'Nestro Kağıthane Merkez',
+		addressNo: '22145',
+		name: 'Nestro Depo Kağıthane',
+		phone: '+90 212 999 5678',
+		email: 'depo@nestro.com',
+		country: 'TR',
+		city: 'İstanbul',
+		district: 'Kağıthane',
+		address: 'Cendere Cad. No:105 Depo No:3',
+		isMain: true
+	},
+	{
+		id: 'addr-5',
+		type: 'receiver',
+		title: 'Nestro Tuzla Lojistik',
+		addressNo: '33201',
+		name: 'Nestro Lojistik Tuzla',
+		phone: '+90 216 444 9876',
+		email: 'tuzla@nestro.com',
+		country: 'TR',
+		city: 'İstanbul',
+		district: 'Tuzla',
+		address: 'Orhanlı Org. San. Bölgesi 3. Cad. No:20',
+		isMain: false
+	}
+];
+
+function initAddressBookView() {
+	addressBookSearchQuery = '';
+	const searchInput = document.getElementById('address-book-search-input');
+	if (searchInput) {
+		searchInput.value = '';
+		searchInput.placeholder = addressBookTab === 'depot' ? 'Depo Konumu Ara...' : 'Alıcı Konumu Ara...';
+	}
+	renderAddressBookCards();
+}
+
+function switchAddressBookTab(tabType) {
+	addressBookTab = tabType;
+	
+	const btnDepot = document.getElementById('tab-depot-locations');
+	const btnReceiver = document.getElementById('tab-receiver-locations');
+	const searchInput = document.getElementById('address-book-search-input');
+	
+	if (btnDepot && btnReceiver) {
+		if (tabType === 'depot') {
+			btnDepot.classList.add('active');
+			btnReceiver.classList.remove('active');
+			if (searchInput) searchInput.placeholder = 'Depo Konumu Ara...';
+		} else {
+			btnReceiver.classList.add('active');
+			btnDepot.classList.remove('active');
+			if (searchInput) searchInput.placeholder = 'Alıcı Konumu Ara...';
+		}
+	}
+	
+	renderAddressBookCards();
+}
+
+function handleAddressBookSearch(query) {
+	addressBookSearchQuery = query.toLowerCase().trim();
+	renderAddressBookCards();
+}
+
+function renderAddressBookCards() {
+	const grid = document.getElementById('address-book-cards-grid');
+	if (!grid) return;
+	
+	grid.innerHTML = '';
+	
+	const filtered = addressBookAddresses.filter(addr => {
+		if (addr.type !== addressBookTab) return false;
+		if (addressBookSearchQuery === '') return true;
+		
+		return addr.title.toLowerCase().includes(addressBookSearchQuery) ||
+			addr.name.toLowerCase().includes(addressBookSearchQuery) ||
+			addr.city.toLowerCase().includes(addressBookSearchQuery) ||
+			addr.district.toLowerCase().includes(addressBookSearchQuery);
+	});
+	
+	if (filtered.length === 0) {
+		grid.innerHTML = `
+			<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">
+				<i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 12px; display: block; color: var(--text-muted);"></i>
+				Kayıtlı adres bulunamadı.
+			</div>
+		`;
+		return;
+	}
+	
+	filtered.forEach(addr => {
+		const card = document.createElement('div');
+		card.className = `address-card ${addr.isMain ? 'is-main' : ''}`;
+		
+		let mainBadge = '';
+		let actionButton = '';
+		let deleteButton = '';
+		
+		if (addr.isMain) {
+			mainBadge = `<span style="background: rgba(16, 185, 129, 0.12); color: #10b981; padding: 4px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-check"></i> Ana Depo</span>`;
+		} else {
+			actionButton = `<button class="btn-address-action" onclick="setMainAddress('${addr.id}')">Ana Depo Yap</button>`;
+			deleteButton = `<button class="address-delete-btn" onclick="deleteAddress('${addr.id}')"><i class="fa-regular fa-trash-can"></i></button>`;
+		}
+		
+		card.innerHTML = `
+			<div>
+				<div class="address-card-header">
+					<div class="address-card-title">
+						<i class="fa-solid fa-house-chimney" style="color: var(--primary);"></i> ${escapeHTML(addr.title)}
+					</div>
+					<div style="display: flex; align-items: center; gap: 8px;">
+						${mainBadge}
+						${deleteButton}
+					</div>
+				</div>
+				<div class="address-card-details">
+					<div class="address-card-detail-item">
+						<i class="fa-solid fa-hashtag"></i>
+						<span><strong>Adres No:</strong> ${escapeHTML(addr.addressNo)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-regular fa-user"></i>
+						<span><strong>Gönderici Adı:</strong> ${escapeHTML(addr.name)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-solid fa-phone"></i>
+						<span><strong>Gönderici Telefonu:</strong> ${escapeHTML(addr.phone)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-regular fa-envelope"></i>
+						<span><strong>Gönderici E-Postası:</strong> ${escapeHTML(addr.email || 'Belirtilmemiş')}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-regular fa-flag"></i>
+						<span><strong>Gönderici Ülkesi:</strong> ${escapeHTML(addr.country)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-solid fa-location-dot"></i>
+						<span><strong>Gönderici İli:</strong> ${escapeHTML(addr.city)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-solid fa-map-pin"></i>
+						<span><strong>Gönderici İlçesi:</strong> ${escapeHTML(addr.district)}</span>
+					</div>
+					<div class="address-card-detail-item">
+						<i class="fa-regular fa-map"></i>
+						<span><strong>Gönderici Adresi:</strong> ${escapeHTML(addr.address)}</span>
+					</div>
+				</div>
+			</div>
+			<div style="margin-top: auto;">
+				${actionButton}
+			</div>
+		`;
+		
+		grid.appendChild(card);
+	});
+}
+
+function setMainAddress(id) {
+	addressBookAddresses.forEach(addr => {
+		if (addr.type === addressBookTab) {
+			addr.isMain = (addr.id === id);
+		}
+	});
+	renderAddressBookCards();
+	showNotification('Seçilen adres birincil depo konumu olarak ayarlandı.', 'success');
+}
+
+function deleteAddress(id) {
+	if (confirm('Bu adresi silmek istediğinize emin misiniz?')) {
+		addressBookAddresses = addressBookAddresses.filter(addr => addr.id !== id);
+		renderAddressBookCards();
+		showNotification('Adres başarıyla silindi.', 'success');
+	}
+}
+
+// Yeni adres modalı tetikleyicileri
+function handleAddNewAddressPrompt() {
+	const modal = document.getElementById('add-address-modal');
+	const typeSelect = document.getElementById('new-addr-type');
+	const form = document.getElementById('add-address-form');
+	
+	if (modal && typeSelect && form) {
+		form.reset();
+		typeSelect.value = addressBookTab; // Aktif sekmeyi seçili getir
+		modal.style.display = 'flex';
+	}
+}
+
+function closeAddAddressModal() {
+	const modal = document.getElementById('add-address-modal');
+	if (modal) modal.style.display = 'none';
+}
+
+function saveNewAddress(event) {
+	event.preventDefault();
+	
+	const type = document.getElementById('new-addr-type').value;
+	const title = document.getElementById('new-addr-title').value;
+	const name = document.getElementById('new-addr-name').value;
+	const phone = document.getElementById('new-addr-phone').value;
+	const city = document.getElementById('new-addr-city').value;
+	const district = document.getElementById('new-addr-district').value;
+	const address = document.getElementById('new-addr-detail').value;
+	
+	const addressNo = Math.floor(10000 + Math.random() * 90000).toString();
+	const id = 'addr-' + Date.now();
+	
+	// Eğer ilk adresteyse veya isMain seçeneği yoksa şimdilik false, eğer bu tipte başka adres yoksa main yap
+	const hasAnyOfThisType = addressBookAddresses.some(addr => addr.type === type);
+	
+	const newAddr = {
+		id,
+		type,
+		title,
+		addressNo,
+		name,
+		phone,
+		email: '',
+		country: 'TR',
+		city,
+		district,
+		address,
+		isMain: !hasAnyOfThisType
+	};
+	
+	addressBookAddresses.push(newAddr);
+	closeAddAddressModal();
+	renderAddressBookCards();
+	showNotification('Yeni adres başarıyla kaydedildi.', 'success');
 }
 
 

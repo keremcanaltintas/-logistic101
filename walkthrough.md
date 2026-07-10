@@ -80,3 +80,42 @@ NETGSM_HEADER=your_approved_header
 TURSO_DATABASE_URL=libsql://veritabani-adi.turso.io
 TURSO_AUTH_TOKEN=ey...
 ```
+
+---
+
+## Yeni Arayüz Geliştirmeleri ve Mobil Uyum Çalışmaları
+
+### 1. Premium Bildirim Merkezi & Destek (SSS) Modalı
+- **Tasarım**: Navbar bell (çan) ikonuna basıldığında açılan, daha okunaklı ve opaklaştırılmış (`rgba(255, 255, 255, 0.94)`) frosted glass bildirim dropdown popup'ı.
+- **Detaylar**: Mobil uyumlu (`max-width: calc(100vw - 32px)`), taşma yapmayan ve okundu olarak işaretleme / bildirim temizleme mantığı. Destek butonu için modern SSS modal kutusu.
+
+### 2. Kapıda Ödeme Teyit Mobil Uyumluluğu
+- **Tasarım**: Mobil genişliklerde (max-width: 768px) arama ve bakiye kartlarının alt alta (`flex-direction: column`) sıralanması.
+- **Optimizasyon**: Bakiye kartı horizontal hizalaması ile küsuratlı para birimi değerlerinin tek satıra sığması sağlandı.
+
+### 3. Ürünlerim Sayfası Mobil Düzenlemeleri
+- **Tasarım**: Araç çubuğundaki ("Barkod Oluştur", "Excel İndir", "Rapor Oluştur") aksiyon butonlarının mobil görünümde tam ekran genişlikte alt alta düzenli listelenmesi.
+- **Optimizasyon**: Pasif Ürünler ve Seçim Modu toggle switch'lerinin sol etiket, sağ buton şeklinde grid satırları olarak hizalanması ve tablonun yatayda kaydırılabilir hale getirilmesi (`max-width: 100% !important` table-responsive).
+
+### 4. Hızlı Adres Yükleme Sistemi (Gönderici & Alıcı Adres Defteri)
+- **Tasarım**: Depoya Ürün Gönder formundaki "Gönderici Bilgileri" ve "Alıcı Bilgileri" başlıklarının yanına **"Adres Defteri"** butonu entegre edildi.
+- **Detaylar**: Buton tıklandığında açılan hızlı adres seçim modalı ve tek tıkla Ad, Telefon, İl, İlçe, Adres alanlarının otomatik doldurulması.
+
+### 5. Yeni "Adres Defteri" Sidebar Yönetim Sayfası
+- **Tasarım**: Sol sidebar menüsüne `"Adres Defteri"` adında yeni bir navigasyon menüsü (`#nav-address-book`) eklendi.
+- **Özellikler**:
+  - **"Depo Konumları"** ve **"Alıcı Konumları"** sekmeleri arası dinamik geçiş.
+  - Adres başlığı, Adres No, Gönderici Adı, Telefonu, E-Postası, Ülkesi, İli, İlçesi ve açık adresi listesi içeren modern kart ızgarası (Grid).
+  - Seçilen konumu **Ana Depo Yap** (Varsayılan adres olarak işaretleme) özelliği ile aktif vurgulu sınır çizgisi (`is-main`).
+  - Sağ üstte **Toplu Adres Ekle** ve **Yeni Adres Ekle** aksiyon butonları ile yeni adres kaydetme formu.
+  - Kartlarda adres silme (Trash can) işlevi.
+
+---
+
+## Detaylı Doğrulama Listesi (Verification Checklist)
+
+1. **Sidebar Navigasyon**: Sidebar üzerindeki tüm sekmelerin (Dashboard, Siparişlerim, Kapıda Ödeme Teyit, Ürünlerim, Depoya Ürün Gönder, Adres Defteri vb.) sorunsuz yüklendiğini ve geçiş yaptığını doğrulayın.
+2. **Hızlı Adres Doldurma**: "Depoya Ürün Gönder" sayfasında "Standart Teslimat"ı seçin. Gönderici ve Alıcı Adres Defteri butonlarına tıklayarak kayıtlı adreslerin alanları anında doldurduğunu gözlemleyin.
+3. **Adres Defteri Yönetimi**: Sidebar'daki "Adres Defteri" sayfasına girin. Kart listelerini, "Depo / Alıcı Konumları" sekmelerini, arama çubuğunu, "Yeni Adres Ekle" formunu ve "Ana Depo Yap" tetikleyicilerini test edin.
+4. **Mobil Responsive Kontroller**: Tarayıcıyı mobil boyutlara getirin. Navbar arama barının küçüldüğünü/kapandığını, durum kartlarının, sipariş listelerinin ve adres kartlarının taşma yapmadan alt alta hizalandığını doğrulayın.
+5. **Bildirim Popup**: Navbar çan ikonuna tıklayıp bildirimleri görüntüleyin. Tümünü okundu olarak işaretleyip dışarı tıklayarak kapatın.

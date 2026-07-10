@@ -172,6 +172,10 @@
 					<i class="fa-solid fa-comment-sms"></i>
 					<span>SMS Ayarları</span>
 				</a>
+				<a href="#" class="menu-item" id="nav-address-book">
+					<i class="fa-solid fa-address-book"></i>
+					<span>Adres Defteri</span>
+				</a>
 				<a href="#" class="menu-item" id="nav-support">
 					<i class="fa-solid fa-headset"></i>
 					<span>Destek</span>
@@ -1188,6 +1192,51 @@
 				</div>
 			</div>
 
+			<!-- ========== ADRES DEFTERİ GÖRÜNÜMÜ (ADDRESS BOOK VIEW) ========== -->
+			<div id="address-book-view" class="view-section" style="display: none;">
+				<!-- Header (Başlık) -->
+				<header class="content-header" style="margin-bottom: 20px;">
+					<div class="header-welcome-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+						<div class="header-welcome">
+							<h1>Adres Defteri</h1>
+							<p class="header-subtitle">Kayıtlı depo ve alıcı adreslerinizi yönetin.</p>
+						</div>
+						<div style="display: flex; gap: 12px; flex-wrap: wrap;">
+							<button class="btn-secondary" style="padding: 10px 18px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-md); border: 1px solid var(--border-color) !important;" onclick="showNotification('Toplu adres ekleme şablonu indiriliyor...', 'success')">
+								<i class="fa-solid fa-file-import" style="color: var(--text-secondary);"></i> Toplu Adres Ekle
+							</button>
+							<button class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 20px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; border-radius: var(--radius-md);" onclick="handleAddNewAddressPrompt()">
+								<i class="fa-solid fa-circle-plus" style="color: #ffffff !important;"></i> Yeni Adres Ekle
+							</button>
+						</div>
+					</div>
+				</header>
+
+				<!-- Tabs & Arama Çubuğu -->
+				<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; width: 100%;">
+					<!-- Pills -->
+					<div style="display: flex; gap: 8px; background: rgba(0,0,0,0.03); padding: 4px; border-radius: 30px; border: 1px solid rgba(0,0,0,0.05);">
+						<button id="tab-depot-locations" class="address-tab-btn active" style="padding: 8px 18px; border-radius: 20px; border: none; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;" onclick="switchAddressBookTab('depot')">
+							Depo Konumları
+						</button>
+						<button id="tab-receiver-locations" class="address-tab-btn" style="padding: 8px 18px; border-radius: 20px; border: none; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s;" onclick="switchAddressBookTab('receiver')">
+							Alıcı Konumları
+						</button>
+					</div>
+
+					<!-- Arama Kutusu -->
+					<div class="verification-search-input-wrapper" style="max-width: 280px; width: 100%; flex: none;">
+						<i class="fa-solid fa-magnifying-glass" style="left: 14px;"></i>
+						<input type="text" id="address-book-search-input" placeholder="Depo Konumu Ara..." style="padding: 10px 16px 10px 38px; font-size: 13px; border-radius: 50px; background: #ffffff; border: 1px solid rgba(0,0,0,0.08);" oninput="handleAddressBookSearch(this.value)">
+					</div>
+				</div>
+
+				<!-- Adres Kartları Grid -->
+				<div id="address-book-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+					<!-- JS ile doldurulacak -->
+				</div>
+			</div>
+
 			<!-- ========== AYARLAR GÖRÜNÜMÜ (SETTINGS VIEW) ========== -->
 			<div id="settings-view" class="view-section" style="display: none;">
 				<!-- Header (Başlık) -->
@@ -1309,7 +1358,12 @@
 
 						<!-- 4. Gönderici Bilgileri (Only visible in Standard mode) -->
 						<div id="sender-info-card" class="spring-out-element">
-							<div class="flat-section-header">Gönderici Bilgileri</div>
+							<div class="flat-section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<span>Gönderici Bilgileri</span>
+								<button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; margin: 0; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border-color) !important; border-radius: var(--radius-md) !important;" onclick="openAddressBookModal('sender')">
+									<i class="fa-solid fa-address-book" style="color: var(--primary) !important;"></i> Adres Defteri
+								</button>
+							</div>
 							
 							<div class="flat-form-row">
 								<div class="flat-form-label">Ad Soyad / Firma*</div>
@@ -1343,7 +1397,12 @@
 
 						<!-- 5. Alıcı Bilgileri (Only visible in Standard mode) -->
 						<div id="receiver-info-card" class="spring-out-element">
-							<div class="flat-section-header">Alıcı Bilgileri</div>
+							<div class="flat-section-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<span>Alıcı Bilgileri</span>
+								<button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; margin: 0; display: flex; align-items: center; gap: 6px; border: 1px solid var(--border-color) !important; border-radius: var(--radius-md) !important;" onclick="openAddressBookModal('receiver')">
+									<i class="fa-solid fa-address-book" style="color: var(--primary) !important;"></i> Adres Defteri
+								</button>
+							</div>
 							
 							<div class="flat-form-row">
 								<div class="flat-form-label">Ad Soyad / Firma*</div>
@@ -2257,6 +2316,76 @@
 			<div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background: #f8f9fa;">
 				<button type="button" class="btn-secondary" onclick="closeFaqModal()">Kapat</button>
 			</div>
+		</div>
+	</div>
+
+	<!-- Adres Defteri Modalı -->
+	<div id="address-book-modal" class="modal-backdrop" onclick="if(event.target === this) closeAddressBookModal()" style="display: none;">
+		<div class="modal-box" style="max-width: 550px;">
+			<div class="modal-header">
+				<h3 class="modal-title" id="address-book-title"><i class="fa-solid fa-address-book"></i> Adres Defteri</h3>
+				<button class="modal-close-btn" onclick="closeAddressBookModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+				<input type="hidden" id="address-book-target-type" value="">
+				<div id="address-book-list" style="display: flex; flex-direction: column; gap: 12px;">
+					<!-- Dinamik olarak JS ile doldurulacak -->
+				</div>
+			</div>
+			<div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background: #f8f9fa;">
+				<button type="button" class="btn-secondary" onclick="closeAddressBookModal()">Kapat</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Yeni Adres Ekle Modalı -->
+	<div id="add-address-modal" class="modal-backdrop" onclick="if(event.target === this) closeAddAddressModal()" style="display: none;">
+		<div class="modal-box" style="max-width: 500px;">
+			<div class="modal-header">
+				<h3 class="modal-title"><i class="fa-solid fa-circle-plus"></i> Yeni Adres Ekle</h3>
+				<button class="modal-close-btn" onclick="closeAddAddressModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<form id="add-address-form" onsubmit="saveNewAddress(event)">
+				<div class="modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 14px; text-align: left;">
+					<div style="display: flex; flex-direction: column; gap: 4px;">
+						<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">Adres Tipi</label>
+						<select id="new-addr-type" style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+							<option value="depot">Depo Konumu</option>
+							<option value="receiver">Alıcı Konumu</option>
+						</select>
+					</div>
+					<div style="display: flex; flex-direction: column; gap: 4px;">
+						<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">Adres Başlığı*</label>
+						<input type="text" id="new-addr-title" placeholder="Örn: Veliora Depo" required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+					</div>
+					<div style="display: flex; flex-direction: column; gap: 4px;">
+						<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">Gönderici/Alıcı Adı*</label>
+						<input type="text" id="new-addr-name" placeholder="Ad Soyad veya Firma" required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+					</div>
+					<div style="display: flex; flex-direction: column; gap: 4px;">
+						<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">Telefon*</label>
+						<input type="text" id="new-addr-phone" placeholder="+90 555 555 55 55" required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+					</div>
+					<div style="display: flex; gap: 12px;">
+						<div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+							<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">İl*</label>
+							<input type="text" id="new-addr-city" placeholder="İl" required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+						</div>
+						<div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+							<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">İlçe*</label>
+							<input type="text" id="new-addr-district" placeholder="İlçe" required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+						</div>
+					</div>
+					<div style="display: flex; flex-direction: column; gap: 4px;">
+						<label style="font-size: 12.5px; font-weight: 700; color: var(--text-primary);">Adres Detayı*</label>
+						<textarea id="new-addr-detail" rows="3" placeholder="Mahalle, sokak, no, daire..." required style="padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); resize: none;"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer" style="padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; background: #f8f9fa;">
+					<button type="button" class="btn-secondary" onclick="closeAddAddressModal()">Vazgeç</button>
+					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Adresi Kaydet</button>
+				</div>
+			</form>
 		</div>
 	</div>
 

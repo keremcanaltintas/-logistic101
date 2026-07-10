@@ -7218,4 +7218,127 @@ body {
 	}
 }
 
+/* Address Book Item hover effects */
+.address-book-item:hover {
+	border-color: var(--primary) !important;
+	background: rgba(16, 185, 129, 0.04) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Address Book Page Styles */
+.address-tab-btn {
+	background: transparent;
+	color: var(--text-secondary);
+	border: none;
+}
+
+.address-tab-btn.active {
+	background: var(--primary) !important;
+	color: #ffffff !important;
+	box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15) !important;
+}
+
+.address-card {
+	background: rgba(255, 255, 255, 0.45);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	border-radius: var(--radius-lg);
+	padding: 20px;
+	position: relative;
+	transition: all 0.2s;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.address-card:hover {
+	background: rgba(255, 255, 255, 0.65);
+	transform: translateY(-2px);
+}
+
+.address-card.is-main {
+	border-color: var(--primary) !important;
+	box-shadow: 0 4px 16px rgba(40, 167, 69, 0.08) !important;
+}
+
+.address-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+	border-bottom: 1px solid rgba(0,0,0,0.04);
+	padding-bottom: 10px;
+}
+
+.address-card-title {
+	font-family: var(--font-alt);
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--text-primary);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.address-card-details {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	font-size: 12.5px;
+	color: var(--text-secondary);
+	text-align: left;
+	margin-bottom: 16px;
+}
+
+.address-card-detail-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	line-height: 1.4;
+}
+
+.address-card-detail-item i {
+	width: 16px;
+	color: var(--text-muted);
+	margin-top: 2px;
+	font-size: 12px;
+}
+
+.address-card-detail-item strong {
+	color: var(--text-primary);
+}
+
+.btn-address-action {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	background: #ffffff;
+	color: var(--text-secondary);
+	font-size: 12.5px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.btn-address-action:hover {
+	border-color: var(--primary);
+	color: var(--primary);
+	background: rgba(16, 185, 129, 0.02);
+}
+
+.address-delete-btn {
+	background: transparent;
+	border: none;
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: color 0.2s;
+	font-size: 14px;
+}
+
+.address-delete-btn:hover {
+	color: #ef4444;
+}
+
 
