@@ -6985,12 +6985,12 @@ body {
 	right: 0;
 	width: 330px;
 	max-width: calc(100vw - 32px) !important;
-	background: var(--glass-bg) !important;
-	backdrop-filter: var(--glass-blur) !important;
-	-webkit-backdrop-filter: var(--glass-blur) !important;
-	border: 1px solid var(--glass-border) !important;
+	background: rgba(255, 255, 255, 0.94) !important;
+	backdrop-filter: blur(10px) !important;
+	-webkit-backdrop-filter: blur(10px) !important;
+	border: 1px solid rgba(0, 0, 0, 0.08) !important;
 	border-radius: var(--radius-md) !important;
-	box-shadow: var(--glass-shadow) !important;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
 	z-index: 1000;
 	margin-top: 10px;
 	display: flex;
@@ -7122,6 +7122,41 @@ body {
 
 .notification-dropdown-footer a:hover {
 	color: var(--primary);
+}
+
+/* Responsive adjustments for Kapıda Ödeme Sipariş Doğrulama page */
+.verification-balance-card {
+	display: flex !important;
+	align-items: center !important;
+	gap: 16px !important;
+}
+
+@media (max-width: 768px) {
+	.verification-top-grid {
+		grid-template-columns: 1fr !important;
+		gap: 16px !important;
+	}
+
+	.verification-grid {
+		grid-template-columns: 1fr !important;
+		gap: 16px !important;
+	}
+
+	#verification-search-form {
+		flex-direction: column !important;
+		gap: 12px !important;
+	}
+
+	.verification-search-card {
+		padding: 16px !important;
+		display: block !important;
+	}
+
+	#btn-verification-search {
+		width: 100% !important;
+		margin-top: 0 !important;
+		padding: 12px !important;
+	}
 }
 
 
