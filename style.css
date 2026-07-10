@@ -6881,4 +6881,17 @@ body {
 	pointer-events: auto;
 }
 
+/* Collapse padding/borders completely when hidden to prevent height misalignment */
+.spring-out-element:not(.show) {
+	padding: 0 !important;
+	border-width: 0 !important;
+	border-color: transparent !important;
+	margin-bottom: 0 !important;
+}
+
+/* Disable hover bounce/translate for cards in the warehouse shipping form */
+.send-to-warehouse-grid .settings-card:hover {
+	transform: none !important;
+}
+
 
