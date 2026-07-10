@@ -1233,13 +1233,10 @@
 					</div>
 				</header>
 				<form id="warehouse-shipment-form" onsubmit="handleCreateWarehouseShipment(event)" style="margin-top: 24px;">
-					<!-- Grid layout for the cards -->
-					<div class="send-to-warehouse-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%;">
-						
-						<!-- Sol Kolon: Hizmet Seçimi & Gönderici Bilgileri -->
-						<div style="display: flex; flex-direction: column; gap: 0; height: 100%;">
-							<!-- Hizmet Türü ve Taşıyıcı Kartı -->
-							<div class="settings-card" style="margin-bottom: 24px; background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); width: 100%; box-sizing: border-box; flex: 1; display: flex; flex-direction: column;">
+					<!-- Vertical list layout for the cards -->
+					<div class="send-to-warehouse-list">
+						<!-- Hizmet Türü ve Taşıyıcı Kartı -->
+						<div class="settings-card">
 								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-truck-fast"></i> Gönderi Hizmet ve Taşıyıcı Seçimi</h3>
 								
 								<!-- Hizmet Türü Seçimi -->
@@ -1280,7 +1277,7 @@
 							</div>
 
 							<!-- Gönderici Bilgileri Kartı (Fırlayacak Eleman) -->
-							<div id="sender-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
+							<div id="sender-info-card" class="settings-card spring-out-element">
 								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-user-check"></i> Gönderici Bilgileri</h3>
 								
 								<div class="form-group-draft" style="margin-bottom: 12px;">
@@ -1307,12 +1304,9 @@
 									<textarea id="sender-address" rows="3" placeholder="Açık adres yazınız..." style="margin-top: 6px;"></textarea>
 								</div>
 							</div>
-						</div>
 
-						<!-- Sağ Kolon: Alıcı Bilgileri & Gönderi & Ödeme Bilgileri -->
-						<div style="display: flex; flex-direction: column; gap: 0; height: 100%;">
 							<!-- Alıcı Bilgileri Kartı (Fırlayacak Eleman) -->
-							<div id="receiver-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
+							<div id="receiver-info-card" class="settings-card spring-out-element">
 								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-location-dot"></i> Alıcı Bilgileri</h3>
 								
 								<div class="form-group-draft" style="margin-bottom: 12px;">
@@ -1342,7 +1336,7 @@
 							</div>
 
 							<!-- Gönderi Detayları & Ödeme Kartı (Fırlayacak Eleman) -->
-							<div id="shipment-payment-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%; flex: 1; display: flex; flex-direction: column;">
+							<div id="shipment-payment-card" class="settings-card spring-out-element">
 								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-box-open"></i> Gönderi & Ödeme Bilgileri</h3>
 								
 								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
@@ -1378,7 +1372,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
 					</div>
 
 					<!-- Form Footer: Gönderi Oluşturma Butonu -->
