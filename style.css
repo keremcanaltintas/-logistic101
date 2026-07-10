@@ -7159,4 +7159,63 @@ body {
 	}
 }
 
+/* Responsive adjustments for products page */
+@media (max-width: 768px) {
+	.products-toolbar {
+		flex-direction: column !important;
+		align-items: stretch !important;
+		gap: 16px !important;
+		padding: 16px !important;
+	}
+	
+	.products-toolbar .toolbar-left,
+	.products-toolbar .toolbar-right {
+		flex-direction: column !important;
+		align-items: stretch !important;
+		width: 100% !important;
+		gap: 12px !important;
+	}
+	
+	.products-toolbar .toolbar-left button,
+	.products-toolbar .toolbar-right button,
+	.products-toolbar .toolbar-right div {
+		width: 100% !important;
+		text-align: center !important;
+		justify-content: center !important;
+		margin: 0 !important;
+	}
+	
+	.products-toolbar .toolbar-left > div {
+		display: flex !important;
+		justify-content: space-between !important;
+		align-items: center !important;
+		background: rgba(0, 0, 0, 0.02) !important;
+		border: 1px solid rgba(0, 0, 0, 0.05) !important;
+		padding: 10px 14px !important;
+		border-radius: var(--radius-md) !important;
+		width: 100% !important;
+	}
+	
+	.products-toolbar .toolbar-left > div .toggle-switch {
+		margin: 0 !important;
+	}
+
+	.products-card {
+		max-width: 100% !important;
+		overflow: hidden !important;
+	}
+}
+
+/* Global responsive table scroll improvement */
+.table-responsive {
+	max-width: 100% !important;
+}
+
+/* Hide global search bar on small mobile screens to prevent navbar stretch */
+@media (max-width: 520px) {
+	.search-bar-wrapper {
+		display: none !important;
+	}
+}
+
 
