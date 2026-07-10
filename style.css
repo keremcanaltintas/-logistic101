@@ -6888,8 +6888,9 @@ body {
 	border-radius: var(--radius-md) !important;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 	padding: 32px !important;
-	max-width: 900px;
-	margin: 24px auto 0 auto;
+	width: 100% !important;
+	box-sizing: border-box !important;
+	margin: 24px 0 0 0 !important;
 }
 
 .flat-section-header {
