@@ -3275,25 +3275,39 @@ function setServiceType(type) {
 	];
 
 	if (type === 'return') {
-		// Kartları gizle (Yaylanarak kapanma animasyonu)
-		animatedCards.forEach(card => {
-			if (card) card.classList.remove('show');
-		});
+		// Kartları gizle/göster (Sol ve sağ kolondaki adres kartları gizlenir, ödeme kartı gösterilir)
+		if (senderCard) senderCard.classList.remove('show');
+		if (receiverCard) receiverCard.classList.remove('show');
+		if (paymentCard) paymentCard.classList.add('show');
 
-		// Browser validasyon hatası vermemesi için required özniteliklerini kaldır
-		formFields.forEach(field => {
+		// Gizlenen form elemanlarının required durumunu kaldır ve temizle
+		const hiddenFields = [
+			senderName, senderPhone, senderCity, senderDistrict, senderAddress,
+			receiverName, receiverPhone, receiverCity, receiverDistrict, receiverAddress
+		];
+		hiddenFields.forEach(field => {
 			if (field) {
 				field.removeAttribute('required');
 				field.value = ''; // temizle
 			}
 		});
-	} else if (type === 'standard') {
-		// Kartları göster (Yaylanarak fırlama animasyonu)
-		animatedCards.forEach(card => {
-			if (card) card.classList.add('show');
-		});
 
-		// Inputları required yap
+		// Ödeme kartı görünür olduğu için desi ve paket alanlarını doldur ve required yap
+		if (desi) {
+			desi.setAttribute('required', 'true');
+			if (!desi.value) desi.value = '2';
+		}
+		if (packages) {
+			packages.setAttribute('required', 'true');
+			if (!packages.value) packages.value = '1';
+		}
+	} else if (type === 'standard') {
+		// Tüm kartları göster
+		if (senderCard) senderCard.classList.add('show');
+		if (receiverCard) receiverCard.classList.add('show');
+		if (paymentCard) paymentCard.classList.add('show');
+
+		// Tüm girdileri required yap
 		formFields.forEach(field => {
 			if (field) {
 				field.setAttribute('required', 'true');
@@ -3328,10 +3342,10 @@ function handleCreateWarehouseShipment(event) {
 		receiverDistrictVal = NESTRO_WAREHOUSE_ADDRESS.district;
 		receiverAddressVal = NESTRO_WAREHOUSE_ADDRESS.address;
 		
-		desiVal = '2';
-		packagesVal = '1';
+		desiVal = document.getElementById('shipment-desi').value || '2';
+		packagesVal = document.getElementById('shipment-packages').value || '1';
 		noteVal = document.getElementById('shipment-note').value || '-';
-		paymentMethodVal = 'cari';
+		paymentMethodVal = document.getElementById('shipment-payment-method').value || 'cari';
 	} else {
 		// Standart Teslimat Modu: Formdan bilgileri al
 		senderNameVal = document.getElementById('sender-name').value;
