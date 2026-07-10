@@ -3629,6 +3629,13 @@ document.addEventListener('click', function(event) {
 	if (trigger && menu && !trigger.contains(event.target)) {
 		menu.classList.remove('active');
 	}
+	
+	// Bildirim balonu kapatma mantığı
+	const notiBtn = document.getElementById('btn-notification-trigger');
+	const notiDropdown = document.getElementById('notification-dropdown');
+	if (notiBtn && notiDropdown && !notiBtn.contains(event.target) && !notiDropdown.contains(event.target)) {
+		notiDropdown.style.display = 'none';
+	}
 });
 
 // ==========================================================================
@@ -4075,6 +4082,69 @@ async function saveCallOutcome() {
 	
 	// Arayüzü sıfırla
 	initVerificationView();
+}
+
+// ==========================================================================
+// 23. BİLDİRİM VE SSS MODAL FONKSİYONLARI (NOTIFICATION & FAQ MODAL LOGIC)
+// ==========================================================================
+
+function toggleNotificationDropdown(event) {
+	if (event) event.stopPropagation();
+	const dropdown = document.getElementById('notification-dropdown');
+	if (!dropdown) return;
+	
+	if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+		dropdown.style.display = 'flex';
+	} else {
+		dropdown.style.display = 'none';
+	}
+}
+
+function closeNotificationDropdown() {
+	const dropdown = document.getElementById('notification-dropdown');
+	if (dropdown) dropdown.style.display = 'none';
+}
+
+function markAllNotificationsAsRead(event) {
+	if (event) {
+		event.preventDefault();
+		event.stopPropagation();
+	}
+	
+	const unreadItems = document.querySelectorAll('.noti-item.unread');
+	unreadItems.forEach(item => {
+		item.classList.remove('unread');
+	});
+	
+	const badge = document.getElementById('noti-badge-dot');
+	if (badge) {
+		badge.style.display = 'none';
+	}
+	
+	showNotification('Tüm bildirimler okundu olarak işaretlendi.', 'success');
+}
+
+function checkUnreadCount() {
+	const unread = document.querySelectorAll('.noti-item.unread');
+	const badge = document.getElementById('noti-badge-dot');
+	if (badge) {
+		if (unread.length === 0) {
+			badge.style.display = 'none';
+		} else {
+			badge.style.display = 'block';
+		}
+	}
+}
+
+// SSS Modalı Aç/Kapat
+function openFaqModal() {
+	const modal = document.getElementById('faq-modal');
+	if (modal) modal.style.display = 'flex';
+}
+
+function closeFaqModal() {
+	const modal = document.getElementById('faq-modal');
+	if (modal) modal.style.display = 'none';
 }
 
 
