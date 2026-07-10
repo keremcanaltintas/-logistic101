@@ -6984,6 +6984,7 @@ body {
 	top: 100%;
 	right: 0;
 	width: 330px;
+	max-width: calc(100vw - 32px) !important;
 	background: var(--glass-bg) !important;
 	backdrop-filter: var(--glass-blur) !important;
 	-webkit-backdrop-filter: var(--glass-blur) !important;
@@ -7081,6 +7082,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+	flex: 1 !important;
+	min-width: 0 !important;
 }
 
 .noti-text {
@@ -7089,6 +7092,8 @@ body {
 	line-height: 1.4;
 	margin: 0;
 	font-weight: 500;
+	word-break: break-word !important;
+	white-space: normal !important;
 }
 
 .noti-item.unread .noti-text {
