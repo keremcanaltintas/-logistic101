@@ -1224,173 +1224,170 @@
 				</div>
 			</div>
 
-			<!-- ========== DEPOYA ÜRÜN GÖNDER MODALI (SEND TO WAREHOUSE MODAL) ========== -->
-			<div id="send-to-warehouse-modal" style="display: none;" class="modal-backdrop">
-				<div class="modal-box vertical-rectangle-modal" style="max-width: 960px; width: 95%;">
-					<div class="modal-header">
-						<h3 class="modal-title"><i class="fa-solid fa-truck-ramp-box"></i> Depoya Ürün Gönder</h3>
-						<button type="button" class="modal-close-btn" onclick="closeSendToWarehouseModal()"><i class="fa-solid fa-xmark"></i></button>
+			<!-- ========== DEPOYA ÜRÜN GÖNDERİ OLUŞTURMA SAYFASI ========== -->
+			<div id="send-to-warehouse-view" class="view-section" style="display: none;">
+				<header class="content-header">
+					<div class="header-welcome">
+						<h1>Depoya Ürün Gönder</h1>
+						<p class="header-subtitle">Deponuza ürün gönderin veya iade işlemlerinizi başlatın</p>
 					</div>
-					<form id="warehouse-shipment-form" onsubmit="handleCreateWarehouseShipment(event)">
-						<div class="modal-body" style="padding: 24px; text-align: left; max-height: 70vh; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
-							<p style="margin: 0; font-size: 13.5px; color: var(--text-secondary);">Deponuza ürün gönderin veya iade işlemlerinizi başlatın</p>
-							
-							<!-- Grid layout for the cards -->
-							<div class="send-to-warehouse-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%;">
+				</header>
+				<form id="warehouse-shipment-form" onsubmit="handleCreateWarehouseShipment(event)" style="margin-top: 24px;">
+					<!-- Grid layout for the cards -->
+					<div class="send-to-warehouse-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%;">
+						
+						<!-- Sol Kolon: Hizmet Seçimi & Gönderici Bilgileri -->
+						<div style="display: flex; flex-direction: column; gap: 0;">
+							<!-- Hizmet Türü ve Taşıyıcı Kartı -->
+							<div class="settings-card" style="margin-bottom: 24px; background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); width: 100%; box-sizing: border-box;">
+								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-truck-fast"></i> Gönderi Hizmet ve Taşıyıcı Seçimi</h3>
 								
-								<!-- Sol Kolon: Hizmet Seçimi & Gönderici Bilgileri -->
-								<div style="display: flex; flex-direction: column; gap: 0;">
-									<!-- Hizmet Türü ve Taşıyıcı Kartı -->
-									<div class="settings-card" style="margin-bottom: 24px; background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); width: 100%; box-sizing: border-box;">
-										<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-truck-fast"></i> Gönderi Hizmet ve Taşıyıcı Seçimi</h3>
-										
-										<!-- Hizmet Türü Seçimi -->
-										<div class="form-group-draft" style="margin-bottom: 16px;">
-											<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Hizmet Türü</label>
-											<div class="service-type-buttons" style="display: flex; gap: 12px; margin-top: 6px;">
-												<button type="button" id="btn-service-return" class="btn-service-type active" onclick="setServiceType('return')" style="flex: 1; padding: 10px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px;">
-													<i class="fa-solid fa-arrow-left-rotate"></i> İade (Depoya Gönderim)
-												</button>
-												<button type="button" id="btn-service-standard" class="btn-service-type" onclick="setServiceType('standard')" style="flex: 1; padding: 10px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px;">
-													<i class="fa-solid fa-arrow-right-to-bracket"></i> Standart Teslimat
-												</button>
-											</div>
-										</div>
+								<!-- Hizmet Türü Seçimi -->
+								<div class="form-group-draft" style="margin-bottom: 16px;">
+									<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Hizmet Türü</label>
+									<div class="service-type-buttons" style="display: flex; gap: 12px; margin-top: 6px;">
+										<button type="button" id="btn-service-return" class="btn-service-type active" onclick="setServiceType('return')" style="flex: 1; padding: 10px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px;">
+											<i class="fa-solid fa-arrow-left-rotate"></i> İade (Depoya Gönderim)
+										</button>
+										<button type="button" id="btn-service-standard" class="btn-service-type" onclick="setServiceType('standard')" style="flex: 1; padding: 10px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px;">
+											<i class="fa-solid fa-arrow-right-to-bracket"></i> Standart Teslimat
+										</button>
+									</div>
+								</div>
 
-										<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-											<!-- Taşıyıcı Firma -->
-											<div class="form-group-draft">
-												<label for="shipment-carrier" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Taşıyıcı Firma*</label>
-												<div class="priority-select-group" style="width: 100%; margin-top: 6px;">
-													<select id="shipment-carrier" required style="width: 100%;">
-														<option value="" disabled selected>Seçiniz</option>
-														<option value="Yurtiçi Kargo">Yurtiçi Kargo</option>
-														<option value="MNG Kargo">MNG Kargo</option>
-														<option value="Aras Kargo">Aras Kargo</option>
-														<option value="Sürat Kargo">Sürat Kargo</option>
-														<option value="PTT Kargo">PTT Kargo</option>
-													</select>
-												</div>
-											</div>
-
-											<!-- Referans ID -->
-											<div class="form-group-draft">
-												<label for="shipment-ref-id" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Referans ID</label>
-												<input type="text" id="shipment-ref-id" placeholder="Örn: REF-12345" style="margin-top: 6px;">
-											</div>
+								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+									<!-- Taşıyıcı Firma -->
+									<div class="form-group-draft">
+										<label for="shipment-carrier" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Taşıyıcı Firma*</label>
+										<div class="priority-select-group" style="width: 100%; margin-top: 6px;">
+											<select id="shipment-carrier" required style="width: 100%;">
+												<option value="" disabled selected>Seçiniz</option>
+												<option value="Yurtiçi Kargo">Yurtiçi Kargo</option>
+												<option value="MNG Kargo">MNG Kargo</option>
+												<option value="Aras Kargo">Aras Kargo</option>
+												<option value="Sürat Kargo">Sürat Kargo</option>
+												<option value="PTT Kargo">PTT Kargo</option>
+											</select>
 										</div>
 									</div>
 
-									<!-- Gönderici Bilgileri Kartı (Fırlayacak Eleman) -->
-									<div id="sender-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
-										<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-user-check"></i> Gönderici Bilgileri</h3>
-										
-										<div class="form-group-draft" style="margin-bottom: 12px;">
-											<label for="sender-name" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ad Soyad / Firma*</label>
-											<input type="text" id="sender-name" placeholder="Gönderici Ad Soyad veya Şirket Adı" style="margin-top: 6px;">
-										</div>
+									<!-- Referans ID -->
+									<div class="form-group-draft">
+										<label for="shipment-ref-id" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Referans ID</label>
+										<input type="text" id="shipment-ref-id" placeholder="Örn: REF-12345" style="margin-top: 6px;">
+									</div>
+								</div>
+							</div>
 
-										<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
-											<div class="form-group-draft">
-												<label for="sender-phone" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Telefon*</label>
-												<input type="text" id="sender-phone" placeholder="0555 555 55 55" style="margin-top: 6px;">
-											</div>
-											<div class="form-group-draft">
-												<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">İl / İlçe*</label>
-												<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
-													<input type="text" id="sender-city" placeholder="İl">
-													<input type="text" id="sender-district" placeholder="İlçe">
-												</div>
-											</div>
-										</div>
+							<!-- Gönderici Bilgileri Kartı (Fırlayacak Eleman) -->
+							<div id="sender-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
+								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-user-check"></i> Gönderici Bilgileri</h3>
+								
+								<div class="form-group-draft" style="margin-bottom: 12px;">
+									<label for="sender-name" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ad Soyad / Firma*</label>
+									<input type="text" id="sender-name" placeholder="Gönderici Ad Soyad veya Şirket Adı" style="margin-top: 6px;">
+								</div>
 
-										<div class="form-group-draft">
-											<label for="sender-address" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Adres*</label>
-											<textarea id="sender-address" rows="3" placeholder="Açık adres yazınız..." style="margin-top: 6px;"></textarea>
+								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+									<div class="form-group-draft">
+										<label for="sender-phone" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Telefon*</label>
+										<input type="text" id="sender-phone" placeholder="0555 555 55 55" style="margin-top: 6px;">
+									</div>
+									<div class="form-group-draft">
+										<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">İl / İlçe*</label>
+										<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+											<input type="text" id="sender-city" placeholder="İl">
+											<input type="text" id="sender-district" placeholder="İlçe">
 										</div>
 									</div>
 								</div>
 
-								<!-- Sağ Kolon: Alıcı Bilgileri & Gönderi & Ödeme Bilgileri -->
-								<div style="display: flex; flex-direction: column; gap: 0;">
-									<!-- Alıcı Bilgileri Kartı (Fırlayacak Eleman) -->
-									<div id="receiver-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
-										<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-location-dot"></i> Alıcı Bilgileri</h3>
-										
-										<div class="form-group-draft" style="margin-bottom: 12px;">
-											<label for="receiver-name" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ad Soyad / Firma*</label>
-											<input type="text" id="receiver-name" placeholder="Alıcı Ad Soyad veya Şirket Adı" style="margin-top: 6px;">
-										</div>
+								<div class="form-group-draft">
+									<label for="sender-address" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Adres*</label>
+									<textarea id="sender-address" rows="3" placeholder="Açık adres yazınız..." style="margin-top: 6px;"></textarea>
+								</div>
+							</div>
+						</div>
 
-										<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
-											<div class="form-group-draft">
-												<label for="receiver-phone" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Telefon*</label>
-												<input type="text" id="receiver-phone" placeholder="0555 555 55 55" style="margin-top: 6px;">
-											</div>
-											<div class="form-group-draft">
-												<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">İl / İlçe*</label>
-												<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
-													<input type="text" id="receiver-city" placeholder="İl">
-													<input type="text" id="receiver-district" placeholder="İlçe">
-												</div>
-											</div>
-										</div>
+						<!-- Sağ Kolon: Alıcı Bilgileri & Gönderi & Ödeme Bilgileri -->
+						<div style="display: flex; flex-direction: column; gap: 0;">
+							<!-- Alıcı Bilgileri Kartı (Fırlayacak Eleman) -->
+							<div id="receiver-info-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
+								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-location-dot"></i> Alıcı Bilgileri</h3>
+								
+								<div class="form-group-draft" style="margin-bottom: 12px;">
+									<label for="receiver-name" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ad Soyad / Firma*</label>
+									<input type="text" id="receiver-name" placeholder="Alıcı Ad Soyad veya Şirket Adı" style="margin-top: 6px;">
+								</div>
 
-										<div class="form-group-draft">
-											<label for="receiver-address" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Adres*</label>
-											<textarea id="receiver-address" rows="3" placeholder="Açık adres yazınız..." style="margin-top: 6px;"></textarea>
+								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+									<div class="form-group-draft">
+										<label for="receiver-phone" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Telefon*</label>
+										<input type="text" id="receiver-phone" placeholder="0555 555 55 55" style="margin-top: 6px;">
+									</div>
+									<div class="form-group-draft">
+										<label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">İl / İlçe*</label>
+										<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+											<input type="text" id="sender-city" style="display:none;"><!-- hidden field/duplicate avoid if any -->
+											<input type="text" id="receiver-city" placeholder="İl">
+											<input type="text" id="receiver-district" placeholder="İlçe">
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group-draft">
+									<label for="receiver-address" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Adres*</label>
+									<textarea id="receiver-address" rows="3" placeholder="Açık adres yazınız..." style="margin-top: 6px;"></textarea>
+								</div>
+							</div>
+
+							<!-- Gönderi Detayları & Ödeme Kartı (Fırlayacak Eleman) -->
+							<div id="shipment-payment-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
+								<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-box-open"></i> Gönderi & Ödeme Bilgileri</h3>
+								
+								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
+									<!-- Desi -->
+									<div class="form-group-draft">
+										<label for="shipment-desi" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Desi Değeri*</label>
+										<input type="number" id="shipment-desi" min="1" placeholder="Örn: 2" style="margin-top: 6px;">
+									</div>
+
+									<!-- Paket Sayısı -->
+									<div class="form-group-draft">
+										<label for="shipment-packages" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Paket Sayısı*</label>
+										<input type="number" id="shipment-packages" min="1" value="1" placeholder="Örn: 1" style="margin-top: 6px;">
+									</div>
+								</div>
+
+								<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+									<!-- Ödeme Şekli -->
+									<div class="form-group-draft">
+										<label for="shipment-payment-method" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ödeme Şekli*</label>
+										<div class="priority-select-group" style="width: 100%; margin-top: 6px;">
+											<select id="shipment-payment-method" style="width: 100%;">
+												<option value="cari" selected>Cari Hesap (Nestro Cüzdan)</option>
+												<option value="alicinin-hesabindan">Alıcı Ödemeli</option>
+											</select>
 										</div>
 									</div>
 
-									<!-- Gönderi Detayları & Ödeme Kartı (Fırlayacak Eleman) -->
-									<div id="shipment-payment-card" class="settings-card spring-out-element" style="background: rgba(255,255,255,0.45); border: 1px solid rgba(0,0,0,0.06); padding: 18px; border-radius: var(--radius-md); box-sizing: border-box; width: 100%;">
-										<h3 class="settings-card-title" style="font-size: 14px; font-weight: 700; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);"><i class="fa-solid fa-box-open"></i> Gönderi & Ödeme Bilgileri</h3>
-										
-										<div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px;">
-											<!-- Desi -->
-											<div class="form-group-draft">
-												<label for="shipment-desi" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Desi Değeri*</label>
-												<input type="number" id="shipment-desi" min="1" placeholder="Örn: 2" style="margin-top: 6px;">
-											</div>
-
-											<!-- Paket Sayısı -->
-											<div class="form-group-draft">
-												<label for="shipment-packages" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Paket Sayısı*</label>
-												<input type="number" id="shipment-packages" min="1" value="1" placeholder="Örn: 1" style="margin-top: 6px;">
-											</div>
-										</div>
-
-                                        <div class="settings-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                            <!-- Ödeme Şekli -->
-                                            <div class="form-group-draft">
-                                                <label for="shipment-payment-method" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Ödeme Şekli*</label>
-                                                <div class="priority-select-group" style="width: 100%; margin-top: 6px;">
-                                                    <select id="shipment-payment-method" style="width: 100%;">
-                                                        <option value="cari" selected>Cari Hesap (Nestro Cüzdan)</option>
-                                                        <option value="alicinin-hesabindan">Alıcı Ödemeli</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Gönderi Notu -->
-                                            <div class="form-group-draft">
-                                                <label for="shipment-note" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Gönderi Notu</label>
-                                                <input type="text" id="shipment-note" placeholder="Kurye için not..." style="margin-top: 6px;">
-                                            </div>
-                                        </div>
+									<!-- Gönderi Notu -->
+									<div class="form-group-draft">
+										<label for="shipment-note" style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Gönderi Notu</label>
+										<input type="text" id="shipment-note" placeholder="Kurye için not..." style="margin-top: 6px;">
 									</div>
 								</div>
 							</div>
 						</div>
-						
-						<!-- Modal Footer: Gönderi Oluşturma Butonu -->
-						<div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color);">
-							<button type="submit" id="btn-create-warehouse-shipment" class="btn-create-draft" style="width: auto; padding: 12px 32px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; border: none; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; margin-top: 0; background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important; color: #ffffff !important;">
-								<i class="fa-solid fa-paper-plane" style="color: #ffffff !important;"></i> <span id="btn-create-warehouse-shipment-text" style="color: #ffffff !important;">Gönderiyi Oluştur</span>
-							</button>
-						</div>
-					</form>
-				</div>
+					</div>
+
+					<!-- Form Footer: Gönderi Oluşturma Butonu -->
+					<div class="form-footer" style="padding: 24px 0 0 0; display: flex; justify-content: flex-end; border-top: 1px solid var(--border-color); margin-top: 16px;">
+						<button type="submit" id="btn-create-warehouse-shipment" class="btn-create-draft" style="width: auto; padding: 12px 32px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; border: none; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; margin-top: 0; background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important; color: #ffffff !important;">
+							<i class="fa-solid fa-paper-plane" style="color: #ffffff !important;"></i> <span id="btn-create-warehouse-shipment-text" style="color: #ffffff !important;">Gönderiyi Oluştur</span>
+						</button>
+					</div>
+				</form>
 			</div>
 
 			<!-- ========== KAPIDA ÖDEME MÜŞTERİ TEYİT VE ARAMA GÖRÜNÜMÜ ========== -->

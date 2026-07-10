@@ -171,7 +171,6 @@ function transitionToDashboard() {
 		loginPage.style.display = 'none';
 		
 		let lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
-		if (lastView === 'send-to-warehouse') lastView = 'dashboard';
 		switchView(lastView);
 	}, 600);
 }
@@ -219,7 +218,6 @@ function checkLoginAndRoute() {
 		document.getElementById('dashboard-page').style.display = 'flex';
 		showChatbot();
 		let lastView = localStorage.getItem('nestro_current_view') || 'dashboard';
-		if (lastView === 'send-to-warehouse') lastView = 'dashboard';
 		switchView(lastView);
 	}
 	setupModalScrollBlocker();
@@ -1124,11 +1122,7 @@ function initNavigation() {
 			el.parentNode.replaceChild(newEl, el);
 			newEl.addEventListener('click', (e) => {
 				e.preventDefault();
-				if (menuItems[id] === 'send-to-warehouse') {
-					openSendToWarehouseModal();
-				} else {
-					switchView(menuItems[id]);
-				}
+				switchView(menuItems[id]);
 			});
 		}
 	});
@@ -1144,9 +1138,6 @@ function toggleMobileSidebar() {
 }
 
 function switchView(viewName) {
-	if (viewName === 'send-to-warehouse') {
-		viewName = 'dashboard';
-	}
 	// Sayfa yenilemelerinde aktif sayfayı korumak için kaydet
 	localStorage.setItem('nestro_current_view', viewName);
 
@@ -1160,6 +1151,7 @@ function switchView(viewName) {
 	const reportsView = document.getElementById('reports-view');
 	const settingsView = document.getElementById('settings-view');
 	const verificationView = document.getElementById('verification-view');
+	const sendToWarehouseView = document.getElementById('send-to-warehouse-view');
 	
 	const navDashboard = document.getElementById('nav-dashboard');
 	const navConnect = document.getElementById('nav-connect');
@@ -1173,7 +1165,7 @@ function switchView(viewName) {
 	const navSettings = document.getElementById('nav-settings');
 	const navVerification = document.getElementById('nav-verification');
 
-	if (!dashboardView || !connectView || !ordersView || !productsView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView) return;
+	if (!dashboardView || !connectView || !ordersView || !productsView || !walletView || !supportView || !smsView || !reportsView || !settingsView || !verificationView || !sendToWarehouseView) return;
 
 	// Mobil sidebar'ı kapat (eğer aktifse)
 	const sidebar = document.querySelector('.sidebar');
@@ -1207,6 +1199,7 @@ function switchView(viewName) {
 	reportsView.style.display = 'none';
 	settingsView.style.display = 'none';
 	verificationView.style.display = 'none';
+	sendToWarehouseView.style.display = 'none';
 
 	// İlgili görünümü aç
 	if (viewName === 'dashboard') {
@@ -1251,6 +1244,10 @@ function switchView(viewName) {
 		verificationView.style.display = 'block';
 		if (navVerification) navVerification.classList.add('active');
 		initVerificationView();
+	} else if (viewName === 'send-to-warehouse') {
+		sendToWarehouseView.style.display = 'block';
+		if (navSendToWarehouse) navSendToWarehouse.classList.add('active');
+		setServiceType('return');
 	}
 }
 
@@ -3231,19 +3228,7 @@ const NESTRO_WAREHOUSE_ADDRESS = {
 
 let currentServiceType = 'return';
 
-// Depoya Ürün Gönder Modalı Helper Fonksiyonları
-function openSendToWarehouseModal() {
-	const modal = document.getElementById('send-to-warehouse-modal');
-	if (modal) {
-		modal.style.display = 'flex';
-		// default to return service type when opening
-		setServiceType('return');
-	}
-}
-
-function closeSendToWarehouseModal() {
-	closeModalWithAnimation('send-to-warehouse-modal');
-}
+// Depoya Ürün Gönder Helper Fonksiyonları
 
 // Hizmet Türü Değişimi ve Adres Otomatik Doldurma / Kitleme / Yaylanarak Fırlama (Spring) Animasyonu
 function setServiceType(type) {
@@ -3390,8 +3375,7 @@ function handleCreateWarehouseShipment(event) {
 		btnSubmit.classList.remove('loading-pulse');
 		btnSubmit.innerHTML = oldBtnHtml;
 
-		// Depo modalını kapat
-		closeSendToWarehouseModal();
+		// Depo modalı artık düz sayfa olduğu için kapatma işlemi yapılmaz
 
 		// Takip Numarası Oluşturma (Mock)
 		const randomTracking = 'NT' + Math.floor(100000000 + Math.random() * 900000000);
