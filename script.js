@@ -1135,6 +1135,13 @@ function toggleMobileSidebar() {
 	if (sidebar && overlay) {
 		sidebar.classList.toggle('mobile-active');
 		overlay.classList.toggle('active');
+		
+		// Background scroll lock
+		if (sidebar.classList.contains('mobile-active')) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
 	}
 }
 
@@ -1176,6 +1183,7 @@ function switchView(viewName) {
 	if (sidebar && sidebar.classList.contains('mobile-active')) {
 		sidebar.classList.remove('mobile-active');
 		if (overlay) overlay.classList.remove('active');
+		document.body.style.overflow = '';
 	}
 
 	// Aktif menü vurgulamalarını kaldır

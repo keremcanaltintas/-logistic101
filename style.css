@@ -597,6 +597,7 @@ img, svg {
 	z-index: 100;
 	padding: 24px 16px;
 	transition: var(--transition-smooth);
+	overscroll-behavior: contain;
 }
 
 .sidebar-header {
@@ -1772,6 +1773,8 @@ aside.sidebar .menu-item.wizard-highlighted i {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
+		overscroll-behavior: contain;
+		overflow-y: auto;
 	}
 
 	.sidebar.mobile-active {
@@ -1979,18 +1982,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	}
 }
 
-/* Ekstrem Küçük Mobil Ekranlar (max-width: 380px) */
-@media (max-width: 380px) {
-	.profile-store-text,
-	.profile-chevron {
-		display: none !important;
-	}
-
-	.profile-dropdown-trigger {
-		padding: 4px !important;
-		gap: 0 !important;
-	}
-}
+/* Ekstrem Küçük Mobil Ekranlarda Mağazam butonunun tam görünmesini sağla */
 
 @keyframes modalSlideUpMobile {
 	from { transform: translateY(100%); }
@@ -4763,7 +4755,7 @@ aside.sidebar .menu-item.wizard-highlighted i {
 }
 
 .report-finance-card.net-profit-highlight {
-	border: 2px dashed var(--primary);
+	border: 2px solid var(--primary);
 	background: rgba(40, 167, 73, 0.02);
 }
 

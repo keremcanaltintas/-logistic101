@@ -119,3 +119,6 @@ TURSO_AUTH_TOKEN=ey...
 3. **Adres Defteri Yönetimi**: Sidebar'daki "Adres Defteri" sayfasına girin. Kart listelerini, "Depo / Alıcı Konumları" sekmelerini, arama çubuğunu, "Yeni Adres Ekle" formunu ve "Ana Depo Yap" tetikleyicilerini test edin.
 4. **Mobil Responsive Kontroller**: Tarayıcıyı mobil boyutlara getirin. Navbar arama barının küçüldüğünü/kapandığını, durum kartlarının, sipariş listelerinin ve adres kartlarının taşma yapmadan alt alta hizalandığını doğrulayın.
 5. **Bildirim Popup**: Navbar çan ikonuna tıklayıp bildirimleri görüntüleyin. Tümünü okundu olarak işaretleyip dışarı tıklayarak kapatın.
+6. **Net Kâr Kartı Kenarlığı**: Raporlar sayfasındaki "Net Kâr" kartının kenarlığının kesikli (dashed) yerine düz (solid) çizgi şeklinde görüntülendiğini doğrulayın.
+7. **Mobil Üst Panel Mağazam Butonu**: Mobil ekran boyutlarında navbar'ın sağındaki "Mağazam" butonunun kesilmeden/kaybolmadan ikon, metin ve aşağı ok işaretiyle birlikte bir bütün halinde kapsül şeklinde göründüğünü doğrulayın.
+8. **Mobil Sidebar Arka Plan Kayma Önleyici (Scroll Lock)**: Mobil görünümde sol hamburger menüye tıklayarak sidebar'ı açın. Menü içerisinde aşağı yukarı kaydırma (scroll) yaptığınızda, arkadaki ana sayfa içeriğinin/arka planın sabit kaldığını ve oynamadığını doğrulayın.
