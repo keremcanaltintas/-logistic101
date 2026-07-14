@@ -3013,27 +3013,6 @@ const turkeyGeoDb = {
   "kilis": ["ELBEYLI", "MUSABEYLİ", "POLATELI"],
   "osmaniye": ["BAHÇE", "DÜZİÇİ", "HASANBEYLİ", "KADİRLİ", "SUMBAS", "TOPRAKKALE"],
   "düzce": ["AKÇAKOCA", "CUMAYERİ", "ÇİLİMLİ", "GÖLYAKA", "GÜMÜŞOVA", "KAYNAŞLI", "YIĞILCA"]
-};rnekpazari", "düzköy", "hayrat", "köprübaşi", "maçka", "of", "ortahisar", "sürmene", "şalpazari", "tonya", "vakfikebir", "yomra"],
-  "tunceli": ["çemişgezek", "hozat", "mazgirt", "nazimiye", "ovacik", "pertek", "pülümür"],
-  "şanliurfa": ["akçakale", "birecik", "bozova", "ceylanpinar", "eyyübiye", "halfeti", "haliliye", "harran", "hilvan", "karaköprü", "siverek", "suruç", "viranşehir"],
-  "uşak": ["banaz", "eşme", "karahalli", "sivasli", "ulubey"],
-  "van": ["bahçesaray", "başkale", "çaldiran", "çatak", "edremit", "erciş", "gevaş", "gürpinar", "ipekyolu", "muradiye", "özalp", "saray", "tuşba"],
-  "yozgat": ["akdağmadeni", "aydincik", "boğazliyan", "çandir", "çayiralalan", "çekerek", "kadişehri", "saraykent", "sarikaya", "sorgun", "şefaatli", "yenifakili", "yerköy"],
-  "zonguldak": ["alapli", "çaycuma", "devrek", "ereğli", "gökçebey", "kilimli", "kozlu"],
-  "aksaray": ["ağaçören", "eskil", "gülağaç", "güzelyurt", "ortaköy", "sariyahşi", "sultanhani"],
-  "bayburt": ["aydintepe", "demirözü"],
-  "karaman": ["ayranci", "başyayla", "ermenek", "kazimkarabekir", "sariveliler"],
-  "kirikkale": ["bahşili", "balişeyh", "çelebi", "delice", "karakeçili", "keskin", "sulakyurt", "yahşihan"],
-  "batman": ["beşiri", "gercüş", "hasankeyf", "kozluk", "sason"],
-  "şirnak": ["beytüşşebap", "cizre", "güçlükonak", "idil", "silopi", "uludere"],
-  "bartin": ["amasra", "kurucaşile", "ulus"],
-  "ardahan": ["çildir", "damal", "göle", "hanak", "posof"],
-  "ığdir": ["aralik", "karakoyunlu", "tuzluca"],
-  "yalova": ["altinova", "armutlu", "çinarcik", "çiftlikköy", "termal"],
-  "karabük": ["eflani", "eskipazar", "ovacik", "safranbolu", "yenice"],
-  "kilis": ["elbeyli", "musabeyli", "polateli"],
-  "osmaniye": ["bahçe", "düziçi", "hasanbeyli", "kadirli", "sumbas", "toprakkale"],
-  "düzce": ["akçakoca", "cumayeri", "çilimli", "gölyaka", "gümüşova", "kaynaşli", "yiğilca"]
 };
 
 // Türkçe karakter duyarlı küçük harfe çevirme fonksiyonu
