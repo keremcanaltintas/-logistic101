@@ -7961,4 +7961,17 @@ body {
 	background: #f8fafc;
 }
 
+/* Explain split grid responsive */
+.explain-grid-responsive {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+@media (min-width: 576px) {
+	.explain-grid-responsive {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
 

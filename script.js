@@ -2850,58 +2850,296 @@ function getActionText(action) {
 	}
 }
 
+function submitSupportTicket(e) {
+	e.preventDefault();
+	
+	if (!currentTicketOrder) {
+		showNotification("Lütfen önce bir sipariş sorgulayın.", "error");
+		return;
+	}
+	
+	if (!selectedTicketAction) {
+		showNotification("Lütfen bir yapılacak işlem seçin.", "error");
+		return;
+	}
+	
+	const order = currentTicketOrder;
+	let ticketSubject = '';
+	let actionNote = '';
+	
+	let originalProductsList = null;
+	let newProductsList = null;
+	let originalAddressStr = null;
+	let newAddressStr = null;
+	
+	if (selectedTicketAction === 'urgency') {
+		const userNote = document.getElementById('ticket-urgency-note').value.trim();
+		order.urgent = true;
+		actionNote = `[Destek Talebi - ACİLİYET] Öncelikli çıkış talep edildi.` + (userNote ? ` Not: ${userNote}` : '');
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Aciliyet Bildirimi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'hold') {
+		const userNote = document.getElementById('ticket-hold-note').value.trim();
+		
+		if (order.status === 'cancelled' || order.status === 'shipped') {
+			showNotification("İptal edilmiş veya kargolanmış siparişler beklemeye alınamaz. ❌", "error");
+			return;
+		}
+		
+		order.status = 'on-hold';
+		actionNote = `[Destek Talebi - BEKLETME] Sipariş beklemeye alındı.` + (userNote ? ` Not: ${userNote}` : '');
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Siparişi Bekletme Talebi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'address') {
+		const mahalle = document.getElementById('t-addr-mahalle').value.trim();
+		const sokak = document.getElementById('t-addr-sokak').value.trim();
+		const no = document.getElementById('t-addr-no').value.trim();
+		const ilce = document.getElementById('t-addr-ilce').value.trim();
+		const il = document.getElementById('t-addr-il').value.trim();
+		
+		// 1. Alan doluluk kontrolü
+		if (!mahalle || !sokak || !no || !ilce || !il) {
+			showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
+			return;
+		}
+		
+		// 2. Mahalle Kelime Kontrolü
+		const mahLower = turkishToLower(mahalle);
+		if (!mahLower.includes('mah') && !mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
+			showNotification("Mahalle alanında 'mah', 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
+			return;
+		}
+
+		// 3. Sokak/Cadde Kelime Kontrolü
+		const sokLower = turkishToLower(sokak);
+		if (!sokLower.includes('sok') && !sokLower.includes('sok.') && !sokLower.includes('cad') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
+			showNotification("Sokak/Cadde alanında 'sok', 'sok.', 'cad', 'cad.' veya 'caddesi' olmalıdır.", "error");
+			return;
+		}
+
+		// 4. Apt / No Kelime Kontrolü
+		const noLower = turkishToLower(no);
+		if (!noLower.includes('no.') && !noLower.includes('no') && !noLower.includes('numara')) {
+			showNotification("Apt/Bina/No alanında 'no.' veya 'numara' ifadesi olmalıdır.", "error");
+			return;
+		}
+
+		// 5. İl Doğrulaması
+		const ilLower = turkishToLower(il);
+		if (!turkeyGeoDb.hasOwnProperty(ilLower)) {
+			showNotification("Geçersiz il adı girdiniz.", "error");
+			return;
+		}
+
+		// 6. İlçe Doğrulaması
+		const ilceLower = turkishToLower(ilce);
+		const validDistricts = turkeyGeoDb[ilLower];
+		const hasDistrict = validDistricts.some(d => {
+			const dbDistrictLower = turkishToLower(d);
+			if (ilLower === 'ankara' && dbDistrictLower === 'amak' && ilceLower === 'mamak') {
+				return true;
+			}
+			return dbDistrictLower === ilceLower;
+		});
+		if (!hasDistrict) {
+			showNotification("Geçersiz ilçe adı girdiniz.", "error");
+			return;
+		}
+		
+		// Eski adresi yakala
+		let customerAddress = 'Girilmemiş';
+		if (order.address) {
+			customerAddress = order.address;
+		} else if (order.shippingDetails) {
+			const s = order.shippingDetails;
+			customerAddress = `${s.neighborhood || ''} ${s.street || ''} No: ${s.buildingNo || ''} ${s.district || ''}/${s.city || ''}`;
+		}
+		originalAddressStr = customerAddress;
+		
+		const formattedAddress = `${mahalle}, ${sokak}, ${no}, ${ilce}/${il}`;
+		newAddressStr = formattedAddress;
+		
+		actionNote = `[Destek Talebi - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${formattedAddress}`;
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Adres Değişikliği Talebi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'exchange') {
+		if (ticketExchangeCart.length === 0) {
+			showNotification("Siparişin en az 1 adet ürünü olmalıdır. Güncel sepetiniz boş!", "error");
+			return;
+		}
+		
+		// Eski ürünleri kaydet
+		originalProductsList = order.products.map(p => `${p.name} - ${p.qty} ADET`);
+		
+		order.products = ticketExchangeCart.map(item => ({
+			name: item.name,
+			qty: item.qty,
+			price: item.price
+		}));
+		
+		// Yeni ürünleri kaydet
+		newProductsList = ticketExchangeCart.map(item => `${item.name} - ${item.qty} ADET`);
+		
+		const productsText = ticketExchangeCart.map(item => `${item.name} (x${item.qty})`).join(', ');
+		actionNote = `[Destek Talebi - DEĞİŞİM] Ürünler güncellendi. Yeni sepet: ${productsText}`;
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Ürün Değişim Talebi (${order.code})`;
+	}
+	
+	// CRM tablolarını güncelle
+	renderOrders(currentFilter, currentSearchQuery);
+	updateDashboardStats();
+	
+	// Yeni Destek Talebi Ekle
+	const newId = 'DST-' + (Math.floor(Math.random() * 900) + 100);
+	const now = new Date();
+	const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+	let detailNote = '';
+	if (selectedTicketAction === 'urgency') {
+		detailNote = document.getElementById('ticket-urgency-note').value.trim();
+	} else if (selectedTicketAction === 'hold') {
+		detailNote = document.getElementById('ticket-hold-note').value.trim();
+	}
+
+	const newTicket = {
+		id: newId,
+		subject: ticketSubject,
+		date: dateStr,
+		status: 'open',
+		details: {
+			orderCode: order.code,
+			customerName: order.customer || 'Bilinmeyen Müşteri',
+			storeName: order.store || 'Underbros',
+			actionType: selectedTicketAction,
+			actionText: getActionText(selectedTicketAction),
+			description: actionNote,
+			note: detailNote,
+			originalProducts: originalProductsList,
+			newProducts: newProductsList,
+			originalAddress: originalAddressStr,
+			newAddress: newAddressStr,
+			response: 'Talebiniz inceleme aşamasındadır.'
+		}
+	};
+
+	tickets.unshift(newTicket);
+	renderTickets();
+
+	closeSupportTicketModal();
+	showNotification('Talebiniz destek ekibine iletildi.', 'success');
+}
+
+function getActionText(action) {
+	switch(action) {
+		case 'urgency': return 'Aciliyet';
+		case 'hold': return 'Siparişi Bekletme';
+		case 'address': return 'Adres Değişikliği';
+		case 'exchange': return 'Değişim';
+		default: return 'Diğer';
+	}
+}
+
 function showTicketDetailsModal(ticketId) {
 	const ticket = tickets.find(t => t.id === ticketId);
 	if (!ticket) return;
 	
-	document.getElementById('view-ticket-title').textContent = `Destek Talebi Detayı (#${ticket.id})`;
-	document.getElementById('view-ticket-date').textContent = ticket.date;
-	document.getElementById('view-ticket-subject').textContent = ticket.subject;
+	const orderCode = (ticket.details && ticket.details.orderCode) ? ticket.details.orderCode : 'Yok';
 	
-	// Durum Badge
+	document.getElementById('view-ticket-title').textContent = `Talep Detayı - ${orderCode}`;
+	document.getElementById('view-ticket-date').textContent = ticket.date;
+	document.getElementById('view-ticket-subject').textContent = ticket.details ? ticket.details.actionText : ticket.subject;
+	
+	// Durum Text
+	let statusText = 'Beklemede';
+	if (ticket.status === 'answered') {
+		statusText = 'Yanıtlandı';
+	} else if (ticket.status === 'closed') {
+		statusText = 'Kapalı';
+	} else if (ticket.status === 'open') {
+		statusText = 'Beklemede';
+	}
+	document.getElementById('view-ticket-status-text').textContent = statusText;
+	
+	// Durum Badge/HTML
 	const statusContainer = document.getElementById('view-ticket-status');
 	statusContainer.innerHTML = '';
 	let statusBadgeHTML = '';
 	if (ticket.status === 'answered') {
-		statusBadgeHTML = `<span class="badge-ticket-answered"><i class="fa-solid fa-circle-check"></i> Yanıtlandı</span>`;
+		statusBadgeHTML = `<span class="badge-ticket-answered" style="background: #D1FAE5; color: #065F46; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-circle-check"></i> Yanıtlandı</span>`;
 	} else if (ticket.status === 'open') {
-		statusBadgeHTML = `<span class="badge-ticket-open"><i class="fa-solid fa-envelope-open"></i> Açık</span>`;
+		statusBadgeHTML = `<span class="badge-ticket-open" style="background: #FEF3C7; color: #92400E; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-envelope-open"></i> Açık</span>`;
 	} else if (ticket.status === 'closed') {
-		statusBadgeHTML = `<span class="badge-ticket-closed"><i class="fa-solid fa-folder-closed"></i> Kapalı</span>`;
+		statusBadgeHTML = `<span class="badge-ticket-closed" style="background: #F3F4F6; color: #374151; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 11px;"><i class="fa-solid fa-folder-closed"></i> Kapalı</span>`;
 	}
 	statusContainer.innerHTML = statusBadgeHTML;
 	
 	if (ticket.details) {
 		document.getElementById('view-ticket-customer').textContent = ticket.details.customerName || 'Sistem';
 		document.getElementById('view-ticket-order').textContent = ticket.details.orderCode || 'Yok';
+		document.getElementById('view-ticket-store').textContent = ticket.details.storeName || 'Underbros';
 		
-		// İşlem Ayrıntısı
-		const detailSection = document.getElementById('view-ticket-detail-section');
-		if (ticket.details.description) {
-			detailSection.style.display = 'flex';
-			document.getElementById('view-ticket-description').textContent = ticket.details.description;
+		// Talep Açıklaması Alanı Eşleşmesi
+		const explainContainer = document.getElementById('view-ticket-explain-container');
+		explainContainer.innerHTML = '';
+		
+		if (ticket.details.actionType === 'exchange' || (ticket.details.originalProducts && ticket.details.newProducts)) {
+			// Ürün Değişimi Detayı
+			const origHtml = ticket.details.originalProducts.map(p => `<div style="background: #FFF5F5; border: 1.5px solid #FED7D7; color: #C53030; border-radius: 6px; padding: 10px 14px; font-size: 12.5px; font-weight: 600; margin-bottom: 8px;">${p}</div>`).join('');
+			const newHtml = ticket.details.newProducts.map(p => `<div style="background: #F0FFF4; border: 1.5px solid #C6F6D5; color: #22543D; border-radius: 6px; padding: 10px 14px; font-size: 12.5px; font-weight: 600; margin-bottom: 8px;">${p}</div>`).join('');
+			
+			explainContainer.innerHTML = `
+				<div style="display: grid; grid-template-columns: 1fr; gap: 16px;" class="explain-grid-responsive">
+					<div>
+						<span style="font-size: 11px; text-transform: uppercase; color: #c53030; font-weight: 700; display: block; margin-bottom: 8px; letter-spacing: 0.5px;">ESKİ ÜRÜNLER</span>
+						${origHtml}
+					</div>
+					<div>
+						<span style="font-size: 11px; text-transform: uppercase; color: #22543d; font-weight: 700; display: block; margin-bottom: 8px; letter-spacing: 0.5px;">YENİ ÜRÜNLER</span>
+						${newHtml}
+					</div>
+				</div>
+			`;
+		} else if (ticket.details.actionType === 'address' || (ticket.details.originalAddress && ticket.details.newAddress)) {
+			// Adres Değişikliği Detayı
+			explainContainer.innerHTML = `
+				<div style="display: grid; grid-template-columns: 1fr; gap: 16px;" class="explain-grid-responsive">
+					<div>
+						<span style="font-size: 11px; text-transform: uppercase; color: #c53030; font-weight: 700; display: block; margin-bottom: 8px; letter-spacing: 0.5px;">ESKİ ADRES</span>
+						<div style="background: #FFF5F5; border: 1.5px solid #FED7D7; color: #C53030; border-radius: 6px; padding: 12px 16px; font-size: 12.5px; font-weight: 600; line-height: 1.45;">${ticket.details.originalAddress}</div>
+					</div>
+					<div>
+						<span style="font-size: 11px; text-transform: uppercase; color: #22543d; font-weight: 700; display: block; margin-bottom: 8px; letter-spacing: 0.5px;">YENİ ADRES</span>
+						<div style="background: #F0FFF4; border: 1.5px solid #C6F6D5; color: #22543D; border-radius: 6px; padding: 12px 16px; font-size: 12.5px; font-weight: 600; line-height: 1.45;">${ticket.details.newAddress}</div>
+					</div>
+				</div>
+			`;
 		} else {
-			detailSection.style.display = 'none';
+			// Diğer Talepler (Aciliyet, Bekletme vb.)
+			const noteText = ticket.details.note ? `<div style="margin-top: 8px; font-style: italic; color: #475569; font-size: 12.5px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px;">Ek Not: ${ticket.details.note}</div>` : '';
+			explainContainer.innerHTML = `
+				<div>
+					<div style="font-size: 13px; color: #1e293b; font-weight: 600; line-height: 1.4;">${ticket.details.description}</div>
+					${noteText}
+				</div>
+			`;
 		}
 		
-		// Kullanıcı Notu
-		const noteSection = document.getElementById('view-ticket-note-section');
-		if (ticket.details.note) {
-			noteSection.style.display = 'flex';
-			document.getElementById('view-ticket-note').textContent = ticket.details.note;
-		} else {
-			noteSection.style.display = 'none';
-		}
-		
-		// Sistem Yanıtı
-		document.getElementById('view-ticket-response').textContent = ticket.details.response || 'Talebiniz operasyon ekiplerimiz tarafından incelenmektedir.';
+		// Yanıt Mesajı
+		document.getElementById('view-ticket-response').textContent = ticket.details.response || 'Talebiniz inceleme aşamasındadır.';
 	} else {
 		// Varsayılan
 		document.getElementById('view-ticket-customer').textContent = 'Sistem';
 		document.getElementById('view-ticket-order').textContent = 'Yok';
-		document.getElementById('view-ticket-detail-section').style.display = 'none';
-		document.getElementById('view-ticket-note-section').style.display = 'none';
-		document.getElementById('view-ticket-response').textContent = 'Talebiniz operasyon ekiplerimiz tarafından incelenmektedir.';
+		document.getElementById('view-ticket-store').textContent = 'Underbros';
+		
+		const explainContainer = document.getElementById('view-ticket-explain-container');
+		explainContainer.innerHTML = `<div style="font-size: 13px; color: #1e293b; font-weight: 600;">${ticket.subject}</div>`;
+		
+		document.getElementById('view-ticket-response').textContent = 'Talebiniz inceleme aşamasındadır.';
 	}
 	
 	document.getElementById('modal-view-ticket').style.display = 'flex';
