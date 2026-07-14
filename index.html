@@ -2173,15 +2173,37 @@
 							<div id="t-detail-exchange" class="ticket-subform" style="display: none;">
 								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Lütfen değişim yapılacak yeni ürünü ve adedi seçin:</p>
 								
-								<!-- Modern Product List for Modal -->
-								<div class="modern-product-list" id="ticket-exchange-product-list">
-									<!-- JS ile doldurulacak -->
-								</div>
-								<input type="hidden" id="selected-ticket-exchange-product-id" value="">
+								<div class="exchange-split-container">
+									<!-- Left Column: Available Products (Catalog) -->
+									<div class="exchange-column">
+										<div class="exchange-column-title" style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Katalogdan Ürün Seçin</div>
+										
+										<!-- Modern Product List for Modal -->
+										<div class="modern-product-list" id="ticket-exchange-product-list" style="max-height: 200px;">
+											<!-- JS ile doldurulacak -->
+										</div>
+										<input type="hidden" id="selected-ticket-exchange-product-id" value="">
+										
+										<div style="margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+											<div style="display: flex; align-items: center; gap: 8px;">
+												<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary);">Miktar:</label>
+												<input type="number" id="ticket-exchange-qty-input" value="1" min="1" style="width: 60px; padding: 6px; text-align: center; margin: 0;">
+											</div>
+											<button type="button" class="btn-create-draft" onclick="addSelectedProductToTicketCart()" style="margin: 0; padding: 8px 16px; font-size: 12.5px; flex: 1;">
+												<i class="fa-solid fa-plus"></i> Ekle
+											</button>
+										</div>
+									</div>
 
-								<div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
-									<label style="font-size: 13px; font-weight: 700; color: var(--text-secondary);">Miktar (Adet):</label>
-									<input type="number" id="ticket-exchange-qty-input" value="1" min="1" style="width: 80px; padding: 6px; text-align: center;">
+									<!-- Right Column: Current/New Products of the Order -->
+									<div class="exchange-column">
+										<div class="exchange-column-title" style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Siparişin Güncel Ürünleri</div>
+										
+										<!-- Cart List -->
+										<div class="exchange-cart-list" id="ticket-exchange-cart-list">
+											<!-- JS ile doldurulacak -->
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -2198,6 +2220,71 @@
 					</div>
 				</div>
 			</form>
+		</div>
+	</div>
+
+	<!-- Destek Talebi Detay Modalı -->
+	<div id="modal-view-ticket" class="modal-backdrop" style="display: none;">
+		<div class="modal-box" style="max-width: 600px; width: 90%;">
+			<div class="modal-header">
+				<h3 class="modal-title" id="view-ticket-title">Destek Talebi Detayı</h3>
+				<button type="button" class="modal-close-btn" onclick="closeViewTicketModal()"><i class="fa-solid fa-xmark"></i></button>
+			</div>
+			<div class="modal-body">
+				<div style="display: flex; flex-direction: column; gap: 16px;">
+					<!-- Durum & Tarih Row -->
+					<div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px;">
+						<div>
+							<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700; display: block; margin-bottom: 2px;">Tarih</span>
+							<strong id="view-ticket-date" style="font-size: 13px; color: #1e293b;"></strong>
+						</div>
+						<div>
+							<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700; display: block; margin-bottom: 2px; text-align: right;">Durum</span>
+							<div id="view-ticket-status" style="margin-top: 2px;"></div>
+						</div>
+					</div>
+
+					<!-- Konu & Sipariş Bilgileri -->
+					<div style="display: flex; flex-direction: column; gap: 8px;">
+						<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700;">Talep Konusu</span>
+						<strong id="view-ticket-subject" style="font-size: 14px; color: #1e293b;"></strong>
+					</div>
+
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+						<div>
+							<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">Müşteri</span>
+							<span id="view-ticket-customer" style="font-size: 13px; color: #334155; font-weight: 600;"></span>
+						</div>
+						<div>
+							<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">İlişkili Sipariş</span>
+							<span id="view-ticket-order" style="font-size: 13px; color: #334155; font-weight: 600;"></span>
+						</div>
+					</div>
+
+					<!-- İşlem Ayrıntısı -->
+					<div id="view-ticket-detail-section" style="border-top: 1px solid #f1f5f9; padding-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+						<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700;">İşlem / Değişiklik Ayrıntıları</span>
+						<div id="view-ticket-description" style="font-size: 13px; color: #334155; background: rgba(40, 167, 69, 0.04); border: 1.5px solid rgba(40, 167, 69, 0.1); border-radius: 6px; padding: 10px 14px; font-weight: 500; line-height: 1.45;"></div>
+					</div>
+
+					<!-- Kullanıcı Notu -->
+					<div id="view-ticket-note-section" style="border-top: 1px solid #f1f5f9; padding-top: 12px; display: flex; flex-direction: column; gap: 4px;">
+						<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; font-weight: 700;">Ek Not</span>
+						<p id="view-ticket-note" style="font-size: 13px; color: #475569; font-style: italic; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin: 0;"></p>
+					</div>
+
+					<!-- Sistem Yanıtı -->
+					<div style="border-top: 1px solid #f1f5f9; padding-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+						<span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 4px;">
+							<i class="fa-solid fa-reply"></i> Nestro Müşteri Hizmetleri Yanıtı
+						</span>
+						<div id="view-ticket-response" style="font-size: 13px; color: #0f172a; background: rgba(59, 130, 246, 0.04); border: 1.5px solid rgba(59, 130, 246, 0.1); border-radius: 6px; padding: 12px 16px; font-weight: 500; line-height: 1.5;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer" style="justify-content: flex-end;">
+				<button type="button" class="btn-secondary" onclick="closeViewTicketModal()">Kapat</button>
+			</div>
 		</div>
 	</div>
 

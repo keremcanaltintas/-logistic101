@@ -2306,10 +2306,68 @@ function handleAutoTopupToggle(toggle) {
 
 // Örnek Destek Talepleri Veri Kümesi
 let tickets = [
-	{ id: 'DST-901', subject: 'Kargo Takip Kodu Senkronizasyon Hatası', date: '23 Mayıs 2026, 10:20', status: 'answered' },
-	{ id: 'DST-892', subject: 'Cüzdan Para Çekme Limitleri Hk.', date: '21 Mayıs 2026, 15:40', status: 'closed' },
-	{ id: 'DST-854', subject: '#1015 Numaralı Siparişte Yanlış Ürün Eşleşmesi', date: '18 Mayıs 2026, 09:15', status: 'closed' },
-	{ id: 'DST-811', subject: 'SMS Entegrasyonu Başlık Onayı', date: '15 Mayıs 2026, 11:30', status: 'closed' }
+	{ 
+		id: 'DST-901', 
+		subject: 'Kargo Takip Kodu Senkronizasyon Hatası', 
+		date: '23 Mayıs 2026, 10:20', 
+		status: 'answered',
+		details: {
+			orderCode: '#1021',
+			customerName: 'Can Demir',
+			actionType: 'other',
+			actionText: 'Kargo Senkronizasyonu',
+			description: 'Shopify kargo takip kodu Nestro Depo paneline yansımamıştır.',
+			note: 'Lütfen sipariş gönderi takip durumunu senkronize eder misiniz?',
+			response: 'Merhaba, API bağlantısı yenilenmiş ve kargo takip numarası sipariş kartınıza yansıtılmıştır. İyi çalışmalar dileriz.'
+		}
+	},
+	{ 
+		id: 'DST-892', 
+		subject: 'Cüzdan Para Çekme Limitleri Hk.', 
+		date: '21 Mayıs 2026, 15:40', 
+		status: 'closed',
+		details: {
+			orderCode: 'Yok',
+			customerName: 'Sistem',
+			actionType: 'other',
+			actionText: 'Bilgi Talebi',
+			description: 'Cüzdan para çekme limitlerinin artırılması talebi.',
+			note: 'Limiti günlük 50.000 TLye çıkarmak istiyoruz.',
+			response: 'Merhaba, talebiniz doğrultusunda günlük limitiniz 50.000 TL olarak güncellenmiştir. İyi günler dileriz.'
+		}
+	},
+	{ 
+		id: 'DST-854', 
+		subject: '#1015 Numaralı Siparişte Yanlış Ürün Eşleşmesi', 
+		date: '18 Mayıs 2026, 09:15', 
+		status: 'closed',
+		details: {
+			orderCode: '#1015',
+			customerName: 'Ayşe Kaya',
+			actionType: 'exchange',
+			actionText: 'Ürün Değişimi',
+			description: 'Yanlış beden gönderimi nedeniyle değişim yapılmıştır.',
+			note: 'M Beden yerine L Beden talep ediliyor.',
+			originalProducts: 'Nestro Pamuklu T-Shirt (M) (x1)',
+			newProducts: 'Nestro Pamuklu T-Shirt (L) (x1)',
+			response: 'Talebiniz alınmış ve L beden ürün değişimi yapılarak yeni çıkış sağlanmıştır.'
+		}
+	},
+	{ 
+		id: 'DST-811', 
+		subject: 'SMS Entegrasyonu Başlık Onayı', 
+		date: '15 Mayıs 2026, 11:30', 
+		status: 'closed',
+		details: {
+			orderCode: 'Yok',
+			customerName: 'Sistem',
+			actionType: 'other',
+			actionText: 'Entegrasyon',
+			description: 'SMS gönderimleri için onaylı başlık (Sender ID) başvurusu.',
+			note: 'Başlık: NESTRO',
+			response: 'Başvurunuz onaylanmıştır. NESTRO başlığıyla SMS gönderimlerinizi başlatabilirsiniz.'
+		}
+	}
 ];
 
 // Destek Taleplerini Render Et
@@ -2320,6 +2378,8 @@ function renderTickets() {
 	tbody.innerHTML = '';
 	tickets.forEach(ticket => {
 		const tr = document.createElement('tr');
+		tr.style.cursor = 'pointer';
+		tr.onclick = () => showTicketDetailsModal(ticket.id);
 		
 		let statusBadgeHTML = '';
 		if (ticket.status === 'answered') {
@@ -2468,6 +2528,8 @@ function getStatusBadgeClass(status) {
 	}
 }
 
+let ticketExchangeCart = [];
+
 function selectTicketAction(action) {
 	selectedTicketAction = action;
 	
@@ -2509,6 +2571,18 @@ function selectTicketAction(action) {
 		
 		document.getElementById('selected-ticket-exchange-product-id').value = '';
 		document.getElementById('ticket-exchange-qty-input').value = '1';
+		
+		// Siparişin mevcut ürünlerini sepete doldur
+		ticketExchangeCart = currentTicketOrder.products.map(op => {
+			const catalogProduct = products.find(p => p.name === op.name);
+			return {
+				id: catalogProduct ? catalogProduct.id : 'custom-' + Math.random().toString(36).substr(2, 9),
+				name: op.name,
+				qty: op.qty,
+				price: op.price
+			};
+		});
+		renderTicketExchangeCart();
 	}
 }
 
@@ -2518,6 +2592,97 @@ function selectTicketExchangeProduct(element, productId) {
 	
 	element.classList.add('selected');
 	document.getElementById('selected-ticket-exchange-product-id').value = productId;
+}
+
+function renderTicketExchangeCart() {
+	const cartList = document.getElementById('ticket-exchange-cart-list');
+	if (!cartList) return;
+	
+	cartList.innerHTML = '';
+	
+	if (ticketExchangeCart.length === 0) {
+		cartList.innerHTML = '<div style="color: #64748b; font-size: 12px; text-align: center; margin-top: 25px;">Sepet boş! Katalogdan ürün ekleyin.</div>';
+		return;
+	}
+	
+	ticketExchangeCart.forEach(item => {
+		const itemDiv = document.createElement('div');
+		itemDiv.className = 'exchange-cart-item';
+		
+		itemDiv.innerHTML = `
+			<div class="exchange-cart-item-info">
+				<div class="exchange-cart-item-name">${item.name}</div>
+				<div class="exchange-cart-item-price">${item.price}</div>
+			</div>
+			<div class="exchange-cart-item-actions">
+				<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', -1)">-</button>
+				<span class="cart-item-qty">${item.qty}</span>
+				<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', 1)">+</button>
+				<button type="button" class="btn-cart-remove" onclick="removeTicketCartItem('${item.id}')">
+					<i class="fa-solid fa-trash-can"></i>
+				</button>
+			</div>
+		`;
+		
+		cartList.appendChild(itemDiv);
+	});
+}
+
+function updateTicketCartItemQty(id, delta) {
+	const item = ticketExchangeCart.find(i => i.id === id);
+	if (!item) return;
+	
+	item.qty += delta;
+	if (item.qty < 1) {
+		item.qty = 1;
+	}
+	renderTicketExchangeCart();
+}
+
+function removeTicketCartItem(id) {
+	ticketExchangeCart = ticketExchangeCart.filter(i => i.id !== id);
+	renderTicketExchangeCart();
+}
+
+function addSelectedProductToTicketCart() {
+	const productId = document.getElementById('selected-ticket-exchange-product-id').value;
+	if (!productId) {
+		showNotification("Lütfen soldaki listeden eklemek istediğiniz bir ürün seçin.", "error");
+		return;
+	}
+	
+	const product = products.find(p => p.id === productId);
+	if (!product) return;
+	
+	const qtyInput = document.getElementById('ticket-exchange-qty-input');
+	const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+	if (isNaN(qty) || qty < 1) {
+		showNotification("Lütfen geçerli bir adet girin.", "error");
+		return;
+	}
+	
+	// Sepette var mı?
+	const existing = ticketExchangeCart.find(i => i.id === product.id);
+	if (existing) {
+		existing.qty += qty;
+	} else {
+		ticketExchangeCart.push({
+			id: product.id,
+			name: product.name,
+			qty: qty,
+			price: '₺1.200,00'
+		});
+	}
+	
+	renderTicketExchangeCart();
+	
+	// Reset selection
+	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
+	cards.forEach(c => c.classList.remove('selected'));
+	document.getElementById('selected-ticket-exchange-product-id').value = '';
+	document.getElementById('ticket-exchange-qty-input').value = '1';
+	
+	showNotification("Ürün sepete eklendi.", "success");
 }
 
 function submitSupportTicket(e) {
@@ -2619,28 +2784,19 @@ function submitSupportTicket(e) {
 		ticketSubject = `Adres Değişikliği Talebi (${order.code})`;
 		
 	} else if (selectedTicketAction === 'exchange') {
-		const productId = document.getElementById('selected-ticket-exchange-product-id').value;
-		if (!productId) {
-			showNotification("Lütfen değişim yapılacak bir ürün seçin.", "error");
+		if (ticketExchangeCart.length === 0) {
+			showNotification("Siparişin en az 1 adet ürünü olmalıdır. Güncel sepetiniz boş!", "error");
 			return;
 		}
 		
-		const selectedProduct = products.find(p => p.id === productId);
-		if (!selectedProduct) return;
+		order.products = ticketExchangeCart.map(item => ({
+			name: item.name,
+			qty: item.qty,
+			price: item.price
+		}));
 		
-		const qtyInput = document.getElementById('ticket-exchange-qty-input');
-		const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
-		if (isNaN(quantity) || quantity < 1) {
-			showNotification("Lütfen geçerli bir adet girin.", "error");
-			return;
-		}
-		
-		const itemPrice = 1200.00;
-		order.products = [
-			{ name: selectedProduct.name, qty: quantity, price: '₺' + itemPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-		];
-		
-		actionNote = `[Destek Talebi - DEĞİŞİM] Ürün değişti. Yeni Ürün: ${selectedProduct.name} (${selectedProduct.sku}), Adet: ${quantity}`;
+		const productsText = ticketExchangeCart.map(item => `${item.name} (x${item.qty})`).join(', ');
+		actionNote = `[Destek Talebi - DEĞİŞİM] Ürünler güncellendi. Yeni sepet: ${productsText}`;
 		order.notes = (order.notes || '') + '\n' + actionNote;
 		ticketSubject = `Ürün Değişim Talebi (${order.code})`;
 	}
@@ -2654,11 +2810,27 @@ function submitSupportTicket(e) {
 	const now = new Date();
 	const dateStr = now.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
+	let detailNote = '';
+	if (selectedTicketAction === 'urgency') {
+		detailNote = document.getElementById('ticket-urgency-note').value.trim();
+	} else if (selectedTicketAction === 'hold') {
+		detailNote = document.getElementById('ticket-hold-note').value.trim();
+	}
+
 	const newTicket = {
 		id: newId,
 		subject: ticketSubject,
 		date: dateStr,
-		status: 'open'
+		status: 'open',
+		details: {
+			orderCode: order.code,
+			customerName: order.customer || 'Bilinmeyen Müşteri',
+			actionType: selectedTicketAction,
+			actionText: getActionText(selectedTicketAction),
+			description: actionNote,
+			note: detailNote,
+			response: 'Destek talebiniz açık durumdadır. Depo operasyon ekibimiz talebiniz doğrultusunda gerekli güncellemeyi gerçekleştirmiştir. 🚀'
+		}
 	};
 
 	tickets.unshift(newTicket);
@@ -2666,6 +2838,77 @@ function submitSupportTicket(e) {
 
 	closeSupportTicketModal();
 	showNotification('Talebiniz destek ekibine iletildi.', 'success');
+}
+
+function getActionText(action) {
+	switch(action) {
+		case 'urgency': return 'Aciliyet Bildirimi';
+		case 'hold': return 'Siparişi Bekletme';
+		case 'address': return 'Adres Değişikliği';
+		case 'exchange': return 'Ürün Değişimi';
+		default: return 'Diğer';
+	}
+}
+
+function showTicketDetailsModal(ticketId) {
+	const ticket = tickets.find(t => t.id === ticketId);
+	if (!ticket) return;
+	
+	document.getElementById('view-ticket-title').textContent = `Destek Talebi Detayı (#${ticket.id})`;
+	document.getElementById('view-ticket-date').textContent = ticket.date;
+	document.getElementById('view-ticket-subject').textContent = ticket.subject;
+	
+	// Durum Badge
+	const statusContainer = document.getElementById('view-ticket-status');
+	statusContainer.innerHTML = '';
+	let statusBadgeHTML = '';
+	if (ticket.status === 'answered') {
+		statusBadgeHTML = `<span class="badge-ticket-answered"><i class="fa-solid fa-circle-check"></i> Yanıtlandı</span>`;
+	} else if (ticket.status === 'open') {
+		statusBadgeHTML = `<span class="badge-ticket-open"><i class="fa-solid fa-envelope-open"></i> Açık</span>`;
+	} else if (ticket.status === 'closed') {
+		statusBadgeHTML = `<span class="badge-ticket-closed"><i class="fa-solid fa-folder-closed"></i> Kapalı</span>`;
+	}
+	statusContainer.innerHTML = statusBadgeHTML;
+	
+	if (ticket.details) {
+		document.getElementById('view-ticket-customer').textContent = ticket.details.customerName || 'Sistem';
+		document.getElementById('view-ticket-order').textContent = ticket.details.orderCode || 'Yok';
+		
+		// İşlem Ayrıntısı
+		const detailSection = document.getElementById('view-ticket-detail-section');
+		if (ticket.details.description) {
+			detailSection.style.display = 'flex';
+			document.getElementById('view-ticket-description').textContent = ticket.details.description;
+		} else {
+			detailSection.style.display = 'none';
+		}
+		
+		// Kullanıcı Notu
+		const noteSection = document.getElementById('view-ticket-note-section');
+		if (ticket.details.note) {
+			noteSection.style.display = 'flex';
+			document.getElementById('view-ticket-note').textContent = ticket.details.note;
+		} else {
+			noteSection.style.display = 'none';
+		}
+		
+		// Sistem Yanıtı
+		document.getElementById('view-ticket-response').textContent = ticket.details.response || 'Talebiniz operasyon ekiplerimiz tarafından incelenmektedir.';
+	} else {
+		// Varsayılan
+		document.getElementById('view-ticket-customer').textContent = 'Sistem';
+		document.getElementById('view-ticket-order').textContent = 'Yok';
+		document.getElementById('view-ticket-detail-section').style.display = 'none';
+		document.getElementById('view-ticket-note-section').style.display = 'none';
+		document.getElementById('view-ticket-response').textContent = 'Talebiniz operasyon ekiplerimiz tarafından incelenmektedir.';
+	}
+	
+	document.getElementById('modal-view-ticket').style.display = 'flex';
+}
+
+function closeViewTicketModal() {
+	document.getElementById('modal-view-ticket').style.display = 'none';
 }
 
 // AI Chatbot Değişkenleri
