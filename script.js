@@ -2402,29 +2402,34 @@ function renderTickets() {
 
 let currentTicketOrder = null;
 let selectedTicketAction = null;
+let selectedTicketCategoryType = null;
 
 // Yeni Talep Oluşturma (Modal Açma)
 function handleCreateTicketPrompt() {
-	// Reset step states
-	document.getElementById('ticket-step-search').style.display = 'block';
-	document.getElementById('ticket-step-details').style.display = 'none';
-	document.getElementById('ticket-order-search-input').value = '';
-	document.getElementById('ticket-search-error').style.display = 'none';
-	
-	// Reset footers
-	document.getElementById('ticket-modal-footer-search').style.display = 'flex';
-	document.getElementById('ticket-modal-footer-details').style.display = 'none';
-	
-	// Reset action states
+	selectedTicketCategoryType = null;
 	selectedTicketAction = null;
 	currentTicketOrder = null;
 	
-	// De-highlight action buttons
+	// Reset step states
+	document.getElementById('ticket-step-category').style.display = 'block';
+	document.getElementById('ticket-step-search').style.display = 'none';
+	document.getElementById('ticket-step-details').style.display = 'none';
+	document.getElementById('ticket-step-system-form').style.display = 'none';
+	
+	// Reset inputs
+	document.getElementById('ticket-order-search-input').value = '';
+	document.getElementById('ticket-search-error').style.display = 'none';
+	document.getElementById('ticket-action-detail-area').style.display = 'none';
+	
+	// Reset action buttons highlights
 	const actionBtns = document.querySelectorAll('.ticket-action-btn');
 	actionBtns.forEach(btn => btn.classList.remove('active'));
 	
-	// Hide action detail area
-	document.getElementById('ticket-action-detail-area').style.display = 'none';
+	// Reset footers
+	document.getElementById('ticket-modal-footer-category').style.display = 'flex';
+	document.getElementById('ticket-modal-footer-search').style.display = 'none';
+	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+	document.getElementById('ticket-modal-footer-system').style.display = 'none';
 	
 	// Reset input fields
 	document.getElementById('ticket-urgency-note').value = '';
@@ -2436,6 +2441,12 @@ function handleCreateTicketPrompt() {
 	document.getElementById('t-addr-il').value = '';
 	document.getElementById('selected-ticket-exchange-product-id').value = '';
 	document.getElementById('ticket-exchange-qty-input').value = '1';
+	
+	// Reset system ticket fields
+	const sysSubject = document.getElementById('ticket-system-subject');
+	const sysMsg = document.getElementById('ticket-system-message');
+	if (sysSubject) sysSubject.value = '';
+	if (sysMsg) sysMsg.value = '';
 	
 	// Open modal
 	document.getElementById('modal-support-ticket').style.display = 'flex';
@@ -2451,6 +2462,51 @@ function goBackToTicketSearch() {
 	document.getElementById('ticket-step-details').style.display = 'none';
 	document.getElementById('ticket-modal-footer-search').style.display = 'flex';
 	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+}
+
+function selectTicketCategory(type) {
+	selectedTicketCategoryType = type;
+	
+	// Hide all steps
+	document.getElementById('ticket-step-category').style.display = 'none';
+	document.getElementById('ticket-step-search').style.display = 'none';
+	document.getElementById('ticket-step-details').style.display = 'none';
+	document.getElementById('ticket-step-system-form').style.display = 'none';
+	
+	// Hide all footers
+	document.getElementById('ticket-modal-footer-category').style.display = 'none';
+	document.getElementById('ticket-modal-footer-search').style.display = 'none';
+	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+	document.getElementById('ticket-modal-footer-system').style.display = 'none';
+	
+	if (type === 'order') {
+		document.getElementById('ticket-step-search').style.display = 'block';
+		document.getElementById('ticket-modal-footer-search').style.display = 'flex';
+	} else if (type === 'system') {
+		document.getElementById('ticket-step-system-form').style.display = 'block';
+		document.getElementById('ticket-modal-footer-system').style.display = 'flex';
+		
+		// Reset form fields
+		document.getElementById('ticket-system-subject').value = '';
+		document.getElementById('ticket-system-message').value = '';
+		document.getElementById('ticket-system-type').value = 'wallet';
+	}
+}
+
+function goBackToTicketCategory() {
+	selectedTicketCategoryType = null;
+	
+	// Hide all steps
+	document.getElementById('ticket-step-category').style.display = 'block';
+	document.getElementById('ticket-step-search').style.display = 'none';
+	document.getElementById('ticket-step-details').style.display = 'none';
+	document.getElementById('ticket-step-system-form').style.display = 'none';
+	
+	// Hide all footers
+	document.getElementById('ticket-modal-footer-category').style.display = 'flex';
+	document.getElementById('ticket-modal-footer-search').style.display = 'none';
+	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+	document.getElementById('ticket-modal-footer-system').style.display = 'none';
 }
 
 function searchTicketOrder() {
@@ -2685,174 +2741,53 @@ function addSelectedProductToTicketCart() {
 	showNotification("Ürün sepete eklendi.", "success");
 }
 
+
+
 function submitSupportTicket(e) {
 	e.preventDefault();
 	
-	if (!currentTicketOrder) {
-		showNotification("Lütfen önce bir sipariş sorgulayın.", "error");
-		return;
-	}
-	
-	if (!selectedTicketAction) {
-		showNotification("Lütfen bir yapılacak işlem seçin.", "error");
-		return;
-	}
-	
-	const order = currentTicketOrder;
-	let ticketSubject = '';
-	let actionNote = '';
-	
-	if (selectedTicketAction === 'urgency') {
-		const userNote = document.getElementById('ticket-urgency-note').value.trim();
-		order.urgent = true;
-		actionNote = `[Destek Talebi - ACİLİYET] Öncelikli çıkış talep edildi.` + (userNote ? ` Not: ${userNote}` : '');
-		order.notes = (order.notes || '') + '\n' + actionNote;
-		ticketSubject = `Aciliyet Bildirimi (${order.code})`;
+	// Sistem Talebi için özel kayıt mantığı
+	if (selectedTicketCategoryType === 'system') {
+		const typeVal = document.getElementById('ticket-system-type').value;
+		const subjectVal = document.getElementById('ticket-system-subject').value.trim();
+		const msgVal = document.getElementById('ticket-system-message').value.trim();
 		
-	} else if (selectedTicketAction === 'hold') {
-		const userNote = document.getElementById('ticket-hold-note').value.trim();
-		
-		if (order.status === 'cancelled' || order.status === 'shipped') {
-			showNotification("İptal edilmiş veya kargolanmış siparişler beklemeye alınamaz. ❌", "error");
+		if (!subjectVal || !msgVal) {
+			showNotification("Lütfen konu başlığı ve açıklama alanlarını doldurun.", "error");
 			return;
 		}
 		
-		order.status = 'on-hold';
-		actionNote = `[Destek Talebi - BEKLETME] Sipariş beklemeye alındı.` + (userNote ? ` Not: ${userNote}` : '');
-		order.notes = (order.notes || '') + '\n' + actionNote;
-		ticketSubject = `Siparişi Bekletme Talebi (${order.code})`;
+		const newId = 'DST-' + (Math.floor(Math.random() * 900) + 100);
+		const now = new Date();
+		const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 		
-	} else if (selectedTicketAction === 'address') {
-		const mahalle = document.getElementById('t-addr-mahalle').value.trim();
-		const sokak = document.getElementById('t-addr-sokak').value.trim();
-		const no = document.getElementById('t-addr-no').value.trim();
-		const ilce = document.getElementById('t-addr-ilce').value.trim();
-		const il = document.getElementById('t-addr-il').value.trim();
+		const categoryText = getSystemCategoryText(typeVal);
 		
-		// 1. Alan doluluk kontrolü
-		if (!mahalle || !sokak || !no || !ilce || !il) {
-			showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
-			return;
-		}
-		
-		// 2. Mahalle Kelime Kontrolü
-		const mahLower = turkishToLower(mahalle);
-		if (!mahLower.includes('mah') && !mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
-			showNotification("Mahalle alanında 'mah', 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
-			return;
-		}
-
-		// 3. Sokak/Cadde Kelime Kontrolü
-		const sokLower = turkishToLower(sokak);
-		if (!sokLower.includes('sok') && !sokLower.includes('sok.') && !sokLower.includes('cad') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
-			showNotification("Sokak/Cadde alanında 'sok', 'sok.', 'cad', 'cad.' veya 'caddesi' olmalıdır.", "error");
-			return;
-		}
-
-		// 4. Apt / No Kelime Kontrolü
-		const noLower = turkishToLower(no);
-		if (!noLower.includes('no.') && !noLower.includes('no') && !noLower.includes('numara')) {
-			showNotification("Apt/Bina/No alanında 'no.' veya 'numara' ifadesi olmalıdır.", "error");
-			return;
-		}
-
-		// 5. İl Doğrulaması
-		const ilLower = turkishToLower(il);
-		if (!turkeyGeoDb.hasOwnProperty(ilLower)) {
-			showNotification("Geçersiz il adı girdiniz.", "error");
-			return;
-		}
-
-		// 6. İlçe Doğrulaması
-		const ilceLower = turkishToLower(ilce);
-		const validDistricts = turkeyGeoDb[ilLower];
-		const hasDistrict = validDistricts.some(d => {
-			const dbDistrictLower = turkishToLower(d);
-			if (ilLower === 'ankara' && dbDistrictLower === 'amak' && ilceLower === 'mamak') {
-				return true;
+		const newTicket = {
+			id: newId,
+			subject: subjectVal,
+			date: dateStr,
+			status: 'open',
+			details: {
+				orderCode: 'Yok',
+				customerName: 'Sistem',
+				storeName: 'Nestro',
+				actionType: 'system',
+				actionText: categoryText,
+				description: msgVal,
+				note: '',
+				response: 'Talebiniz inceleme aşamasındadır.'
 			}
-			return dbDistrictLower === ilceLower;
-		});
-		if (!hasDistrict) {
-			showNotification("Geçersiz ilçe adı girdiniz.", "error");
-			return;
-		}
+		};
 		
-		const formattedAddress = `${mahalle}, ${sokak}, ${no}, ${ilce}/${il}`;
-		actionNote = `[Destek Talebi - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${formattedAddress}`;
-		order.notes = (order.notes || '') + '\n' + actionNote;
-		ticketSubject = `Adres Değişikliği Talebi (${order.code})`;
-		
-	} else if (selectedTicketAction === 'exchange') {
-		if (ticketExchangeCart.length === 0) {
-			showNotification("Siparişin en az 1 adet ürünü olmalıdır. Güncel sepetiniz boş!", "error");
-			return;
-		}
-		
-		order.products = ticketExchangeCart.map(item => ({
-			name: item.name,
-			qty: item.qty,
-			price: item.price
-		}));
-		
-		const productsText = ticketExchangeCart.map(item => `${item.name} (x${item.qty})`).join(', ');
-		actionNote = `[Destek Talebi - DEĞİŞİM] Ürünler güncellendi. Yeni sepet: ${productsText}`;
-		order.notes = (order.notes || '') + '\n' + actionNote;
-		ticketSubject = `Ürün Değişim Talebi (${order.code})`;
+		tickets.unshift(newTicket);
+		renderTickets();
+		closeSupportTicketModal();
+		showNotification('Sistem talebiniz başarıyla oluşturuldu.', 'success');
+		return;
 	}
 	
-	// CRM tablolarını güncelle
-	renderOrders(currentFilter, currentSearchQuery);
-	updateDashboardStats();
-	
-	// Yeni Destek Talebi Ekle
-	const newId = 'DST-' + (Math.floor(Math.random() * 900) + 100);
-	const now = new Date();
-	const dateStr = now.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-
-	let detailNote = '';
-	if (selectedTicketAction === 'urgency') {
-		detailNote = document.getElementById('ticket-urgency-note').value.trim();
-	} else if (selectedTicketAction === 'hold') {
-		detailNote = document.getElementById('ticket-hold-note').value.trim();
-	}
-
-	const newTicket = {
-		id: newId,
-		subject: ticketSubject,
-		date: dateStr,
-		status: 'open',
-		details: {
-			orderCode: order.code,
-			customerName: order.customer || 'Bilinmeyen Müşteri',
-			actionType: selectedTicketAction,
-			actionText: getActionText(selectedTicketAction),
-			description: actionNote,
-			note: detailNote,
-			response: 'Destek talebiniz açık durumdadır. Depo operasyon ekibimiz talebiniz doğrultusunda gerekli güncellemeyi gerçekleştirmiştir. 🚀'
-		}
-	};
-
-	tickets.unshift(newTicket);
-	renderTickets();
-
-	closeSupportTicketModal();
-	showNotification('Talebiniz destek ekibine iletildi.', 'success');
-}
-
-function getActionText(action) {
-	switch(action) {
-		case 'urgency': return 'Aciliyet Bildirimi';
-		case 'hold': return 'Siparişi Bekletme';
-		case 'address': return 'Adres Değişikliği';
-		case 'exchange': return 'Ürün Değişimi';
-		default: return 'Diğer';
-	}
-}
-
-function submitSupportTicket(e) {
-	e.preventDefault();
-	
+	// Sipariş Talebi Kontrolleri
 	if (!currentTicketOrder) {
 		showNotification("Lütfen önce bir sipariş sorgulayın.", "error");
 		return;
@@ -3040,6 +2975,16 @@ function getActionText(action) {
 		case 'address': return 'Adres Değişikliği';
 		case 'exchange': return 'Değişim';
 		default: return 'Diğer';
+	}
+}
+
+function getSystemCategoryText(type) {
+	switch(type) {
+		case 'wallet': return 'Cüzdan & Ödeme';
+		case 'sms': return 'SMS & Entegrasyon';
+		case 'tech': return 'Teknik Destek';
+		case 'other': return 'Genel Konular';
+		default: return 'Sistem';
 	}
 }
 
