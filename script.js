@@ -2940,6 +2940,7 @@ function submitChatAddressChangeStructured(orderCode) {
 
 	if (!mahalle || !sokak || !no || !ilce || !il) {
 		showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
+		triggerBotTypingAndReply("Lütfen adres değişikliği için tüm alanları (Mahalle, Sokak, No, İlçe, İl) eksiksiz doldurun. Eksik bilgi girdiniz! ❌");
 		return;
 	}
 	
