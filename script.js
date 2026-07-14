@@ -2340,8 +2340,44 @@ function renderTickets() {
 	});
 }
 
+let currentTicketOrder = null;
+let selectedTicketAction = null;
+
 // Yeni Talep Oluşturma (Modal Açma)
 function handleCreateTicketPrompt() {
+	// Reset step states
+	document.getElementById('ticket-step-search').style.display = 'block';
+	document.getElementById('ticket-step-details').style.display = 'none';
+	document.getElementById('ticket-order-search-input').value = '';
+	document.getElementById('ticket-search-error').style.display = 'none';
+	
+	// Reset footers
+	document.getElementById('ticket-modal-footer-search').style.display = 'flex';
+	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+	
+	// Reset action states
+	selectedTicketAction = null;
+	currentTicketOrder = null;
+	
+	// De-highlight action buttons
+	const actionBtns = document.querySelectorAll('.ticket-action-btn');
+	actionBtns.forEach(btn => btn.classList.remove('active'));
+	
+	// Hide action detail area
+	document.getElementById('ticket-action-detail-area').style.display = 'none';
+	
+	// Reset input fields
+	document.getElementById('ticket-urgency-note').value = '';
+	document.getElementById('ticket-hold-note').value = '';
+	document.getElementById('t-addr-mahalle').value = '';
+	document.getElementById('t-addr-sokak').value = '';
+	document.getElementById('t-addr-no').value = '';
+	document.getElementById('t-addr-ilce').value = '';
+	document.getElementById('t-addr-il').value = '';
+	document.getElementById('selected-ticket-exchange-product-id').value = '';
+	document.getElementById('ticket-exchange-qty-input').value = '1';
+	
+	// Open modal
 	document.getElementById('modal-support-ticket').style.display = 'flex';
 }
 
@@ -2350,33 +2386,277 @@ function closeSupportTicketModal() {
 	document.getElementById('support-ticket-form').reset();
 }
 
-function submitSupportTicket(e) {
-	e.preventDefault();
+function goBackToTicketSearch() {
+	document.getElementById('ticket-step-search').style.display = 'block';
+	document.getElementById('ticket-step-details').style.display = 'none';
+	document.getElementById('ticket-modal-footer-search').style.display = 'flex';
+	document.getElementById('ticket-modal-footer-details').style.display = 'none';
+}
 
-	const subjectSelect = document.getElementById('ticket-subject-select');
-	const orderInput = document.getElementById('ticket-order-input');
-	const messageTextarea = document.getElementById('ticket-message-textarea');
-
-	if (!subjectSelect || !messageTextarea) return;
-
-	const subjectVal = subjectSelect.value;
-	const orderVal = orderInput ? orderInput.value.trim() : '';
-	const messageVal = messageTextarea.value.trim();
-
-	if (!messageVal) {
-		showNotification('Lütfen mesajınızı yazın.', 'error');
+function searchTicketOrder() {
+	const searchVal = document.getElementById('ticket-order-search-input').value.trim();
+	const errorDiv = document.getElementById('ticket-search-error');
+	
+	if (!searchVal) {
+		errorDiv.textContent = "Lütfen bir sipariş kodu girin!";
+		errorDiv.style.display = 'block';
 		return;
 	}
+	
+	// Arama (case-insensitive ve # karakteri toleranslı)
+	const cleanSearch = searchVal.replace('#', '').toLowerCase();
+	const order = orders.find(o => o.code.replace('#', '').toLowerCase() === cleanSearch);
+	
+	if (!order) {
+		errorDiv.textContent = "Sipariş bulunamadı! Lütfen geçerli bir sipariş kodu girin.";
+		errorDiv.style.display = 'block';
+		return;
+	}
+	
+	// Bulundu
+	errorDiv.style.display = 'none';
+	currentTicketOrder = order;
+	
+	// Bilgileri güncelle
+	document.getElementById('ticket-info-code').textContent = order.code;
+	
+	// Statü rengini al
+	const statusBadge = document.getElementById('ticket-info-status');
+	statusBadge.textContent = getStatusText(order.status);
+	statusBadge.className = 'status-badge ' + getStatusBadgeClass(order.status);
+	
+	document.getElementById('ticket-info-customer').textContent = order.customer || 'Bilinmeyen Müşteri';
+	document.getElementById('ticket-info-total').textContent = order.total || '₺0.00';
+	
+	const productsListText = order.products.map(p => `${p.name} (x${p.qty})`).join(', ');
+	document.getElementById('ticket-info-products').textContent = productsListText;
+	
+	// Adres
+	let customerAddress = 'Girilmemiş';
+	if (order.address) {
+		customerAddress = order.address;
+	} else if (order.shippingDetails) {
+		const s = order.shippingDetails;
+		customerAddress = `${s.neighborhood || ''} ${s.street || ''} No: ${s.buildingNo || ''} ${s.district || ''}/${s.city || ''}`;
+	}
+	document.getElementById('ticket-info-address').textContent = customerAddress;
+	
+	// Adımları değiştir
+	document.getElementById('ticket-step-search').style.display = 'none';
+	document.getElementById('ticket-step-details').style.display = 'block';
+	document.getElementById('ticket-modal-footer-search').style.display = 'none';
+	document.getElementById('ticket-modal-footer-details').style.display = 'flex';
+}
 
+function getStatusText(status) {
+	switch(status) {
+		case 'processing': return 'Hazırlanıyor';
+		case 'on-hold': return 'Bekletiliyor';
+		case 'shipped': return 'Kargolandı';
+		case 'cancelled': return 'İptal Edildi';
+		default: return status;
+	}
+}
+
+function getStatusBadgeClass(status) {
+	switch(status) {
+		case 'processing': return 'badge-processing';
+		case 'on-hold': return 'badge-on-hold';
+		case 'shipped': return 'badge-shipped';
+		case 'cancelled': return 'badge-cancelled';
+		default: return '';
+	}
+}
+
+function selectTicketAction(action) {
+	selectedTicketAction = action;
+	
+	// Buton aktiflik sınıfları
+	const actionBtns = document.querySelectorAll('.ticket-action-btn');
+	actionBtns.forEach(btn => btn.classList.remove('active'));
+	
+	const activeBtn = document.getElementById('btn-t-action-' + action);
+	if (activeBtn) activeBtn.classList.add('active');
+	
+	// Alanı göster
+	document.getElementById('ticket-action-detail-area').style.display = 'block';
+	
+	// Alt formları gizle / göster
+	const subforms = document.querySelectorAll('.ticket-subform');
+	subforms.forEach(sf => sf.style.display = 'none');
+	
+	document.getElementById('t-detail-' + action).style.display = 'block';
+	
+	// Eğer değişim seçildiyse ürün listesini oluştur
+	if (action === 'exchange') {
+		const exchangeList = document.getElementById('ticket-exchange-product-list');
+		exchangeList.innerHTML = '';
+		
+		products.forEach(p => {
+			const card = document.createElement('div');
+			card.className = 'modern-product-card';
+			card.onclick = () => selectTicketExchangeProduct(card, p.id);
+			
+			card.innerHTML = `
+				<div class="prod-name">${p.name}</div>
+				<div class="prod-meta">
+					<span>SKU: ${p.sku}</span>
+					<span>Stok: ${p.stock} adet</span>
+				</div>
+			`;
+			exchangeList.appendChild(card);
+		});
+		
+		document.getElementById('selected-ticket-exchange-product-id').value = '';
+		document.getElementById('ticket-exchange-qty-input').value = '1';
+	}
+}
+
+function selectTicketExchangeProduct(element, productId) {
+	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
+	cards.forEach(c => c.classList.remove('selected'));
+	
+	element.classList.add('selected');
+	document.getElementById('selected-ticket-exchange-product-id').value = productId;
+}
+
+function submitSupportTicket(e) {
+	e.preventDefault();
+	
+	if (!currentTicketOrder) {
+		showNotification("Lütfen önce bir sipariş sorgulayın.", "error");
+		return;
+	}
+	
+	if (!selectedTicketAction) {
+		showNotification("Lütfen bir yapılacak işlem seçin.", "error");
+		return;
+	}
+	
+	const order = currentTicketOrder;
+	let ticketSubject = '';
+	let actionNote = '';
+	
+	if (selectedTicketAction === 'urgency') {
+		const userNote = document.getElementById('ticket-urgency-note').value.trim();
+		order.urgent = true;
+		actionNote = `[Destek Talebi - ACİLİYET] Öncelikli çıkış talep edildi.` + (userNote ? ` Not: ${userNote}` : '');
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Aciliyet Bildirimi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'hold') {
+		const userNote = document.getElementById('ticket-hold-note').value.trim();
+		
+		if (order.status === 'cancelled' || order.status === 'shipped') {
+			showNotification("İptal edilmiş veya kargolanmış siparişler beklemeye alınamaz. ❌", "error");
+			return;
+		}
+		
+		order.status = 'on-hold';
+		actionNote = `[Destek Talebi - BEKLETME] Sipariş beklemeye alındı.` + (userNote ? ` Not: ${userNote}` : '');
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Siparişi Bekletme Talebi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'address') {
+		const mahalle = document.getElementById('t-addr-mahalle').value.trim();
+		const sokak = document.getElementById('t-addr-sokak').value.trim();
+		const no = document.getElementById('t-addr-no').value.trim();
+		const ilce = document.getElementById('t-addr-ilce').value.trim();
+		const il = document.getElementById('t-addr-il').value.trim();
+		
+		// 1. Alan doluluk kontrolü
+		if (!mahalle || !sokak || !no || !ilce || !il) {
+			showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
+			return;
+		}
+		
+		// 2. Mahalle Kelime Kontrolü
+		const mahLower = turkishToLower(mahalle);
+		if (!mahLower.includes('mah') && !mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
+			showNotification("Mahalle alanında 'mah', 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
+			return;
+		}
+
+		// 3. Sokak/Cadde Kelime Kontrolü
+		const sokLower = turkishToLower(sokak);
+		if (!sokLower.includes('sok') && !sokLower.includes('sok.') && !sokLower.includes('cad') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
+			showNotification("Sokak/Cadde alanında 'sok', 'sok.', 'cad', 'cad.' veya 'caddesi' olmalıdır.", "error");
+			return;
+		}
+
+		// 4. Apt / No Kelime Kontrolü
+		const noLower = turkishToLower(no);
+		if (!noLower.includes('no.') && !noLower.includes('no') && !noLower.includes('numara')) {
+			showNotification("Apt/Bina/No alanında 'no.' veya 'numara' ifadesi olmalıdır.", "error");
+			return;
+		}
+
+		// 5. İl Doğrulaması
+		const ilLower = turkishToLower(il);
+		if (!turkeyGeoDb.hasOwnProperty(ilLower)) {
+			showNotification("Geçersiz il adı girdiniz.", "error");
+			return;
+		}
+
+		// 6. İlçe Doğrulaması
+		const ilceLower = turkishToLower(ilce);
+		const validDistricts = turkeyGeoDb[ilLower];
+		const hasDistrict = validDistricts.some(d => {
+			const dbDistrictLower = turkishToLower(d);
+			if (ilLower === 'ankara' && dbDistrictLower === 'amak' && ilceLower === 'mamak') {
+				return true;
+			}
+			return dbDistrictLower === ilceLower;
+		});
+		if (!hasDistrict) {
+			showNotification("Geçersiz ilçe adı girdiniz.", "error");
+			return;
+		}
+		
+		const formattedAddress = `${mahalle}, ${sokak}, ${no}, ${ilce}/${il}`;
+		actionNote = `[Destek Talebi - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${formattedAddress}`;
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Adres Değişikliği Talebi (${order.code})`;
+		
+	} else if (selectedTicketAction === 'exchange') {
+		const productId = document.getElementById('selected-ticket-exchange-product-id').value;
+		if (!productId) {
+			showNotification("Lütfen değişim yapılacak bir ürün seçin.", "error");
+			return;
+		}
+		
+		const selectedProduct = products.find(p => p.id === productId);
+		if (!selectedProduct) return;
+		
+		const qtyInput = document.getElementById('ticket-exchange-qty-input');
+		const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
+		if (isNaN(quantity) || quantity < 1) {
+			showNotification("Lütfen geçerli bir adet girin.", "error");
+			return;
+		}
+		
+		const itemPrice = 1200.00;
+		order.products = [
+			{ name: selectedProduct.name, qty: quantity, price: '₺' + itemPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+		];
+		
+		actionNote = `[Destek Talebi - DEĞİŞİM] Ürün değişti. Yeni Ürün: ${selectedProduct.name} (${selectedProduct.sku}), Adet: ${quantity}`;
+		order.notes = (order.notes || '') + '\n' + actionNote;
+		ticketSubject = `Ürün Değişim Talebi (${order.code})`;
+	}
+	
+	// CRM tablolarını güncelle
+	renderOrders(currentFilter, currentSearchQuery);
+	updateDashboardStats();
+	
+	// Yeni Destek Talebi Ekle
 	const newId = 'DST-' + (Math.floor(Math.random() * 900) + 100);
 	const now = new Date();
 	const dateStr = now.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-	const subjectText = orderVal ? `${subjectVal} (Sipariş: ${orderVal})` : subjectVal;
-
 	const newTicket = {
 		id: newId,
-		subject: subjectText,
+		subject: ticketSubject,
 		date: dateStr,
 		status: 'open'
 	};
@@ -3046,17 +3326,17 @@ function submitChatAddressChangeStructured(orderCode) {
 
 	// 2. Mahalle Kelime Kontrolü
 	const mahLower = turkishToLower(mahalle);
-	if (!mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
-		showNotification("Mahalle alanında 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
-		triggerBotTypingAndReply("Mahalle adresi geçersiz! Girdiğiniz değer 'mah.', 'mh' veya 'mahallesi' ifadelerinden birini içermelidir. ❌");
+	if (!mahLower.includes('mah') && !mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
+		showNotification("Mahalle alanında 'mah', 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
+		triggerBotTypingAndReply("Mahalle adresi geçersiz! Girdiğiniz değer 'mah', 'mah.', 'mh' veya 'mahallesi' ifadelerinden birini içermelidir. ❌");
 		return;
 	}
 
 	// 3. Sokak/Cadde Kelime Kontrolü
 	const sokLower = turkishToLower(sokak);
-	if (!sokLower.includes('sok.') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
-		showNotification("Sokak/Cadde alanında 'sok.', 'cad.', 'sokak' veya 'caddesi' olmalıdır.", "error");
-		triggerBotTypingAndReply("Sokak/Cadde adresi geçersiz! Girdiğiniz değer 'sok.', 'cad.', 'sokak' veya 'caddesi' ifadelerinden birini içermelidir. ❌");
+	if (!sokLower.includes('sok') && !sokLower.includes('sok.') && !sokLower.includes('cad') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
+		showNotification("Sokak/Cadde alanında 'sok', 'sok.', 'cad', 'cad.' veya 'caddesi' olmalıdır.", "error");
+		triggerBotTypingAndReply("Sokak/Cadde adresi geçersiz! Girdiğiniz değer 'sok', 'sok.', 'cad', 'cad.', 'sokak' veya 'caddesi' ifadelerinden birini içermelidir. ❌");
 		return;
 	}
 

@@ -2076,38 +2076,126 @@
 
 	<!-- Destek Talebi Oluşturma Modalı -->
 	<div id="modal-support-ticket" class="modal-backdrop" style="display: none;">
-		<div class="modal-box" style="max-width: 500px;">
+		<div class="modal-box ticket-modal-box">
 			<div class="modal-header">
 				<h3 class="modal-title">Yeni Destek Talebi Oluştur</h3>
 				<button type="button" class="modal-close-btn" onclick="closeSupportTicketModal()"><i class="fa-solid fa-xmark"></i></button>
 			</div>
 			<form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
 				<div class="modal-body">
-					<div style="display: flex; flex-direction: column; gap: 16px;">
-						<div class="form-group-draft" style="margin-bottom: 0;">
-							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Konu</label>
-							<div class="priority-select-group" style="width: 100%;">
-								<select id="ticket-subject-select" style="width: 100%;">
-									<option value="Kargo Durumu">Kargo Durumu</option>
-									<option value="İade İşlemi">İade İşlemi</option>
-									<option value="Fatura">Fatura</option>
-									<option value="Diğer">Diğer</option>
-								</select>
+					<!-- Step 1: Search Order -->
+					<div id="ticket-step-search">
+						<div style="display: flex; flex-direction: column; gap: 8px;">
+							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Sipariş Numarası</label>
+							<div class="ticket-search-wrapper">
+								<input type="text" id="ticket-order-search-input" placeholder="Sipariş Kodunu girin (Örn: #1024)">
+								<button type="button" class="btn-create-draft" onclick="searchTicketOrder()" style="margin: 0; padding: 10px 20px;">Sorgula</button>
+							</div>
+							<div id="ticket-search-error" style="color: #ef4444; font-size: 12.5px; display: none; margin-top: 4px; font-weight: 600;"></div>
+						</div>
+					</div>
+
+					<!-- Step 2: Order Details & Actions -->
+					<div id="ticket-step-details" style="display: none;">
+						<!-- Order Info Card -->
+						<div class="ticket-order-info">
+							<div class="ticket-order-title">
+								<span id="ticket-info-code" style="font-weight: 700; color: var(--primary);">#1024</span>
+								<span id="ticket-info-status" class="status-badge">Hazırlanıyor</span>
+							</div>
+							<div class="ticket-order-details" style="margin-top: 8px;">
+								<span style="display: inline-block; margin-right: 15px;">Müşteri: <strong id="ticket-info-customer">Mert Yılmaz</strong></span>
+								<span style="display: inline-block; margin-right: 15px;">Tutar: <strong id="ticket-info-total">₺1.200,00</strong></span>
+								<span style="display: inline-block; margin-right: 15px;">Mevcut Ürün: <strong id="ticket-info-products">Nestro Box x1</strong></span>
+								<span style="display: block; width: 100%; margin-top: 6px;">Mevcut Adres: <strong id="ticket-info-address">Atatürk Mah. Yeşil Sk. No:5, Kadıköy/İstanbul</strong></span>
 							</div>
 						</div>
-						<div class="form-group-draft" style="margin-bottom: 0;">
-							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Sipariş Numarası (Opsiyonel)</label>
-							<input type="text" id="ticket-order-input" placeholder="Varsa ilgili sipariş kodunu girin (Örn: #1024)">
+
+						<!-- Action Select Grid -->
+						<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; display: block;">Talep Türü / Yapılacak İşlem</label>
+						<div class="ticket-action-grid">
+							<button type="button" class="ticket-action-btn" id="btn-t-action-urgency" onclick="selectTicketAction('urgency')">
+								<i class="fa-solid fa-bolt"></i> Aciliyet Bildir
+							</button>
+							<button type="button" class="ticket-action-btn" id="btn-t-action-address" onclick="selectTicketAction('address')">
+								<i class="fa-solid fa-map-location-dot"></i> Adres Değişikliği
+							</button>
+							<button type="button" class="ticket-action-btn" id="btn-t-action-exchange" onclick="selectTicketAction('exchange')">
+								<i class="fa-solid fa-arrows-rotate"></i> Ürün Değişimi
+							</button>
+							<button type="button" class="ticket-action-btn" id="btn-t-action-hold" onclick="selectTicketAction('hold')">
+								<i class="fa-solid fa-pause"></i> Siparişi Beklet
+							</button>
 						</div>
-						<div class="form-group-draft" style="margin-bottom: 0;">
-							<label style="font-weight: 700; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; display: block;">Mesajınız</label>
-							<textarea id="ticket-message-textarea" placeholder="Talebinizi buraya detaylıca yazın..." rows="5" required style="resize: vertical; font-family: var(--font-main);"></textarea>
+
+						<!-- Action Detail Area -->
+						<div id="ticket-action-detail-area" style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px; display: none;">
+							<!-- Urgency detail -->
+							<div id="t-detail-urgency" class="ticket-subform" style="display: none;">
+								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Siparişiniz için öncelikli çıkış talebi iletilecektir. Eklemek istediğiniz bir not var mı?</p>
+								<textarea id="ticket-urgency-note" placeholder="Talep notu (Opsiyonel)..." rows="3" style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px; font-family: var(--font-main);"></textarea>
+							</div>
+
+							<!-- Hold detail -->
+							<div id="t-detail-hold" class="ticket-subform" style="display: none;">
+								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Siparişiniz beklemeye alınacaktır. Eklemek istediğiniz bir not var mı?</p>
+								<textarea id="ticket-hold-note" placeholder="Bekletme notu (Opsiyonel)..." rows="3" style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px; font-family: var(--font-main);"></textarea>
+							</div>
+
+							<!-- Address detail -->
+							<div id="t-detail-address" class="ticket-subform" style="display: none;">
+								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Lütfen yeni adres bilgilerini girin:</p>
+								<div style="display: flex; flex-direction: column; gap: 8px;">
+									<div>
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; display: block;">Mahalle</label>
+										<input type="text" id="t-addr-mahalle" placeholder="Örn: Uncalı Mah.">
+									</div>
+									<div>
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; display: block;">Sokak / Cadde</label>
+										<input type="text" id="t-addr-sokak" placeholder="Örn: 1280 Sok.">
+									</div>
+									<div>
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; display: block;">Apt / Bina / No</label>
+										<input type="text" id="t-addr-no" placeholder="Örn: No: 8">
+									</div>
+									<div>
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; display: block;">İlçe</label>
+										<input type="text" id="t-addr-ilce" placeholder="Örn: Konyaaltı">
+									</div>
+									<div>
+										<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; display: block;">İl</label>
+										<input type="text" id="t-addr-il" placeholder="Örn: Antalya">
+									</div>
+								</div>
+							</div>
+
+							<!-- Exchange detail -->
+							<div id="t-detail-exchange" class="ticket-subform" style="display: none;">
+								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Lütfen değişim yapılacak yeni ürünü ve adedi seçin:</p>
+								
+								<!-- Modern Product List for Modal -->
+								<div class="modern-product-list" id="ticket-exchange-product-list">
+									<!-- JS ile doldurulacak -->
+								</div>
+								<input type="hidden" id="selected-ticket-exchange-product-id" value="">
+
+								<div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
+									<label style="font-size: 13px; font-weight: 700; color: var(--text-secondary);">Miktar (Adet):</label>
+									<input type="number" id="ticket-exchange-qty-input" value="1" min="1" style="width: 80px; padding: 6px; text-align: center;">
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="modal-footer">
+				<div class="modal-footer" id="ticket-modal-footer-search">
 					<button type="button" class="btn-secondary" onclick="closeSupportTicketModal()">İptal</button>
-					<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Talebi Gönder</button>
+				</div>
+				<div class="modal-footer" id="ticket-modal-footer-details" style="display: none; justify-content: space-between;">
+					<button type="button" class="btn-secondary" onclick="goBackToTicketSearch()">Geri</button>
+					<div style="display: flex; gap: 8px;">
+						<button type="button" class="btn-secondary" onclick="closeSupportTicketModal()">İptal</button>
+						<button type="submit" class="btn-create-draft" style="width: auto; margin-top: 0; padding: 10px 24px;">Talebi Gönder</button>
+					</div>
 				</div>
 			</form>
 		</div>
