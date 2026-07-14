@@ -2930,7 +2930,127 @@ function submitModernChatExchange(orderCode) {
 	});
 }
 
-// Chat Adres Değişikliği Onaylama Butonu (Yapılandırılmış)
+// Türkiye İl ve İlçe Coğrafi Veri Tabanı (Kullanıcı Veri Seti)
+const turkeyGeoDb = {
+  "adana": ["ALADAĞ", "CEYHAN", "ÇUKUROVA", "FEKE", "İMAMOĞLU", "KARAİSALI", "KARATAŞ", "KOZAN", "POZANTI", "SAİMBEYLİ", "SARIÇAM", "SEYHAN", "TUFANBEYLİ", "YUMURTALIK", "YÜREĞİR"],
+  "adıyaman": ["BESNİ", "ÇELİKHAN", "GERGER", "GÖLBAŞI", "KAHTA", "SAMSAT", "SİNCİK", "TUT"],
+  "afyonkarahisar": ["BAŞMAKÇI", "BAYAT", "BOLVADİN", "ÇAY", "ÇOBANLAR", "DAZKIRI", "DİNAR", "EMİRDAĞ", "EVCİLER", "HOCALAR", "İHSANİYE", "İSCEHİSAR", "KIZILÖREN", "SANDIKLI", "SİNANPAŞA", "SULTANDAĞI", "ŞUHUT"],
+  "ağrı": ["DİYADİN", "DOĞUBAYAZIT", "ELEŞKİRT", "HAMUR", "PATNOS", "TAŞLIÇAY", "TUTAK"],
+  "amasya": ["GÖYNÜCEK", "GÜMÜŞHACIKÖY", "HAMAMÖZÜ", "MERZİFON", "SULUOVA", "TAŞOVA"],
+  "ankara": ["AKYURT", "ALTINDAĞ", "AYAŞ", "BALA", "BEYPAZARI", "ÇAMLIDERE", "ÇANKAYA", "ÇUBUK", "ELMADAĞ", "ETİMESGUT", "EVREN", "GÖLBAŞI", "GÜDÜL", "HAYMANA", "KAHRAMANKAZAN", "KALECİK", "KEÇİÖREN", "KIZILCAHAMAM", "AMAK", "NALLIHAN", "POLATLI", "PURSAKLAR", "SİNCAN", "ŞEREFLİKOÇHİSAR", "YENİMAHALLE"],
+  "antalya": ["AKSEKİ", "AKSU", "ALANYA", "DEMRE", "DÖŞEMEALTI", "ELMALI", "FİNİKE", "GAZİPAŞA", "GÜNDOĞMUŞ", "İBRADI", "KAŞ", "KEMER", "KEPEZ", "KONYAALTI", "KORKUTELİ", "KUMLUCA", "MANAVGAT", "MURATPAŞA", "SERİK"],
+  "artvin": ["ARDANUÇ", "ARHAVİ", "BORÇKA", "HOPA", "KEMALPAŞA", "MURGUL", "ŞAVŞAT", "YUSUFELİ"],
+  "aydın": ["BOZDOĞAN", "BUHARKENT", "ÇİNE", "DİDİM", "EFELER", "GERMENCİK", "İNCİRLİOVA", "KARACASU", "KARPUZLU", "KOÇARLI", "KÖŞK", "KUŞADASI", "KUYUCAK", "NAZİLLİ", "SÖKE", "SULTANHİSAR", "YENİPAZAR"],
+  "balıkesir": ["ALTIEYLÜL", "AYVALIK", "BALYA", "BANDIRMA", "BİGADİÇ", "BURHANİYE", "DURSUNBEY", "EDREMİT", "ERDEK", "GÖMEÇ", "GÖNEN", "HAVRAN", "İVRİNDİ", "KARESİ", "KEPSUT", "MANYAS", "MARMARA", "SAVAŞTEPE", "SINDIRGI", "SUSURLUK"],
+  "bilecik": ["BOZÜYÜK", "GÖLPAZARI", "İNHİSAR", "OSMANELI", "PAZARYERİ", "SÖĞÜT", "YENİPAZAR"],
+  "bingöl": ["ADAKLI", "GENÇ", "KARLIOVA", "KİĞI", "SOLHAN", "YAYLADERE", "YEDİSU"],
+  "bitlis": ["ADİLCEVAZ", "AHLAT", "GÜROYMAK", "HİZAN", "MUTKİ", "TATVAN"],
+  "bolu": ["DÖRTDİVAN", "GEREDE", "GÖYNÜK", "KIBRISCIK", "MENGEN", "MUDURNU", "SEBEN", "YENİÇAĞA"],
+  "burdur": ["AĞLASUN", "ALTINYAYLA", "BUCAK", "ÇAVDIR", "ÇELTİKÇI", "GÖLHİSAR", "KARAMANLI", "KEMER", "TEFENNİ", "YEŞİLOVA"],
+  "bursa": ["BÜYÜKORHAN", "GEMLİK", "GÜRSU", "HARMANCIK", "İNEGÖL", "İZNİK", "KARACABEY", "KELES", "KESTEL", "MUDANYA", "MUSTAFAKEMALPAŞA", "NİLÜFER", "ORHANELİ", "ORHANGAZİ", "OSMANGAZİ", "YENİŞEHİR", "YILDIRIM"],
+  "çanakkale": ["AYVACIK", "BAYRAMİÇ", "BİGA", "BOZCAADA", "ÇAN", "ECEABAT", "EZİNE", "GELİBOLU", "GÖKÇEADA", "LAPSEKİ", "YENİCE"],
+  "çankırı": ["ATKARACALAR", "BAYRAMÖREN", "ÇERKEŞ", "ELDİVAN", "ILGAZ", "KIZILIRMAK", "KORGUN", "KURŞUNLU", "ORTA", "ŞABANÖZÜ", "YAPRAKLI"],
+  "çorum": ["ALACA", "BAYAT", "BOĞAZKALE", "DODURGA", "İSKİLİP", "KARGI", "LAÇİN", "MECİTÖZÜ", "OĞUZLAR", "ORTAKÖY", "OSMANCIK", "SUNGURLU", "UĞURLUDAĞ"],
+  "denizli": ["ACIPAYAM", "BABADAĞ", "BAKLAN", "BEKİLLİ", "BEYAĞAÇ", "BOZKURT", "BULDAN", "ÇAL", "ÇAMELİ", "ÇARDAK", "ÇİVRİL", "GÜNEY", "HONAZ", "KALE", "MERKEZEFENDİ", "PAMUKKALE", "SARAYKÖY", "SERİNHİSAR", "TAVAS"],
+  "diyarbakır": ["BAĞLAR", "BİSMİL", "ÇERMİK", "ÇINAR", "ÇÜNGÜŞ", "DİCLE", "EĞİL", "ERGANİ", "HANİ", "HAZRO", "KAYAPINAR", "KOCAKÖY", "KULP", "LİCE", "SİLVAN", "SUR", "YENİŞEHİR"],
+  "edirne": ["ENEZ", "HAVSA", "İPSALA", "KEŞAN", "LALAPAŞA", "MERİÇ", "SÜLOĞLU", "UZUNKÖPRÜ"],
+  "elazığ": ["AĞIN", "ALACAKAYA", "ARICAK", "BASKİL", "KARAKOÇAN", "KEBAN", "KOVANCILAR", "MADEN", "PALU", "SİVRİCE"],
+  "erzincan": ["ÇAYIRLI", "İLİÇ", "KEMAH", "KEMALİYE", "OTLUKBELİ", "REFAHİYE", "TERCAN", "ÜZÜMLÜ"],
+  "erzurum": ["AŞKALE", "AZİZİYE", "ÇAT", "HINIS", "HORASAN", "İSPİR", "KARAÇOBAN", "KARAYAZI", "KÖPRÜKÖY", "NARMAN", "OLTU", "OLUR", "PALANDÖKEN", "PASİNLER", "PAZARYOLU", "ŞENKAYA", "TEKMAN", "TORTUM", "UZUNDERE", "YAKUTİYE"],
+  "eskişehir": ["ALPU", "BEYLİKOVA", "ÇİFTELER", "GÜNYÜZÜ", "HAN", "İNÖNÜ", "MAHMUDİYE", "MİHALGAZİ", "MİHALIÇÇIK", "ODUNPAZARI", "SARICAKAYA", "SEYİTGAZİ", "SİVRİHİSAR", "TEPEBAŞI"],
+  "gaziantep": ["ARABAN", "İSLAHİYE", "KARKAMIŞ", "NİZİP", "NURDAĞI", "OĞUZELİ", "ŞAHİNBEY", "ŞEHİTKAMİL", "YAVUZELİ"],
+  "giresun": ["ALUCRA", "BULANCAK", "ÇAMOLUK", "ÇANAKÇI", "DERELİ", "DOĞANKENT", "ESPİYE", "EYNESİL", "GÖRELE", "GÜCE", "KEŞAP", "PİRAZİZ", "ŞEBİNKARAHİSAR", "TİREBOLU", "YAĞLIDERE"],
+  "gümüşhane": ["KELKİT", "KÖSE", "KÜRTÜN", "ŞİRAN", "TORUL"],
+  "hakkari": ["ÇUKURCA", "DERECİK", "ŞEMDİNLİ", "YÜKSEKOVA"],
+  "hatay": ["ALTINÖZÜ", "ANTAKYA", "ARSUZ", "BELEN", "DEFNE", "DÖRTYOL", "ERZİN", "HASSA", "İSKENDERUN", "KIRIKHAN", "KUMLU", "PAYAS", "REYHANLI", "SAMANDAĞ", "YAYLADAĞI"],
+  "isparta": ["AKSU", "ATABEY", "EĞİRDİR", "GELENDOST", "GÖNEN", "KEÇİBORLU", "SENİRKENT", "SÜTÇÜLER", "ŞARKİKARAAĞAÇ", "ULUBORLU", "YALVAÇ", "YENİŞARBADEMLİ"],
+  "mersin": ["AKDENİZ", "ANAMUR", "AYDINCIK", "BOZYAZI", "ÇAMLIYAYLA", "ERDEMLİ", "GÜLNAR", "MEZİTLİ", "MUT", "SİLİFKE", "TARSUS", "TOROSLAR", "YENİŞEHİR"],
+  "istanbul": ["ADALAR", "ARNAVUTKÖY", "ATAŞEHİR", "AVCILAR", "BAĞCILAR", "BAHÇELİEVLER", "BAKIRKÖY", "BAŞAKŞEHİR", "BAYRAMPAŞA", "BEŞİKTAŞ", "BEYKOZ", "BEYLİKDÜZÜ", "BEYOĞLU", "BÜYÜKÇEKMECE", "ÇATALCA", "ÇEKMEKÖY", "ESENLER", "ESENYURT", "EYÜPSULTAN", "FATİH", "GAZİOSMANPAŞA", "GÜNGÖREN", "KADIKÖY", "KAĞITHANE", "KARTAL", "KÜÇÜKÇEKMECE", "MALTEPE", "PENDİK", "SANCAKTEPE", "SARIYER", "SİLİVRİ", "SULTANBEYLİ", "SULTANGAZİ", "ŞİLE", "ŞİŞLİ", "TUZLA", "ÜMRANİYE", "ÜSKÜDAR", "ZEYTİNBURNU"],
+  "izmir": ["ALİAĞA", "BALÇOVA", "BAYINDIR", "BAYRAKLI", "BERGAMA", "BEYDAĞ", "BORNOVA", "BUCA", "ÇEŞME", "ÇİĞLİ", "DİKİLİ", "FOÇA", "GAZİEMİR", "GÜZELBAHÇE", "KARABAĞLAR", "KARABURUN", "KARŞIYAKA", "KEMALPAŞA", "KINIK", "KİRAZ", "KONAK", "MENDERES", "MENEMEN", "NARLIDERE", "ÖDEMİŞ", "SEFERİHİSAR", "SELÇUK", "TİRE", "TORBALI", "URLA"],
+  "kars": ["AKYAKA", "ARPAÇAY", "DİGOR", "KAĞIZMAN", "SARIKAMIŞ", "SELİM", "SUSUZ"],
+  "kastamonu": ["ABANA", "AĞLI", "ARAÇ", "AZDAVAY", "BOZKURT", "CİDE", "ÇATALZEYTİN", "DADAY", "DEVREKANİ", "DOĞANYURT", "HANÖNÜ", "İHSANGAZİ", "İNEBOLU", "KÜRE", "PINARBAŞI", "SEYDİLER", "ŞENPAZAR", "TAŞKÖPRÜ", "TOSYA"],
+  "kayseri": ["AKKIŞLA", "BÜNYAN", "DEVELİ", "FELAHİYE", "HACILAR", "İNCESU", "KOCASİNAN", "MELİKGAZİ", "ÖZVATAN", "PINARBAŞI", "SARIOĞLAN", "SARIZ", "TALAS", "TOMARZA", "YAHYALI", "YEŞİLHİSAR"],
+  "kırklareli": ["BABAESKİ", "DEMİRKÖY", "KOFÇAZ", "LÜLEBURGAZ", "PEHLİVANKÖY", "PINARHİSAR", "VİZE"],
+  "kırşehir": ["AKÇAKENT", "AKPINAR", "BOZTEPE", "ÇİÇEKDAĞI", "KAMAN", "MUCUR"],
+  "kocaeli": ["BAŞİSKELE", "ÇAYIROVA", "DARICA", "DERINCE", "DİLOVASI", "GEBZE", "GÖLCÜK", "İZMİT", "KANDIRA", "KARAMÜRSEL", "KARTEPE", "KÖRFEZ"],
+  "konya": ["AHIRLI", "AKÖREN", "AKŞEHİR", "ALTINEKİN", "BEYŞEHİR", "BOZKIR", "CİHANBEYLİ", "ÇELTİK", "ÇUMRA", "DERBENT", "DEREBUCAK", "DOĞANHİSAR", "EMİRGAZİ", "EREĞLİ", "GÜNEYSINIR", "HADİM", "HALKAPINAR", "HÜYÜK", "ILGIN", "KADINHANI", "KARAPINAR", "KARATAY", "KULU", "MERAM", "SARAYÖNÜ", "SELÇUKLU", "SEYDİŞEHİR", "TAŞKENT", "TUZLUKÇU", "YALIHÜYÜK", "YUNAK"],
+  "kütahya": ["ALTINTAŞ", "ASLANAPA", "ÇAVDARHİSAR", "DOMANIÇ", "DUMLUPINAR", "EMET", "GEDİZ", "HİSARCIK", "PAZARLAR", "SİMAV", "ŞAPHANE", "TAVŞANLI"],
+  "malatya": ["AKÇADAĞ", "ARAPGİR", "ARGUVAN", "BATTALGAZİ", "DARENDE", "DOĞANŞEHİR", "DOĞANYOL", "HEKİMHAN", "KALE", "KULUNCAK", "PÜTÜRGE", "YAZIHAN", "YEŞİLYURT"],
+  "manisa": ["AHMETLİ", "AKHİSAR", "ALAŞEHİR", "DEMİRCİ", "GÖLMARMARA", "GÖRDES", "KIRKAĞAÇ", "KÖPRÜBAŞI", "KULA", "SALİHLİ", "SARIGÖL", "SARUHANLI", "SELENDİ", "SOMA", "ŞEHZADELER", "TURGUTLU", "YUNUSEMRE"],
+  "kahramanmaraş": ["AFŞIN", "ANDIRIN", "ÇAĞLAYANCERİT", "DULKADİROĞLU", "EKİNÖZÜ", "ELBİSTAN", "GÖKSUN", "NURHAK", "ONİKİŞUBAT", "PAZARCIK", "TÜRKOĞLU"],
+  "mardin": ["ARTUKLU", "DARGEÇİT", "DERİK", "KIZILTEPE", "MAZIDAĞI", "MİDYAT", "NUSAYBİN", "ÖMERLİ", "SAVUR", "YEŞİLLİ"],
+  "muğla": ["BODRUM", "DALAMAN", "DATÇA", "FETHİYE", "KAVAKLIDERE", "KÖYCEĞİZ", "MARMARİS", "MENTEŞE", "MİLAS", "ORTACA", "SEYDİKEMER", "ULA", "YATAĞAN"],
+  "muş": ["BULANIK", "HASKÖY", "KORKUT", "MALAZGİRT", "VARTO"],
+  "nevşehir": ["ACIGÖL", "AVANOS", "DERİNKUYU", "GÜLŞEHİR", "HACIBEKTAŞ", "KOZAKLI", "ÜRGÜP"],
+  "niğde": ["ALTUNHİSAR", "BOR", "ÇAMARDI", "ÇİFTLİK", "ULUKIŞLA"],
+  "ordu": ["AKKUŞ", "ALTINORDU", "AYBASTI", "ÇAMAŞ", "ÇATALPINAR", "ÇAYBAŞI", "FATSA", "GÖLKÖY", "GÜLYALI", "GÜRGENTEPE", "İKİZCE", "KABADÜZ", "KABATAŞ", "KORGAN", "KUMRU", "MESUDİYE", "PERŞEMBE", "ULUBEY", "ÜNYE"],
+  "rize": ["ARDEŞEN", "ÇAMLIHEMŞİN", "ÇAYELI", "DEREPAZARI", "FINDIKLI", "GÜNEYSU", "HEMŞİN", "İKİZDERE", "İYİDERE", "KALKANDERE", "PAZAR"],
+  "sakarya": ["ADAPAZARI", "AKYAZI", "ARİFİYE", "ERENLER", "FERİZLİ", "GEYVE", "HENDEK", "KARAPÜRÇEK", "KARASU", "KAYNARCA", "KOCAALİ", "PAMUKOVA", "SAPANCA", "SERDİVAN", "SÖĞÜTLÜ", "TARAKLI"],
+  "samsun": ["19 MAYIS", "ALAÇAM", "ASARCIK", "ATAKUM", "AYVACIK", "BAFRA", "CANİK", "ÇARŞAMBA", "HAVZA", "İLKADIM", "KAVAK", "LADİK", "SALIPAZARI", "TEKKEKÖY", "TERME", "VEZİRKÖPRÜ", "YAKAKENT"],
+  "siirt": ["BAYKAN", "ERUH", "KURTALAN", "PERVARİ", "ŞİRVAN", "TİLLO"],
+  "sinop": ["AYANCIK", "BOYABAT", "DİKMEN", "DURAĞAN", "ERFELEK", "GERZE", "SARAYDÜZÜ", "TÜRKELİ"],
+  "sivas": ["AKINCILAR", "ALTINYAYLA", "DİVRİĞİ", "DOĞANŞAR", "GEMEREK", "GÖLOVA", "GÜRÜN", "HAFİK", "İMRANLI", "KANGAL", "KOYULHİSAR", "SUŞEHRİ", "ŞARKIŞLA", "ULAŞ", "YILDIZELİ", "ZARA"],
+  "tekirdağ": ["ÇERKEZKÖY", "ÇORLU", "ERGENE", "HAYRABOLU", "KAPAKLI", "MALKARA", "MARMARAEREĞLİSİ", "MURATLI", "SARAY", "SÜLEYMANPAŞA", "ŞARKÖY"],
+  "tokat": ["ALMUS", "ARTOVA", "BAŞÇİFTLİK", "ERBAA", "NİKSAR", "PAZAR", "REŞADİYE", "SULUSARAY", "TURHAL", "YEŞİLYURT", "ZİLE"],
+  "trabzon": ["AKÇAABAT", "ARAKLI", "ARSİN", "BEŞİKDÜZÜ", "ÇARŞIBAŞI", "ÇAYKARA", "DERNEKPAZARI", "DÜZKÖY", "HAYRAT", "KÖPRÜBAŞI", "MAÇKA", "OF", "ORTAHİSAR", "SÜRMENE", "ŞALPAZARI", "TONYA", "VAKFIKEBİR", "YOMRA"],
+  "tunceli": ["ÇEMİŞGEZEK", "HOZAT", "MAZGİRT", "NAZIMİYE", "OVACIK", "PERTEK", "PÜLÜMÜR"],
+  "şanlıurfa": ["AKÇAKALE", "BİRECİK", "BOZOVA", "CEYLANPINAR", "EYYÜBİYE", "HALFETİ", "HALİLİYE", "HARRAN", "HİLVAN", "KARAKÖPRÜ", "SİVEREK", "SURUÇ", "VİRANŞEHİR"],
+  "uşak": ["BANAZ", "EŞME", "KARAHALLI", "SİVASLI", "ULUBEY"],
+  "van": ["BAHÇESARAY", "BAŞKALE", "ÇALDIRAN", "ÇATAK", "EDREMIT", "ERCİŞ", "GEVAŞ", "GÜRPINAR", "İPEKYOLU", "MURADİYE", "ÖZALP", "SARAY", "TUŞBA"],
+  "yozgat": ["AKDAĞMADENİ", "AYDINCIK", "BOĞAZLIYAN", "ÇANDIR", "ÇAYIRALAN", "ÇEKEREK", "KADIŞEHRİ", "SARAYKENT", "SARIKAYA", "SORGUN", "ŞEFAATLİ", "YENİFAKILI", "YERKÖY"],
+  "zonguldak": ["ALAPLI", "ÇAYCUMA", "DEVREK", "EREĞLİ", "GÖKÇEBEY", "KİLİMLİ", "KOZLU"],
+  "aksaray": ["AĞAÇÖREN", "ESKİL", "GÜLAĞAÇ", "GÜZELYURT", "ORTAKÖY", "SARIYAHŞİ", "SULTANHANI"],
+  "bayburt": ["AYDINTEPE", "DEMİRÖZÜ"],
+  "karaman": ["AYRANCI", "BAŞYAYLA", "ERMENEK", "KAZIMKARABEKİR", "SARIVELİLER"],
+  "kırıkkale": ["BAHŞILI", "BALIŞEYH", "ÇELEBİ", "DELİCE", "KARAKEÇİLİ", "KESKİN", "SULAKYURT", "YAHŞİHAN"],
+  "batman": ["BEŞİRİ", "GERCÜŞ", "HASANKEYF", "KOZLUK", "SASON"],
+  "şırnak": ["BEYTÜŞŞEBAP", "CİZRE", "GÜÇLÜKONAK", "İDİL", "SİLOPİ", "ULUDERE"],
+  "bartın": ["AMASRA", "KURUCAŞİLE", "ULUS"],
+  "ardahan": ["ÇILDIR", "DAMAL", "GÖLE", "HANAK", "POSOF"],
+  "ığdır": ["ARALIK", "KARAKOYUNLU", "TUZLUCA"],
+  "yalova": ["ALTINOVA", "ARMUTLU", "ÇINARCIK", "ÇİFTLİKKÖY", "TERMAL"],
+  "karabük": ["EFLANI", "ESKİPAZAR", "OVACIK", "SAFRANBOLU", "YENİCE"],
+  "kilis": ["ELBEYLI", "MUSABEYLİ", "POLATELI"],
+  "osmaniye": ["BAHÇE", "DÜZİÇİ", "HASANBEYLİ", "KADİRLİ", "SUMBAS", "TOPRAKKALE"],
+  "düzce": ["AKÇAKOCA", "CUMAYERİ", "ÇİLİMLİ", "GÖLYAKA", "GÜMÜŞOVA", "KAYNAŞLI", "YIĞILCA"]
+};rnekpazari", "düzköy", "hayrat", "köprübaşi", "maçka", "of", "ortahisar", "sürmene", "şalpazari", "tonya", "vakfikebir", "yomra"],
+  "tunceli": ["çemişgezek", "hozat", "mazgirt", "nazimiye", "ovacik", "pertek", "pülümür"],
+  "şanliurfa": ["akçakale", "birecik", "bozova", "ceylanpinar", "eyyübiye", "halfeti", "haliliye", "harran", "hilvan", "karaköprü", "siverek", "suruç", "viranşehir"],
+  "uşak": ["banaz", "eşme", "karahalli", "sivasli", "ulubey"],
+  "van": ["bahçesaray", "başkale", "çaldiran", "çatak", "edremit", "erciş", "gevaş", "gürpinar", "ipekyolu", "muradiye", "özalp", "saray", "tuşba"],
+  "yozgat": ["akdağmadeni", "aydincik", "boğazliyan", "çandir", "çayiralalan", "çekerek", "kadişehri", "saraykent", "sarikaya", "sorgun", "şefaatli", "yenifakili", "yerköy"],
+  "zonguldak": ["alapli", "çaycuma", "devrek", "ereğli", "gökçebey", "kilimli", "kozlu"],
+  "aksaray": ["ağaçören", "eskil", "gülağaç", "güzelyurt", "ortaköy", "sariyahşi", "sultanhani"],
+  "bayburt": ["aydintepe", "demirözü"],
+  "karaman": ["ayranci", "başyayla", "ermenek", "kazimkarabekir", "sariveliler"],
+  "kirikkale": ["bahşili", "balişeyh", "çelebi", "delice", "karakeçili", "keskin", "sulakyurt", "yahşihan"],
+  "batman": ["beşiri", "gercüş", "hasankeyf", "kozluk", "sason"],
+  "şirnak": ["beytüşşebap", "cizre", "güçlükonak", "idil", "silopi", "uludere"],
+  "bartin": ["amasra", "kurucaşile", "ulus"],
+  "ardahan": ["çildir", "damal", "göle", "hanak", "posof"],
+  "ığdir": ["aralik", "karakoyunlu", "tuzluca"],
+  "yalova": ["altinova", "armutlu", "çinarcik", "çiftlikköy", "termal"],
+  "karabük": ["eflani", "eskipazar", "ovacik", "safranbolu", "yenice"],
+  "kilis": ["elbeyli", "musabeyli", "polateli"],
+  "osmaniye": ["bahçe", "düziçi", "hasanbeyli", "kadirli", "sumbas", "toprakkale"],
+  "düzce": ["akçakoca", "cumayeri", "çilimli", "gölyaka", "gümüşova", "kaynaşli", "yiğilca"]
+};
+
+// Türkçe karakter duyarlı küçük harfe çevirme fonksiyonu
+function turkishToLower(str) {
+	if (!str) return '';
+	return str.toString()
+		.replace(/İ/g, 'i')
+		.replace(/I/g, 'ı')
+		.replace(/Ş/g, 'ş')
+		.replace(/Ğ/g, 'ğ')
+		.replace(/Ü/g, 'ü')
+		.replace(/Ö/g, 'ö')
+		.replace(/Ç/g, 'ç')
+		.toLowerCase();
+}
+
+// Chat Adres Değişikliği Onaylama Butonu (Yapılandırılmış ve Detaylı Doğrulamalı)
 function submitChatAddressChangeStructured(orderCode) {
 	const mahalle = document.getElementById('chat-addr-mahalle')?.value.trim();
 	const sokak = document.getElementById('chat-addr-sokak')?.value.trim();
@@ -2938,9 +3058,58 @@ function submitChatAddressChangeStructured(orderCode) {
 	const ilce = document.getElementById('chat-addr-ilce')?.value.trim();
 	const il = document.getElementById('chat-addr-il')?.value.trim();
 
+	// 1. Genel boşluk kontrolü
 	if (!mahalle || !sokak || !no || !ilce || !il) {
 		showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
 		triggerBotTypingAndReply("Lütfen adres değişikliği için tüm alanları (Mahalle, Sokak, No, İlçe, İl) eksiksiz doldurun. Eksik bilgi girdiniz! ❌");
+		return;
+	}
+
+	// 2. Mahalle Kelime Kontrolü
+	const mahLower = turkishToLower(mahalle);
+	if (!mahLower.includes('mah.') && !mahLower.includes('mh') && !mahLower.includes('mahallesi')) {
+		showNotification("Mahalle alanında 'mah.', 'mh' veya 'mahallesi' olmalıdır.", "error");
+		triggerBotTypingAndReply("Mahalle adresi geçersiz! Girdiğiniz değer 'mah.', 'mh' veya 'mahallesi' ifadelerinden birini içermelidir. ❌");
+		return;
+	}
+
+	// 3. Sokak/Cadde Kelime Kontrolü
+	const sokLower = turkishToLower(sokak);
+	if (!sokLower.includes('sok.') && !sokLower.includes('cad.') && !sokLower.includes('sokak') && !sokLower.includes('caddesi')) {
+		showNotification("Sokak/Cadde alanında 'sok.', 'cad.', 'sokak' veya 'caddesi' olmalıdır.", "error");
+		triggerBotTypingAndReply("Sokak/Cadde adresi geçersiz! Girdiğiniz değer 'sok.', 'cad.', 'sokak' veya 'caddesi' ifadelerinden birini içermelidir. ❌");
+		return;
+	}
+
+	// 4. Apt / Bina / No Kelime Kontrolü
+	const noLower = turkishToLower(no);
+	if (!noLower.includes('no.') && !noLower.includes('no') && !noLower.includes('numara')) {
+		showNotification("Apt/Bina/No alanında 'no.' veya 'numara' ifadesi olmalıdır.", "error");
+		triggerBotTypingAndReply("Apt/Bina/No adresi geçersiz! Girdiğiniz değer 'no.' veya 'numara' ifadesini içermelidir (Örn: No: 8). ❌");
+		return;
+	}
+
+	// 5. İl Doğrulaması
+	const ilLower = turkishToLower(il);
+	if (!turkeyGeoDb.hasOwnProperty(ilLower)) {
+		showNotification("Geçersiz il adı girdiniz.", "error");
+		triggerBotTypingAndReply(`Girdiğiniz İl (**${il}**) Türkiye'deki 81 il listesinde bulunamadı. Lütfen geçerli bir il girin. ❌`);
+		return;
+	}
+
+	// 6. İlçe Doğrulaması
+	const ilceLower = turkishToLower(ilce);
+	const validDistricts = turkeyGeoDb[ilLower];
+	const hasDistrict = validDistricts.some(d => {
+		const dbDistrictLower = turkishToLower(d);
+		if (ilLower === 'ankara' && dbDistrictLower === 'amak' && ilceLower === 'mamak') {
+			return true;
+		}
+		return dbDistrictLower === ilceLower;
+	});
+	if (!hasDistrict) {
+		showNotification("Geçersiz ilçe adı girdiniz.", "error");
+		triggerBotTypingAndReply(`Girdiğiniz İlçe (**${ilce}**), seçtiğiniz İl (**${il}**) ilçeleri listesinde bulunamadı. Lütfen geçerli bir ilçe girin. ❌`);
 		return;
 	}
 	

@@ -106,9 +106,14 @@ TURSO_AUTH_TOKEN=ey...
 - **Özellikler**:
   - **"Depo Konumları"** ve **"Alıcı Konumları"** sekmeleri arası dinamik geçiş.
   - Adres başlığı, Adres No, Gönderici Adı, Telefonu, E-Postası, Ülkesi, İli, İlçesi ve açık adresi listesi içeren modern kart ızgarası (Grid).
-  - Seçilen konumu **Ana Depo Yap** (Varsayılan adres olarak işaretleme) özelliği ile aktif vurgulu sınır çizgisi (`is-main`).
-  - Sağ üstte **Toplu Adres Ekle** ve **Yeni Adres Ekle** aksiyon butonları ile yeni adres kaydetme formu.
-  - Kartlarda adres silme (Trash can) işlevi.
+  - **ADRES DEĞİŞİKLİĞİ (Yapılandırılmış Form & Kelime ve Coğrafi Veri Doğrulaması):** Düz yazı şeklinde giriş yapılması engellenmiştir. Form **Mahalle**, **Sokak / Cadde**, **Apt / Bina / No**, **İlçe** ve **İl** alanlarını ayrı ayrı alır. Form gönderildiğinde şu kontroller yapılır:
+        * **Boşluk Kontrolü:** Tüm alanların girilmiş olması zorunludur.
+        * **Mahalle Kontrolü:** Girilen değer `mah.`, `mh` veya `mahallesi` kelimelerinden en az birini içermelidir.
+        * **Sokak/Cadde Kontrolü:** Girilen değer `sok.`, `cad.`, `sokak` veya `caddesi` kelimelerinden en az birini içermelidir.
+        * **No Kontrolü:** Girilen değer `no.`, `no` veya `numara` kelimelerinden en az birini içermelidir.
+        * **İl Kontrolü:** Girilen il, Türkiye'deki 81 il veritabanında (`turkeyGeoDb`) mevcut olmalıdır.
+        * **İlçe Kontrolü:** Girdiğiniz ilçe, seçilen ilin sınırları içerisindeki resmi ilçeler arasında yer almalıdır.
+        * Herhangi bir kural ihlalinde bot penceresinde Türkçe açıklayıcı hata mesajı basılarak form düzeltmeye açık tutulur. Başarılı gönderimde ise veriler notlara eklenir.
 
 ---
 
