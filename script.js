@@ -1276,6 +1276,12 @@ function getStatusBadge(status) {
 		return `<span class="status-pill ready"><i class="fa-solid fa-spinner fa-spin-slow"></i> Hazırlandı</span>`;
 	} else if (status === 'shipped') {
 		return `<span class="status-pill shipped"><i class="fa-solid fa-truck-fast"></i> Kargoya Verildi</span>`;
+	} else if (status === 'on-hold') {
+		return `<span class="status-pill on-hold" style="background: rgba(217, 119, 6, 0.15); color: #d97706; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pause"></i> Bekletiliyor</span>`;
+	} else if (status === 'cancelled') {
+		return `<span class="status-pill cancelled"><i class="fa-solid fa-ban"></i> İptal Edildi</span>`;
+	} else if (status === 'returned') {
+		return `<span class="status-pill returned-pending"><i class="fa-solid fa-rotate-left"></i> İade Edildi</span>`;
 	}
 	return status;
 }
@@ -1350,6 +1356,8 @@ function renderOrders(filter = 'all', searchQuery = '') {
 			statusBadge = `<span class="status-pill cancelled"><i class="fa-solid fa-ban"></i> İptal Edildi</span>`;
 		} else if (order.status === 'returned') {
 			statusBadge = `<span class="status-pill returned-pending"><i class="fa-solid fa-rotate-left"></i> İade Edildi</span>`;
+		} else if (order.status === 'on-hold') {
+			statusBadge = `<span class="status-pill on-hold" style="background: rgba(217, 119, 6, 0.15); color: #d97706; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pause"></i> Bekletiliyor</span>`;
 		}
 		
 		// İptal Et butonu sadece Kargoya Verildi (shipped), İade Edildi (returned) ve İptal Edildi değilse gösterilir
@@ -1360,9 +1368,13 @@ function renderOrders(filter = 'all', searchQuery = '') {
 
 		const totalFormatted = '₺' + order.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 		const cityText = order.city ? ` (${escapeHTML(order.city)})` : '';
+		
+		const urgentBadge = order.urgent 
+			? `<span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 6px; display: inline-flex; align-items: center; gap: 3px;"><i class="fa-solid fa-fire"></i> ACİL</span>` 
+			: '';
 
 		tr.innerHTML = `
-			<td class="ledger-code-style">${escapeHTML(order.code)}</td>
+			<td class="ledger-code-style">${escapeHTML(order.code)}${urgentBadge}</td>
 			<td>${escapeHTML(order.date.split(',')[0])}</td>
 			<td><strong>${escapeHTML(order.customer)}</strong><span style="font-size: 12px; color: var(--text-muted);">${cityText}</span></td>
 			<td>${paymentBadge}</td>
@@ -2485,17 +2497,38 @@ function processBotResponse(userMsg) {
 		const match = userMsg.match(/\d+/);
 		if (match) {
 			currentOrderNumber = match[0];
-			chatbotState = 2; // Seçenek Tıklama Bekleniyor
 			
-			triggerBotTypingAndReply(`Teşekkürler. #${currentOrderNumber} numaralı sipariş için ne yapmak istiyorsun?`, 1000, () => {
-				// Hızlı Cevap Butonlarını Yerleştir
-				renderQuickReplies();
-			});
+			// Siparişi ara
+			const formattedQuery = currentOrderNumber.startsWith('#') ? currentOrderNumber : `#${currentOrderNumber}`;
+			const cleanQuery = currentOrderNumber.replace('#', '');
+			const foundOrder = orders.find(o => o.code === formattedQuery || o.code.replace('#', '') === cleanQuery);
+			
+			if (foundOrder) {
+				chatbotState = 2; // Seçenek Tıklama Bekleniyor
+				triggerBotTypingAndReply(`Teşekkürler. #${currentOrderNumber} numaralı sipariş bulundu. Bilgiler aşağıdadır. Lütfen yapmak istediğiniz işlemi seçiniz:`, 800, () => {
+					// Sipariş kartını ve butonları chatbot messages'e bas
+					const messagesContainer = document.getElementById('chatbot-messages');
+					if (messagesContainer) {
+						const cardBubble = document.createElement('div');
+						cardBubble.className = 'chat-bubble bot';
+						cardBubble.style.padding = '0';
+						cardBubble.style.background = 'transparent';
+						cardBubble.style.border = 'none';
+						cardBubble.style.boxShadow = 'none';
+						cardBubble.style.maxWidth = '100%';
+						cardBubble.innerHTML = renderChatbotOrderCard(foundOrder);
+						messagesContainer.appendChild(cardBubble);
+						messagesContainer.scrollTop = messagesContainer.scrollHeight;
+					}
+				});
+			} else {
+				triggerBotTypingAndReply(`Girdiğiniz numaraya ait bir sipariş bulunamadı (#${currentOrderNumber}). Lütfen geçerli bir sipariş kodu girin:`);
+			}
 		} else {
 			triggerBotTypingAndReply("Lütfen geçerli bir sipariş kodu yazar mısın? (Örn: #1024 yazabilirsin veya doğrudan 1024)");
 		}
 	} else if (chatbotState === 2) {
-		triggerBotTypingAndReply("Lütfen aşağıdaki seçeneklerden birini tıklayarak devam et.");
+		triggerBotTypingAndReply("Lütfen yukarıdaki sipariş kartının altında bulunan işlem seçeneklerini kullanarak devam edin.");
 	} else {
 		// Resetleyip Başa Dön
 		triggerBotTypingAndReply("Sana başka bir sipariş hakkında yardımcı olabilir miyim? Lütfen sorgulamak istediğin sipariş kodunu yazar mısın? (Örn: 1024)");
@@ -2503,53 +2536,366 @@ function processBotResponse(userMsg) {
 	}
 }
 
-// Hızlı Cevap Butonlarını Render Et
-function renderQuickReplies() {
+// Sipariş Detaylarını Göster/Gizle
+function toggleChatbotCardDetails(detailsId, toggleBtnId) {
+	const detailsEl = document.getElementById(detailsId);
+	const btnEl = document.getElementById(toggleBtnId);
+	if (!detailsEl || !btnEl) return;
+	
+	if (detailsEl.style.display === 'flex') {
+		detailsEl.style.display = 'none';
+		btnEl.innerHTML = 'Detayları Göster <i class="fa-solid fa-chevron-down"></i>';
+	} else {
+		detailsEl.style.display = 'flex';
+		btnEl.innerHTML = 'Detayı Gizle <i class="fa-solid fa-chevron-up"></i>';
+	}
+}
+
+// Nestro Tarzı Sipariş Kartı HTML Üretici
+function renderChatbotOrderCard(order) {
+	const totalFormatted = '₺' + order.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	
+	// Ödeme Durumu
+	let paymentText = order.payment === 'card' ? 'ÖDENDİ' : 'KAPIDA ÖDEME';
+	let paymentStyle = order.payment === 'card' 
+		? 'background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;' 
+		: 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+
+	// Fulfillment Durumu
+	let ffText = 'HAZIRLANIYOR';
+	let ffStyle = 'background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	
+	if (order.status === 'ready') {
+		ffText = 'HAZIRLANDI';
+		ffStyle = 'background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	} else if (order.status === 'shipped') {
+		ffText = 'TAMAMLANDI';
+		ffStyle = 'background: rgba(107, 114, 128, 0.15); color: #9ca3af; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	} else if (order.status === 'cancelled') {
+		ffText = 'İPTAL EDİLDİ';
+		ffStyle = 'background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	} else if (order.status === 'returned') {
+		ffText = 'İADE EDİLDİ';
+		ffStyle = 'background: rgba(139, 92, 246, 0.15); color: #8b5cf6; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	} else if (order.status === 'on-hold') {
+		ffText = 'BEKLEMEDE';
+		ffStyle = 'background: rgba(217, 119, 6, 0.15); color: #d97706; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;';
+	}
+
+	// Ürünler Listesi HTML
+	let productsHTML = '';
+	if (order.products && order.products.length > 0) {
+		order.products.forEach(p => {
+			const catalogProd = products.find(cp => cp.name.toLowerCase() === p.name.toLowerCase());
+			const skuText = catalogProd ? `SKU: ${catalogProd.sku}` : '';
+			
+			productsHTML += `
+				<div class="chatbot-detail-product-item">
+					<div class="chatbot-detail-product-header">
+						<span>${escapeHTML(p.name)}</span>
+						<span style="white-space: nowrap; margin-left: 8px;">x${p.qty}</span>
+					</div>
+					<div class="chatbot-detail-product-header" style="font-weight: normal; font-size: 11.5px; margin-top: 2px;">
+						<span style="color: #a09c9a;">${skuText}</span>
+						<span style="color: #10b981; font-weight: bold;">${p.price}</span>
+					</div>
+				</div>
+			`;
+		});
+	}
+
+	const cardId = 'cb-card-' + Math.floor(Math.random() * 100000);
+	const detailsId = 'cb-details-' + cardId;
+	const toggleBtnId = 'cb-toggle-' + cardId;
+
+	const html = `
+		<div class="chatbot-order-card" id="${cardId}">
+			<div class="chatbot-order-card-header">
+				<span>${escapeHTML(order.code)}</span>
+				<span>${totalFormatted}</span>
+			</div>
+			<div class="chatbot-order-card-body">
+				<div class="chatbot-card-row">
+					<span class="chatbot-card-label">Müşteri</span>
+					<span class="chatbot-card-value">${escapeHTML(order.customer)}</span>
+				</div>
+				<div class="chatbot-card-row">
+					<span class="chatbot-card-label">Ödeme</span>
+					<span style="${paymentStyle}">${paymentText}</span>
+				</div>
+				<div class="chatbot-card-row">
+					<span class="chatbot-card-label">FF Durumu</span>
+					<span style="${ffStyle}">${ffText}</span>
+				</div>
+				<div class="chatbot-card-row">
+					<span class="chatbot-card-label">Tarih</span>
+					<span class="chatbot-card-value">${escapeHTML(order.date)}</span>
+				</div>
+				
+				<button class="chatbot-card-toggle-btn" id="${toggleBtnId}" onclick="toggleChatbotCardDetails('${detailsId}', '${toggleBtnId}')">
+					Detayları Göster <i class="fa-solid fa-chevron-down"></i>
+				</button>
+				
+				<div class="chatbot-card-details" id="${detailsId}">
+					<div class="chatbot-detail-block">
+						<div class="chatbot-detail-block-title green">Müşteri Bilgileri</div>
+						<div class="chatbot-detail-block-content">
+							<strong>E-posta:</strong> ${escapeHTML(order.email || '-')}<br>
+							<strong>Telefon:</strong> ${escapeHTML(order.phone || '-')}
+						</div>
+					</div>
+					
+					<div class="chatbot-detail-block">
+						<div class="chatbot-detail-block-title orange">Kargo Adresi</div>
+						<div class="chatbot-detail-block-content">
+							<strong>${escapeHTML(order.customer)}</strong><br>
+							${escapeHTML(order.address || '-')}
+						</div>
+					</div>
+					
+					<div class="chatbot-detail-block">
+						<div class="chatbot-detail-block-title green">Ürünler</div>
+						<div class="chatbot-detail-block-content">
+							${productsHTML}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="chatbot-action-buttons">
+			<button class="btn-chatbot-action status" onclick="handleChatbotAction('${order.code}', 'status')">
+				<i class="fa-solid fa-circle-question"></i> Sipariş Durumu
+			</button>
+			<button class="btn-chatbot-action cancel" onclick="handleChatbotAction('${order.code}', 'cancel')">
+				<i class="fa-solid fa-ban"></i> İptal
+			</button>
+			<button class="btn-chatbot-action change" onclick="handleChatbotAction('${order.code}', 'change')">
+				<i class="fa-solid fa-arrows-rotate"></i> Değişim
+			</button>
+			<button class="btn-chatbot-action hold" onclick="handleChatbotAction('${order.code}', 'hold')">
+				<i class="fa-solid fa-pause"></i> Bekletme
+			</button>
+			<button class="btn-chatbot-action urgency" onclick="handleChatbotAction('${order.code}', 'urgency')">
+				<i class="fa-solid fa-fire"></i> Aciliyet
+			</button>
+			<button class="btn-chatbot-action address" onclick="handleChatbotAction('${order.code}', 'address')">
+				<i class="fa-solid fa-house-chimney-user"></i> Adres Değişikliği
+			</button>
+		</div>
+	`;
+	return html;
+}
+
+// Chatbot Aksiyon Butonları Handler'ı
+function handleChatbotAction(orderCode, actionType) {
+	// Eğer daha önce açılmış bir form varsa temizle
+	const existingForm = document.getElementById('chat-action-form-container');
+	if (existingForm) existingForm.remove();
+
+	const order = orders.find(o => o.code === orderCode);
+	if (!order) {
+		triggerBotTypingAndReply("Hata: Sipariş bulunamadı.");
+		return;
+	}
+
 	const messagesContainer = document.getElementById('chatbot-messages');
 	if (!messagesContainer) return;
 
-	const replyBox = document.createElement('div');
-	replyBox.className = 'quick-replies-container';
-	replyBox.id = 'active-quick-replies';
+	if (actionType === 'status') {
+		appendUserMessage("Sipariş Durumu");
+		
+		let statusReply = "";
+		if (order.status === 'preparing') {
+			statusReply = `Siparişiniz henüz hazırlanmadı, şu anda **Hazırlanıyor** aşamasında. En kısa sürede paketlenip çıkışı sağlanacaktır. ⏳`;
+		} else if (order.status === 'ready') {
+			statusReply = `Siparişiniz **Hazırlandı**! Kargo firmasının teslim alması bekleniyor. 📦`;
+		} else if (order.status === 'shipped') {
+			statusReply = `Siparişiniz hazırlandı ve **Kargoya Verildi**! Kargo takip numaranız: **${order.tracking || '-'}** 🚚`;
+		} else if (order.status === 'cancelled') {
+			statusReply = `Siparişiniz **İptal Edildi** olarak görünüyor. ❌`;
+		} else if (order.status === 'returned') {
+			statusReply = `Siparişiniz **İade Edildi** olarak görünüyor. ↩️`;
+		} else if (order.status === 'on-hold') {
+			statusReply = `Siparişiniz **Beklemede** olarak işaretlenmiştir. İleri bir tarihte gönderilecektir. ⏸️`;
+		}
 
-	const options = [
-		{ text: 'Ürün Değişikliği', value: 'urun' },
-		{ text: 'Adres Değişikliği', value: 'adres' },
-		{ text: 'Aciliyet Bildir', value: 'aciliyet' }
-	];
-
-	options.forEach(opt => {
-		const btn = document.createElement('button');
-		btn.className = 'btn-quick-reply';
-		btn.textContent = opt.text;
-		btn.onclick = () => handleQuickReplyClick(opt.text, opt.value);
-		replyBox.appendChild(btn);
-	});
-
-	messagesContainer.appendChild(replyBox);
-	messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-// Hızlı Cevap Tıklama Handler'ı
-function handleQuickReplyClick(text, value) {
-	// Aktif buton kutusunu sil
-	const replyBox = document.getElementById('active-quick-replies');
-	if (replyBox) replyBox.remove();
-
-	// Tıklanan metni kullanıcı balonu olarak ekle
-	appendUserMessage(text);
-
-	chatbotState = 3; // Çözüldü
-
-	if (value === 'aciliyet') {
-		triggerBotTypingAndReply("İşleminiz alındı. Depoya aciliyet bildirildi! Siparişin en kısa sürede hazırlanıp kargoya verilecektir. 🚀", 1200, () => {
+		chatbotState = 3;
+		triggerBotTypingAndReply(statusReply, 1000, () => {
 			askAnythingElse();
 		});
-	} else {
-		triggerBotTypingAndReply("Talebiniz destek ekibine iletildi. İlgili sipariş için en kısa sürede sizinle iletişime geçeceğiz. 🤝", 1200, () => {
+
+	} else if (actionType === 'cancel') {
+		appendUserMessage("İptal");
+		
+		if (order.status === 'shipped' || order.status === 'returned') {
+			chatbotState = 3;
+			triggerBotTypingAndReply(`Bu sipariş kargoya verildiği veya iade edildiği için iptal edilemez. 🚚`, 1000, () => {
+				askAnythingElse();
+			});
+		} else if (order.status === 'cancelled') {
+			chatbotState = 3;
+			triggerBotTypingAndReply(`Bu sipariş zaten iptal edilmiştir. ❌`, 1000, () => {
+				askAnythingElse();
+			});
+		} else {
+			// İptal et
+			order.status = 'cancelled';
+			order.notes = (order.notes || '') + '\n[AI Asistan] Sipariş iptal edildi.';
+			
+			// CRM panelini ve dashboard'u güncelle
+			renderOrders(currentFilter, currentSearchQuery);
+			updateDashboardStats();
+			
+			chatbotState = 3;
+			triggerBotTypingAndReply(`#${order.code.replace('#', '')} numaralı sipariş başarıyla iptal edildi! ❌\nSipariş durumu hem Shopify hem de Siparişlerim panelinde **İPTAL** olarak güncellenmiştir.`, 1200, () => {
+				askAnythingElse();
+			});
+		}
+
+	} else if (actionType === 'change') {
+		appendUserMessage("Değişim");
+
+		triggerBotTypingAndReply("Ürün değişimi talebi başlatıldı. Lütfen değişim yapmak istediğiniz yeni ürünü seçin:", 800, () => {
+			// Ürün seçim formunu chat penceresine yerleştir
+			const formDiv = document.createElement('div');
+			formDiv.className = 'chat-action-form';
+			formDiv.id = 'chat-action-form-container';
+			
+			let selectOptions = products.map(p => `<option value="${p.id}">${escapeHTML(p.name)} (${p.sku})</option>`).join('');
+			
+			formDiv.innerHTML = `
+				<label>Değiştirilecek Yeni Ürün</label>
+				<select id="chat-exchange-product-select">
+					${selectOptions}
+				</select>
+				<button onclick="submitChatExchange('${order.code}')">Değişimi Onayla</button>
+			`;
+			
+			messagesContainer.appendChild(formDiv);
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+		});
+
+	} else if (actionType === 'hold') {
+		appendUserMessage("Bekletme");
+		
+		if (order.status === 'cancelled' || order.status === 'shipped') {
+			chatbotState = 3;
+			triggerBotTypingAndReply("İptal edilmiş veya kargolanmış siparişler beklemeye alınamaz. ❌", 1000, () => {
+				askAnythingElse();
+			});
+		} else {
+			order.status = 'on-hold';
+			order.notes = (order.notes || '') + '\n[AI Asistan] Sipariş bekletmeye alındı.';
+			
+			renderOrders(currentFilter, currentSearchQuery);
+			updateDashboardStats();
+			
+			chatbotState = 3;
+			triggerBotTypingAndReply(`#${order.code.replace('#', '')} numaralı sipariş ileri bir tarih için **BEKLEMEYE** alındı. Siparişlerim panelinde "Bekletiliyor" olarak güncellendi. ⏸️`, 1200, () => {
+				askAnythingElse();
+			});
+		}
+
+	} else if (actionType === 'urgency') {
+		appendUserMessage("Aciliyet");
+		
+		order.urgent = true;
+		order.notes = (order.notes || '') + '\n[AI Asistan] ACİLİYET bildirilmiştir.';
+		
+		renderOrders(currentFilter, currentSearchQuery);
+		updateDashboardStats();
+		
+		chatbotState = 3;
+		triggerBotTypingAndReply(`#${order.code.replace('#', '')} numaralı sipariş için **ACİLİYET** bildirildi! Depoya öncelikli çıkış talimatı iletilmiştir. 🚀`, 1200, () => {
 			askAnythingElse();
+		});
+
+	} else if (actionType === 'address') {
+		appendUserMessage("Adres Değişikliği");
+		
+		triggerBotTypingAndReply("Adres değişikliği talebi başlatıldı. Nestro personeli tarafından el ile güncellenecek yeni adresi lütfen yazın:", 800, () => {
+			// Adres giriş alanını yerleştir
+			const formDiv = document.createElement('div');
+			formDiv.className = 'chat-action-form';
+			formDiv.id = 'chat-action-form-container';
+			
+			formDiv.innerHTML = `
+				<label>Yeni Teslimat Adresi</label>
+				<textarea id="chat-new-address-input" rows="3" placeholder="Örn: Uncalı Mah. 1280 Sok. Rüya Evleri G Blok No: 8 Antalya"></textarea>
+				<button onclick="submitChatAddressChange('${order.code}')">Adresi Depoya İlet</button>
+			`;
+			
+			messagesContainer.appendChild(formDiv);
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
 		});
 	}
+}
+
+// Chat Değişim Onaylama Butonu
+function submitChatExchange(orderCode) {
+	const selectEl = document.getElementById('chat-exchange-product-select');
+	if (!selectEl) return;
+	
+	const productId = selectEl.value;
+	const selectedProduct = products.find(p => p.id === productId);
+	if (!selectedProduct) return;
+	
+	const order = orders.find(o => o.code === orderCode);
+	if (!order) return;
+
+	// Formu kaldır
+	const formDiv = document.getElementById('chat-action-form-container');
+	if (formDiv) formDiv.remove();
+
+	// Siparişin ürününü değiştir
+	order.products = [
+		{ name: selectedProduct.name, qty: 1, price: '₺1,200.00' } // Örnek fiyat ile değiştirildi
+	];
+	order.notes = (order.notes || '') + `\n[AI Asistan - DEĞİŞİM] Ürün değişti. Yeni Ürün: ${selectedProduct.name} (${selectedProduct.sku})`;
+
+	// CRM Tablosunu yenile
+	renderOrders(currentFilter, currentSearchQuery);
+	updateDashboardStats();
+
+	appendUserMessage(`Yeni Ürün: ${selectedProduct.name}`);
+	
+	chatbotState = 3;
+	triggerBotTypingAndReply(`Ürün değişimi başarıyla gerçekleştirildi! Sipariş içeriğindeki ürün **${selectedProduct.name}** olarak güncellendi. 🔄`, 1000, () => {
+		askAnythingElse();
+	});
+}
+
+// Chat Adres Değişikliği Onaylama Butonu
+function submitChatAddressChange(orderCode) {
+	const textareaEl = document.getElementById('chat-new-address-input');
+	if (!textareaEl) return;
+	
+	const newAddress = textareaEl.value.trim();
+	if (!newAddress) {
+		showNotification("Lütfen geçerli bir adres yazın.", "error");
+		return;
+	}
+	
+	const order = orders.find(o => o.code === orderCode);
+	if (!order) return;
+
+	// Formu kaldır
+	const formDiv = document.getElementById('chat-action-form-container');
+	if (formDiv) formDiv.remove();
+
+	// Sistemde adres DEĞİŞMEYECEK, sadece depoya el ile girilmesi için notlara eklenecek
+	order.notes = (order.notes || '') + `\n[AI Asistan - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${newAddress}`;
+	
+	// Tabloyu ve detay modalını yenilemek için
+	renderOrders(currentFilter, currentSearchQuery);
+
+	appendUserMessage(`Adres: ${newAddress}`);
+	
+	chatbotState = 3;
+	triggerBotTypingAndReply(`Adres değişikliği talebiniz Nestro Depo birimine iletildi! Sistemdeki adres değişmedi, Nestro personeli el ile yeni adresi güncelleyecektir. 🏠`, 1000, () => {
+		askAnythingElse();
+	});
 }
 
 function askAnythingElse() {
@@ -3535,10 +3881,12 @@ function filterDashboardOrders(statusType, shouldScroll = true) {
 				statusBadge = `<span class="status-pill shipped"><i class="fa-solid fa-truck-fast"></i> Kargoya Verildi</span>`;
 			} else if (order.status === 'cancelled') {
 				statusBadge = `<span class="status-pill cancelled"><i class="fa-solid fa-ban"></i> İptal Edildi</span>`;
+			} else if (order.status === 'on-hold') {
+				statusBadge = `<span class="status-pill on-hold" style="background: rgba(217, 119, 6, 0.15); color: #d97706; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700;"><i class="fa-solid fa-pause"></i> Bekletiliyor</span>`;
 			}
 			
 			// İptal Butonu
-			const showCancel = order.status !== 'shipped' && order.status !== 'cancelled';
+			const showCancel = order.status !== 'shipped' && order.status !== 'cancelled' && order.status !== 'returned';
 			const cancelBtnHTML = showCancel 
 				? `<button class="btn-action-cancel" onclick="openCancelModal('${order.code}')"><i class="fa-solid fa-ban"></i> İptal</button>` 
 				: '';
@@ -3546,8 +3894,12 @@ function filterDashboardOrders(statusType, shouldScroll = true) {
 			const totalFormatted = '₺' + order.total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 			const cityText = order.city ? ` (${escapeHTML(order.city)})` : '';
 			
+			const urgentBadge = order.urgent 
+				? `<span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 6px; display: inline-flex; align-items: center; gap: 3px;"><i class="fa-solid fa-fire"></i> ACİL</span>` 
+				: '';
+			
 			tr.innerHTML = `
-				<td class="ledger-code-style">${escapeHTML(order.code)}</td>
+				<td class="ledger-code-style">${escapeHTML(order.code)}${urgentBadge}</td>
 				<td>${escapeHTML(order.date.split(',')[0])}</td>
 				<td><strong>${escapeHTML(order.customer)}</strong><span style="font-size: 12px; color: var(--text-muted);">${cityText}</span></td>
 				<td>${paymentBadge}</td>
