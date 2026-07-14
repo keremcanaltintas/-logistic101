@@ -7583,7 +7583,8 @@ body {
 }
 
 .chat-action-form select,
-.chat-action-form textarea {
+.chat-action-form textarea,
+.chat-action-form input[type="text"] {
 	width: 100%;
 	background: #ffffff;
 	border: 1px solid #cbd5e1;
@@ -7596,7 +7597,8 @@ body {
 }
 
 .chat-action-form select:focus,
-.chat-action-form textarea:focus {
+.chat-action-form textarea:focus,
+.chat-action-form input[type="text"]:focus {
 	border-color: var(--primary);
 }
 

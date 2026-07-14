@@ -2788,6 +2788,10 @@ function handleChatbotAction(orderCode, actionType) {
 					${productCardsHTML}
 				</div>
 				<input type="hidden" id="selected-exchange-product-id" value="">
+				
+				<label style="margin-top: 8px; display: block;">Adet</label>
+				<input type="number" id="chat-exchange-qty-input" min="1" value="1" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; margin-top: 4px; margin-bottom: 8px; background: #ffffff; color: #1e293b;">
+				
 				<button class="btn-confirm-exchange" onclick="submitModernChatExchange('${order.code}')">Değişimi Onayla</button>
 			`;
 			
@@ -2833,16 +2837,30 @@ function handleChatbotAction(orderCode, actionType) {
 	} else if (actionType === 'address') {
 		appendUserMessage("Adres Değişikliği");
 		
-		triggerBotTypingAndReply("Adres değişikliği talebi başlatıldı. Nestro personeli tarafından el ile güncellenecek yeni adresi lütfen yazın:", 800, () => {
+		triggerBotTypingAndReply("Adres değişikliği talebi başlatıldı. Lütfen adresi oluşturan alanları eksiksiz doldurun:", 800, () => {
 			// Adres giriş alanını yerleştir
 			const formDiv = document.createElement('div');
 			formDiv.className = 'chat-action-form';
 			formDiv.id = 'chat-action-form-container';
+			formDiv.style.gap = '6px';
 			
 			formDiv.innerHTML = `
-				<label>Yeni Teslimat Adresi</label>
-				<textarea id="chat-new-address-input" rows="3" placeholder="Örn: Uncalı Mah. 1280 Sok. Rüya Evleri G Blok No: 8 Antalya"></textarea>
-				<button onclick="submitChatAddressChange('${order.code}')">Adresi Depoya İlet</button>
+				<label>Mahalle</label>
+				<input type="text" id="chat-addr-mahalle" placeholder="Örn: Uncalı Mah.">
+				
+				<label>Sokak / Cadde</label>
+				<input type="text" id="chat-addr-sokak" placeholder="Örn: 1280 Sok.">
+				
+				<label>Apt / Bina / No</label>
+				<input type="text" id="chat-addr-no" placeholder="Örn: Rüya Evleri G Blok No: 8">
+				
+				<label>İlçe</label>
+				<input type="text" id="chat-addr-ilce" placeholder="Örn: Konyaaltı">
+				
+				<label>İl</label>
+				<input type="text" id="chat-addr-il" placeholder="Örn: Antalya">
+				
+				<button style="margin-top: 6px;" onclick="submitChatAddressChangeStructured('${order.code}')">Adresi Depoya İlet</button>
 			`;
 			
 			messagesContainer.appendChild(formDiv);
@@ -2882,36 +2900,46 @@ function submitModernChatExchange(orderCode) {
 	const order = orders.find(o => o.code === orderCode);
 	if (!order) return;
 
+	const qtyInput = document.getElementById('chat-exchange-qty-input');
+	const quantity = qtyInput ? parseInt(qtyInput.value) : 1;
+	if (isNaN(quantity) || quantity < 1) {
+		showNotification("Lütfen geçerli bir adet girin.", "error");
+		return;
+	}
+
 	// Formu kaldır
 	const formDiv = document.getElementById('chat-action-form-container');
 	if (formDiv) formDiv.remove();
 
-	// Siparişin ürününü değiştir
+	// Siparişin ürününü değiştir (sipariş toplam tutarını değiştirmeden)
+	const itemPrice = 1200.00;
 	order.products = [
-		{ name: selectedProduct.name, qty: 1, price: '₺1,200.00' } // Örnek fiyat ile değiştirildi
+		{ name: selectedProduct.name, qty: quantity, price: '₺' + itemPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 	];
-	order.notes = (order.notes || '') + `\n[AI Asistan - DEĞİŞİM] Ürün değişti. Yeni Ürün: ${selectedProduct.name} (${selectedProduct.sku})`;
+	order.notes = (order.notes || '') + `\n[AI Asistan - DEĞİŞİM] Ürün değişti. Yeni Ürün: ${selectedProduct.name} (${selectedProduct.sku}), Adet: ${quantity}`;
 
 	// CRM Tablosunu yenile
 	renderOrders(currentFilter, currentSearchQuery);
 	updateDashboardStats();
 
-	appendUserMessage(`Yeni Ürün: ${selectedProduct.name}`);
+	appendUserMessage(`Yeni Ürün: ${selectedProduct.name} x${quantity}`);
 	
 	chatbotState = 3;
-	triggerBotTypingAndReply(`Ürün değişimi başarıyla gerçekleştirildi! Sipariş içeriğindeki ürün **${selectedProduct.name}** olarak güncellendi. 🔄`, 1000, () => {
+	triggerBotTypingAndReply(`Ürün değişimi başarıyla gerçekleştirildi! Sipariş içeriğindeki ürün **${selectedProduct.name} (x${quantity})** olarak güncellendi. 🔄`, 1000, () => {
 		askAnythingElse();
 	});
 }
 
-// Chat Adres Değişikliği Onaylama Butonu
-function submitChatAddressChange(orderCode) {
-	const textareaEl = document.getElementById('chat-new-address-input');
-	if (!textareaEl) return;
-	
-	const newAddress = textareaEl.value.trim();
-	if (!newAddress) {
-		showNotification("Lütfen geçerli bir adres yazın.", "error");
+// Chat Adres Değişikliği Onaylama Butonu (Yapılandırılmış)
+function submitChatAddressChangeStructured(orderCode) {
+	const mahalle = document.getElementById('chat-addr-mahalle')?.value.trim();
+	const sokak = document.getElementById('chat-addr-sokak')?.value.trim();
+	const no = document.getElementById('chat-addr-no')?.value.trim();
+	const ilce = document.getElementById('chat-addr-ilce')?.value.trim();
+	const il = document.getElementById('chat-addr-il')?.value.trim();
+
+	if (!mahalle || !sokak || !no || !ilce || !il) {
+		showNotification("Lütfen tüm adres alanlarını eksiksiz doldurun.", "error");
 		return;
 	}
 	
@@ -2922,13 +2950,15 @@ function submitChatAddressChange(orderCode) {
 	const formDiv = document.getElementById('chat-action-form-container');
 	if (formDiv) formDiv.remove();
 
+	const formattedAddress = `${mahalle}, ${sokak}, ${no}, ${ilce}/${il}`;
+
 	// Sistemde adres DEĞİŞMEYECEK, sadece depoya el ile girilmesi için notlara eklenecek
-	order.notes = (order.notes || '') + `\n[AI Asistan - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${newAddress}`;
+	order.notes = (order.notes || '') + `\n[AI Asistan - ADRES DEĞİŞİKLİĞİ] Depoya iletilen yeni adres: ${formattedAddress}`;
 	
 	// Tabloyu ve detay modalını yenilemek için
 	renderOrders(currentFilter, currentSearchQuery);
 
-	appendUserMessage(`Adres: ${newAddress}`);
+	appendUserMessage(`Adres: ${formattedAddress}`);
 	
 	chatbotState = 3;
 	triggerBotTypingAndReply(`Adres değişikliği talebiniz Nestro Depo birimine iletildi! Sistemdeki adres değişmedi, Nestro personeli el ile yeni adresi güncelleyecektir. 🏠`, 1000, () => {
