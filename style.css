@@ -7338,9 +7338,9 @@ body {
 	width: 100%;
 	border-radius: var(--radius-md);
 	overflow: hidden;
-	box-shadow: var(--shadow-md), 0 4px 15px rgba(0, 0, 0, 0.15);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 	margin-bottom: 10px;
-	border: 1px solid rgba(255, 255, 255, 0.05);
+	border: 1px solid #e2e8f0;
 	align-self: flex-start;
 }
 
@@ -7359,11 +7359,11 @@ body {
 }
 
 .chatbot-order-card-body {
-	background: #25201c;
+	background: #ffffff;
 	padding: 14px;
 	border-bottom-left-radius: var(--radius-md);
 	border-bottom-right-radius: var(--radius-md);
-	color: #eaeaea;
+	color: #1e293b;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -7378,18 +7378,18 @@ body {
 }
 
 .chatbot-card-label {
-	color: #a09c9a;
+	color: #64748b;
 	font-weight: 500;
 }
 
 .chatbot-card-value {
-	color: #ffffff;
+	color: #1e293b;
 	font-weight: 600;
 }
 
 .chatbot-card-toggle-btn {
 	background: transparent;
-	border: 1px solid rgba(16, 185, 129, 0.4);
+	border: 1px solid rgba(16, 185, 129, 0.5);
 	color: #10b981;
 	padding: 8px 12px;
 	border-radius: var(--radius-sm);
@@ -7406,7 +7406,7 @@ body {
 }
 
 .chatbot-card-toggle-btn:hover {
-	background: rgba(16, 185, 129, 0.1);
+	background: rgba(16, 185, 129, 0.06);
 	border-color: #10b981;
 	color: #10b981;
 }
@@ -7416,13 +7416,13 @@ body {
 	flex-direction: column;
 	gap: 10px;
 	margin-top: 10px;
-	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	border-top: 1px solid #e2e8f0;
 	padding-top: 10px;
 }
 
 .chatbot-detail-block {
-	background: rgba(255, 255, 255, 0.03);
-	border: 1px solid rgba(255, 255, 255, 0.05);
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
 	border-radius: var(--radius-sm);
 	padding: 10px;
 	text-align: left;
@@ -7441,12 +7441,12 @@ body {
 }
 
 .chatbot-detail-block-title.orange {
-	color: #f97316;
+	color: #ea580c;
 }
 
 .chatbot-detail-block-content {
 	font-size: 12.5px;
-	color: #dfdfdf;
+	color: #334155;
 	line-height: 1.4;
 	white-space: pre-line;
 }
@@ -7457,7 +7457,7 @@ body {
 	gap: 2px;
 	margin-bottom: 8px;
 	padding-bottom: 8px;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+	border-bottom: 1px dashed #e2e8f0;
 	font-size: 12.5px;
 }
 
@@ -7472,12 +7472,12 @@ body {
 	justify-content: space-between;
 	align-items: flex-start;
 	font-weight: 600;
-	color: #ffffff;
+	color: #1e293b;
 }
 
 .chatbot-detail-product-meta {
 	font-size: 11px;
-	color: #a09c9a;
+	color: #64748b;
 }
 
 .chatbot-action-buttons {
@@ -7569,8 +7569,8 @@ body {
 	gap: 8px;
 	width: 100%;
 	margin-top: 8px;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
 	border-radius: var(--radius-sm);
 	padding: 10px;
 }
@@ -7578,16 +7578,16 @@ body {
 .chat-action-form label {
 	font-size: 11px;
 	font-weight: 700;
-	color: #a09c9a;
+	color: #64748b;
 	text-transform: uppercase;
 }
 
 .chat-action-form select,
 .chat-action-form textarea {
 	width: 100%;
-	background: #25201c;
-	border: 1px solid rgba(255, 255, 255, 0.15);
-	color: #ffffff;
+	background: #ffffff;
+	border: 1px solid #cbd5e1;
+	color: #1e293b;
 	border-radius: var(--radius-sm);
 	padding: 8px;
 	font-size: 12.5px;
@@ -7613,6 +7613,94 @@ body {
 }
 
 .chat-action-form button:hover {
+	background: var(--primary-hover);
+}
+
+/* Modern Ürün Seçim Listesi ve Kart Stilleri */
+.modern-product-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 200px;
+	overflow-y: auto;
+	margin-top: 6px;
+	padding-right: 4px;
+	width: 100%;
+}
+
+.modern-product-list::-webkit-scrollbar {
+	width: 6px;
+}
+.modern-product-list::-webkit-scrollbar-track {
+	background: #f1f5f9;
+	border-radius: 3px;
+}
+.modern-product-list::-webkit-scrollbar-thumb {
+	background: #cbd5e1;
+	border-radius: 3px;
+}
+.modern-product-list::-webkit-scrollbar-thumb:hover {
+	background: #94a3b8;
+}
+
+.modern-product-card {
+	background: #ffffff;
+	border: 1.5px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 10px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	text-align: left;
+}
+
+.modern-product-card:hover {
+	border-color: #10b981;
+	background: rgba(16, 185, 129, 0.02);
+	transform: translateY(-1px);
+}
+
+.modern-product-card.selected {
+	border-color: #10b981;
+	background: rgba(16, 185, 129, 0.05);
+	box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+}
+
+.modern-product-card .prod-name {
+	font-weight: 700;
+	color: #1e293b;
+	font-size: 12.5px;
+}
+
+.modern-product-card .prod-meta {
+	font-size: 11px;
+	color: #64748b;
+	display: flex;
+	justify-content: space-between;
+}
+
+.modern-product-card.selected .prod-name {
+	color: #047857;
+}
+
+.btn-confirm-exchange {
+	background: var(--primary);
+	color: #ffffff;
+	border: none;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 700;
+	font-size: 13px;
+	cursor: pointer;
+	transition: background 0.2s;
+	margin-top: 8px;
+	width: 100%;
+	text-align: center;
+}
+
+.btn-confirm-exchange:hover {
 	background: var(--primary-hover);
 }
 

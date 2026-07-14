@@ -2689,6 +2689,13 @@ function renderChatbotOrderCard(order) {
 
 // Chatbot Aksiyon Butonları Handler'ı
 function handleChatbotAction(orderCode, actionType) {
+	// Eğer asistan sipariş seçimi aşamasında değilse buton tıklamalarını engelle
+	if (chatbotState !== 2) {
+		triggerBotTypingAndReply("Bu siparişe tekrar işlem yapabilmek için lütfen sipariş numarasını tekrar yazın. 😊");
+		chatbotState = 1;
+		return;
+	}
+
 	// Eğer daha önce açılmış bir form varsa temizle
 	const existingForm = document.getElementById('chat-action-form-container');
 	if (existingForm) existingForm.remove();
@@ -2762,14 +2769,26 @@ function handleChatbotAction(orderCode, actionType) {
 			formDiv.className = 'chat-action-form';
 			formDiv.id = 'chat-action-form-container';
 			
-			let selectOptions = products.map(p => `<option value="${p.id}">${escapeHTML(p.name)} (${p.sku})</option>`).join('');
+			let productCardsHTML = products.map(p => {
+				const stockText = p.stock < 10 ? `<span style="color: #ef4444; font-weight: bold;">Son ${p.stock} adet</span>` : `Stok: ${p.stock} adet`;
+				return `
+					<div class="modern-product-card" onclick="selectChatExchangeProduct(this, '${p.id}')">
+						<div class="prod-name">${escapeHTML(p.name)}</div>
+						<div class="prod-meta">
+							<span>SKU: ${escapeHTML(p.sku)}</span>
+							<span>${stockText}</span>
+						</div>
+					</div>
+				`;
+			}).join('');
 			
 			formDiv.innerHTML = `
 				<label>Değiştirilecek Yeni Ürün</label>
-				<select id="chat-exchange-product-select">
-					${selectOptions}
-				</select>
-				<button onclick="submitChatExchange('${order.code}')">Değişimi Onayla</button>
+				<div class="modern-product-list">
+					${productCardsHTML}
+				</div>
+				<input type="hidden" id="selected-exchange-product-id" value="">
+				<button class="btn-confirm-exchange" onclick="submitModernChatExchange('${order.code}')">Değişimi Onayla</button>
 			`;
 			
 			messagesContainer.appendChild(formDiv);
@@ -2832,12 +2851,31 @@ function handleChatbotAction(orderCode, actionType) {
 	}
 }
 
-// Chat Değişim Onaylama Butonu
-function submitChatExchange(orderCode) {
-	const selectEl = document.getElementById('chat-exchange-product-select');
-	if (!selectEl) return;
+// Chatbot modern ürün seçimi tıklama fonksiyonu
+function selectChatExchangeProduct(element, productId) {
+	// Tüm kartlardan selected sınıfını temizle
+	const cards = document.querySelectorAll('.modern-product-card');
+	cards.forEach(c => c.classList.remove('selected'));
 	
-	const productId = selectEl.value;
+	// Tıklanan karta ekle
+	element.classList.add('selected');
+	
+	// Gizli girdiye id'yi yaz
+	const hiddenInput = document.getElementById('selected-exchange-product-id');
+	if (hiddenInput) {
+		hiddenInput.value = productId;
+	}
+}
+
+// Modern Ürün Değişimi Onaylama
+function submitModernChatExchange(orderCode) {
+	const hiddenInput = document.getElementById('selected-exchange-product-id');
+	if (!hiddenInput || !hiddenInput.value) {
+		showNotification("Lütfen değişim yapılacak bir ürün seçin.", "error");
+		return;
+	}
+	
+	const productId = hiddenInput.value;
 	const selectedProduct = products.find(p => p.id === productId);
 	if (!selectedProduct) return;
 	
