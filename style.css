@@ -7723,16 +7723,18 @@ body {
 /* Modal search wrapper */
 .ticket-search-wrapper {
 	display: flex;
+	flex-direction: column;
 	gap: 10px;
 	margin-bottom: 15px;
 }
 
 .ticket-search-wrapper input {
-	flex: 1;
+	width: 100%;
 }
 
 .ticket-search-wrapper button {
-	padding: 10px 20px;
+	width: 100%;
+	padding: 12px 20px;
 }
 
 /* Ticket order info */
