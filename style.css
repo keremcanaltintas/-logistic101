@@ -8032,4 +8032,86 @@ body {
 	box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
 }
 
+/* Date Disc Picker styles */
+.date-disc-picker-wrapper {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	padding: 10px 0;
+}
+
+.date-disc-scroll {
+	display: flex;
+	gap: 12px;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	padding: 5px 10px;
+	scrollbar-width: none; /* Hide standard scrollbar on Firefox */
+}
+
+.date-disc-scroll::-webkit-scrollbar {
+	display: none; /* Hide standard scrollbar on Chrome/Safari */
+}
+
+.date-disc-item {
+	flex: 0 0 70px;
+	height: 85px;
+	border-radius: 35px; /* Pill shape */
+	border: 1.5px solid #e2e8f0;
+	background: #ffffff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+}
+
+.date-disc-item:hover {
+	border-color: #cbd5e1;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+.date-disc-item.active {
+	background: var(--primary) !important;
+	border-color: var(--primary) !important;
+	color: #ffffff !important;
+	transform: translateY(-4px) scale(1.05);
+	box-shadow: 0 8px 16px rgba(40, 167, 69, 0.25);
+}
+
+.date-disc-item .disc-day-name {
+	font-size: 11px;
+	font-weight: 500;
+	color: #64748b;
+	text-transform: uppercase;
+	margin-bottom: 4px;
+}
+
+.date-disc-item.active .disc-day-name {
+	color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.date-disc-item .disc-day-num {
+	font-size: 18px;
+	font-weight: 800;
+	color: #1e293b;
+}
+
+.date-disc-item.active .disc-day-num {
+	color: #ffffff !important;
+}
+
+.date-disc-item .disc-month {
+	font-size: 10px;
+	font-weight: 600;
+	color: #94a3b8;
+}
+
+.date-disc-item.active .disc-month {
+	color: rgba(255, 255, 255, 0.7) !important;
+}
+
 

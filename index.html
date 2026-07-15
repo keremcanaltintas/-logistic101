@@ -2164,14 +2164,23 @@
 						<div id="ticket-action-detail-area" style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px; display: none;">
 							<!-- Urgency detail -->
 							<div id="t-detail-urgency" class="ticket-subform" style="display: none;">
-								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Siparişiniz için öncelikli çıkış talebi iletilecektir. Eklemek istediğiniz bir not var mı?</p>
-								<textarea id="ticket-urgency-note" placeholder="Talep notu (Opsiyonel)..." rows="3" style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px; font-family: var(--font-main);"></textarea>
+								<div class="urgency-info-banner" style="background: rgba(234, 179, 8, 0.05); border: 1.5px solid #fef08a; padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+									<span class="material-symbols-outlined text-yellow-500" style="color: #eab308; font-size: 20px;">info</span>
+									<span style="font-size: 13px; color: #713f12; font-weight: 500;">Siparişiniz için öncelikli çıkış talebi doğrudan iletilecektir. Ekstra açıklama gerekmemektedir.</span>
+								</div>
 							</div>
 
 							<!-- Hold detail -->
 							<div id="t-detail-hold" class="ticket-subform" style="display: none;">
-								<p style="font-size: 13px; color: #475569; margin-bottom: 10px;">Siparişiniz beklemeye alınacaktır. Eklemek istediğiniz bir not var mı?</p>
-								<textarea id="ticket-hold-note" placeholder="Bekletme notu (Opsiyonel)..." rows="3" style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px; font-family: var(--font-main);"></textarea>
+								<p style="font-size: 13px; color: #475569; margin-bottom: 12px; font-weight: 500;">Siparişinizin ne zamana kadar bekletileceğini seçin:</p>
+								
+								<!-- Date Picker Wheel/Disc Container -->
+								<div class="date-disc-picker-wrapper" style="margin-bottom: 15px;">
+									<div class="date-disc-scroll" id="hold-date-disc-scroll">
+										<!-- Generated via JavaScript -->
+									</div>
+									<input type="hidden" id="selected-hold-date" value="">
+								</div>
 							</div>
 
 							<!-- Address detail -->

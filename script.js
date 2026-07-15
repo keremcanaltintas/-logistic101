@@ -2432,8 +2432,9 @@ function handleCreateTicketPrompt() {
 	document.getElementById('ticket-modal-footer-system').style.display = 'none';
 	
 	// Reset input fields
-	document.getElementById('ticket-urgency-note').value = '';
-	document.getElementById('ticket-hold-note').value = '';
+	if (document.getElementById('selected-hold-date')) {
+		document.getElementById('selected-hold-date').value = '';
+	}
 	document.getElementById('t-addr-mahalle').value = '';
 	document.getElementById('t-addr-sokak').value = '';
 	document.getElementById('t-addr-no').value = '';
@@ -2586,6 +2587,58 @@ function getStatusBadgeClass(status) {
 
 let ticketExchangeCart = [];
 
+function initializeHoldDatePicker() {
+	const container = document.getElementById('hold-date-disc-scroll');
+	if (!container) return;
+	
+	container.innerHTML = '';
+	const daysOfWeek = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+	const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+	
+	// Yarından itibaren üret
+	const startDate = new Date();
+	let firstDateVal = '';
+	
+	for (let i = 1; i <= 14; i++) {
+		const targetDate = new Date();
+		targetDate.setDate(startDate.getDate() + i);
+		
+		const dayNum = targetDate.getDate();
+		const dayName = daysOfWeek[targetDate.getDay()];
+		const monthName = months[targetDate.getMonth()];
+		
+		// format tr-TR DD.MM.YYYY
+		const formattedDate = targetDate.toLocaleDateString('tr-TR', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric'
+		});
+		
+		if (i === 1) {
+			firstDateVal = formattedDate;
+		}
+		
+		const disc = document.createElement('div');
+		disc.className = `date-disc-item${i === 1 ? ' active' : ''}`;
+		disc.dataset.date = formattedDate;
+		disc.onclick = function() {
+			document.querySelectorAll('.date-disc-item').forEach(el => el.classList.remove('active'));
+			disc.classList.add('active');
+			document.getElementById('selected-hold-date').value = formattedDate;
+		};
+		
+		disc.innerHTML = `
+			<span class="disc-day-name">${dayName}</span>
+			<span class="disc-day-num">${dayNum}</span>
+			<span class="disc-month">${monthName}</span>
+		`;
+		
+		container.appendChild(disc);
+	}
+	
+	document.getElementById('selected-hold-date').value = firstDateVal;
+}
+
 function selectTicketAction(action) {
 	selectedTicketAction = action;
 	
@@ -2604,6 +2657,10 @@ function selectTicketAction(action) {
 	subforms.forEach(sf => sf.style.display = 'none');
 	
 	document.getElementById('t-detail-' + action).style.display = 'block';
+	
+	if (action === 'hold') {
+		initializeHoldDatePicker();
+	}
 	
 	// Eğer değişim seçildiyse ürün listesini oluştur
 	if (action === 'exchange') {
@@ -2808,14 +2865,17 @@ function submitSupportTicket(e) {
 	let newAddressStr = null;
 	
 	if (selectedTicketAction === 'urgency') {
-		const userNote = document.getElementById('ticket-urgency-note').value.trim();
 		order.urgent = true;
-		actionNote = `[Destek Talebi - ACİLİYET] Öncelikli çıkış talep edildi.` + (userNote ? ` Not: ${userNote}` : '');
+		actionNote = `[Destek Talebi - ACİLİYET] Öncelikli çıkış talep edildi.`;
 		order.notes = (order.notes || '') + '\n' + actionNote;
 		ticketSubject = `Aciliyet Bildirimi (${order.code})`;
 		
 	} else if (selectedTicketAction === 'hold') {
-		const userNote = document.getElementById('ticket-hold-note').value.trim();
+		const selectedDate = document.getElementById('selected-hold-date').value;
+		if (!selectedDate) {
+			showNotification("Lütfen bir bekletme tarihi seçin.", "error");
+			return;
+		}
 		
 		if (order.status === 'cancelled' || order.status === 'shipped') {
 			showNotification("İptal edilmiş veya kargolanmış siparişler beklemeye alınamaz. ❌", "error");
@@ -2823,7 +2883,7 @@ function submitSupportTicket(e) {
 		}
 		
 		order.status = 'on-hold';
-		actionNote = `[Destek Talebi - BEKLETME] Sipariş beklemeye alındı.` + (userNote ? ` Not: ${userNote}` : '');
+		actionNote = `[Destek Talebi - BEKLETME] Sipariş beklemeye alındı. Bekletme Tarihi: ${selectedDate}`;
 		order.notes = (order.notes || '') + '\n' + actionNote;
 		ticketSubject = `Siparişi Bekletme Talebi (${order.code})`;
 		
@@ -2934,10 +2994,14 @@ function submitSupportTicket(e) {
 	const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
 	let detailNote = '';
+	let responseText = 'Talebiniz inceleme aşamasındadır.';
+	
 	if (selectedTicketAction === 'urgency') {
-		detailNote = document.getElementById('ticket-urgency-note').value.trim();
+		detailNote = 'Acil çıkış talep edildi.';
 	} else if (selectedTicketAction === 'hold') {
-		detailNote = document.getElementById('ticket-hold-note').value.trim();
+		const selectedDate = document.getElementById('selected-hold-date').value;
+		detailNote = `Bekletme Tarihi: ${selectedDate}`;
+		responseText = `${selectedDate} tarihinde gönderilecektir.`;
 	}
 
 	const newTicket = {
@@ -2957,7 +3021,7 @@ function submitSupportTicket(e) {
 			newProducts: newProductsList,
 			originalAddress: originalAddressStr,
 			newAddress: newAddressStr,
-			response: 'Talebiniz inceleme aşamasındadır.'
+			response: responseText
 		}
 	};
 
