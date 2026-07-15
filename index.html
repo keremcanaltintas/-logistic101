@@ -2172,11 +2172,14 @@
 
 							<!-- Hold detail -->
 							<div id="t-detail-hold" class="ticket-subform" style="display: none;">
-								<p style="font-size: 13px; color: #475569; margin-bottom: 12px; font-weight: 500;">Siparişinizin ne zamana kadar bekletileceğini seçin:</p>
+								<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+									<span class="material-symbols-outlined" style="color: #64748b; font-size: 18px;">calendar_today</span>
+									<span style="font-size: 13px; color: #475569; font-weight: 600;">Siparişinizin ne zamana kadar bekletileceğini seçin (Maks. 7 Gün):</span>
+								</div>
 								
-								<!-- Date Picker Wheel/Disc Container -->
+								<!-- Date Picker Grid Container -->
 								<div class="date-disc-picker-wrapper" style="margin-bottom: 15px;">
-									<div class="date-disc-scroll" id="hold-date-disc-scroll">
+									<div class="date-disc-grid" id="hold-date-disc-scroll">
 										<!-- Generated via JavaScript -->
 									</div>
 									<input type="hidden" id="selected-hold-date" value="">

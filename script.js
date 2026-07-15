@@ -2599,7 +2599,7 @@ function initializeHoldDatePicker() {
 	const startDate = new Date();
 	let firstDateVal = '';
 	
-	for (let i = 1; i <= 14; i++) {
+	for (let i = 1; i <= 7; i++) {
 		const targetDate = new Date();
 		targetDate.setDate(startDate.getDate() + i);
 		
