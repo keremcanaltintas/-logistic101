@@ -2215,42 +2215,33 @@
 
 							<!-- Exchange detail -->
 							<div id="t-detail-exchange" class="ticket-subform" style="display: none;">
-								<p style="font-size: 13px; color: #475569; margin-bottom: 12px; font-weight: 500;">Lütfen değişim yapılacak yeni ürünü ve adedi seçin:</p>
+								<p style="font-size: 13px; color: #475569; margin-bottom: 12px; font-weight: 500;">Lütfen değişim yapılacak ürünü seçerek sepete ekleyin:</p>
 								
 								<div class="exchange-split-container">
 									<!-- Left Column: Available Products (Catalog) -->
 									<div class="exchange-column">
-										<div class="exchange-column-title" style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Katalogdan Ürün Seçin</div>
+										<div class="exchange-column-title">Katalogdan Ürün Seçin</div>
 										
 										<!-- Catalog Search Input -->
-										<div style="position: relative; display: flex; align-items: center; margin-bottom: 12px;">
+										<div style="position: relative; display: flex; align-items: center; margin-bottom: 4px;">
 											<span class="material-symbols-outlined" style="position: absolute; left: 10px; color: #64748b; font-size: 18px; pointer-events: none;">search</span>
-											<input type="text" id="exchange-catalog-search" placeholder="Katalogda ürün ara..." style="width: 100%; padding: 8px 12px 8px 34px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: var(--font-main);">
+											<input type="text" id="exchange-catalog-search" class="catalog-search-input" placeholder="Katalogda ürün ara...">
 										</div>
 										
 										<!-- Modern Product List for Modal -->
-										<div class="modern-product-list" id="ticket-exchange-product-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+										<div class="modern-product-list" id="ticket-exchange-product-list" style="height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
 											<!-- JS ile doldurulacak -->
 										</div>
 										<input type="hidden" id="selected-ticket-exchange-product-id" value="">
-										
-										<div style="margin-top: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-											<div style="display: flex; align-items: center; gap: 8px;">
-												<label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin: 0;">Miktar:</label>
-												<input type="number" id="ticket-exchange-qty-input" value="1" min="1" style="width: 60px; padding: 6px; text-align: center; margin: 0; border: 1.5px solid #cbd5e1; border-radius: 6px;">
-											</div>
-											<button type="button" class="btn-create-draft" onclick="addSelectedProductToTicketCart()" style="margin: 0; padding: 8px 16px; font-size: 12.5px; flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;">
-												<i class="fa-solid fa-plus"></i> Ekle
-											</button>
-										</div>
+										<input type="hidden" id="ticket-exchange-qty-input" value="1">
 									</div>
 
 									<!-- Right Column: Current/New Products of the Order -->
 									<div class="exchange-column">
-										<div class="exchange-column-title" style="font-weight: 700; font-size: 13px; color: var(--text-secondary);">Siparişin Güncel Ürünleri</div>
+										<div class="exchange-column-title">Siparişin Güncel Ürünleri</div>
 										
 										<!-- Cart List -->
-										<div class="exchange-cart-list" id="ticket-exchange-cart-list" style="max-height: 310px; overflow-y: auto;">
+										<div class="exchange-cart-list" id="ticket-exchange-cart-list" style="height: 290px; overflow-y: auto; padding-right: 4px;">
 											<!-- JS ile doldurulacak -->
 										</div>
 									</div>

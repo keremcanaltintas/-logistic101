@@ -2681,7 +2681,8 @@ function selectTicketAction(action) {
 		products.forEach(p => {
 			const card = document.createElement('div');
 			card.className = 'modern-product-card';
-			card.onclick = () => selectTicketExchangeProduct(card, p.id);
+			card.dataset.productId = p.id;
+			card.onclick = () => addProductToExchangeCartDirectly(p.id);
 			
 			const priceStr = exchangeMockPrices[p.id] || '₺450.00';
 			
@@ -2743,11 +2744,27 @@ function selectTicketAction(action) {
 }
 
 function selectTicketExchangeProduct(element, productId) {
-	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
-	cards.forEach(c => c.classList.remove('selected'));
-	
-	element.classList.add('selected');
+	// Artık direkt tıklama ile sepet yönetildiğinden bu fonksiyon sadece yedek amaçlıdır.
 	document.getElementById('selected-ticket-exchange-product-id').value = productId;
+}
+
+function addProductToExchangeCartDirectly(productId) {
+	const product = products.find(p => p.id === productId);
+	if (!product) return;
+	
+	const existing = ticketExchangeCart.find(i => i.id === product.id);
+	if (existing) {
+		existing.qty += 1;
+	} else {
+		ticketExchangeCart.push({
+			id: product.id,
+			name: product.name,
+			qty: 1,
+			price: exchangeMockPrices[product.id] || '₺450.00'
+		});
+	}
+	renderTicketExchangeCart();
+	showNotification(`${product.name} sepete eklendi.`, "success");
 }
 
 function renderTicketExchangeCart() {
@@ -2756,8 +2773,20 @@ function renderTicketExchangeCart() {
 	
 	cartList.innerHTML = '';
 	
+	// Katalog aktiflik sınıfını sepet durumuna göre eşzamanlı eşle
+	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
+	const cartItemIds = ticketExchangeCart.map(item => item.id);
+	cards.forEach(card => {
+		const prodId = card.dataset.productId;
+		if (cartItemIds.includes(prodId)) {
+			card.classList.add('selected');
+		} else {
+			card.classList.remove('selected');
+		}
+	});
+	
 	if (ticketExchangeCart.length === 0) {
-		cartList.innerHTML = '<div style="color: #64748b; font-size: 12px; text-align: center; margin-top: 25px;">Sepet boş! Katalogdan ürün ekleyin.</div>';
+		cartList.innerHTML = '<div style="color: #64748b; font-size: 12.5px; text-align: center; margin-top: 50px; font-weight: 500;">Sepet boş! Katalogdan ürün ekleyin.</div>';
 		return;
 	}
 	
