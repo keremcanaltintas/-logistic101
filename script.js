@@ -2767,15 +2767,19 @@ function renderTicketExchangeCart() {
 		itemDiv.className = 'exchange-cart-item';
 		
 		itemDiv.innerHTML = `
-			<div class="exchange-cart-item-info" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; flex: 1; min-width: 0;">
-				<div class="exchange-cart-item-name" style="font-weight: 600; font-size: 12.5px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${item.name}</div>
-				<div class="exchange-cart-item-price" style="font-size: 12px; font-weight: 700; color: var(--primary); flex-shrink: 0;">${item.price}</div>
+			<!-- Top Row: Name and Price Side-by-Side -->
+			<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%;">
+				<div style="font-weight: 700; font-size: 13px; color: #1e293b; line-height: 1.4; white-space: normal; word-break: normal;">${item.name}</div>
+				<div style="font-size: 13px; font-weight: 700; color: var(--primary); flex-shrink: 0; margin-top: 1px;">${item.price}</div>
 			</div>
-			<div class="exchange-cart-item-actions">
-				<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', -1)">-</button>
-				<span class="cart-item-qty">${item.qty}</span>
-				<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', 1)">+</button>
-				<button type="button" class="btn-cart-remove" onclick="removeTicketCartItem('${item.id}')">
+			<!-- Bottom Row: Actions (Divider, Quantity Controls, and Delete Button) -->
+			<div style="display: flex; align-items: center; justify-content: space-between; border-top: 1.5px solid #f1f5f9; padding-top: 8px; margin-top: 2px; width: 100%;">
+				<div style="display: flex; align-items: center; gap: 8px;">
+					<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', -1)">-</button>
+					<span class="cart-item-qty" style="font-weight: 700; font-size: 13.5px; min-width: 18px; text-align: center; color: #1e293b;">${item.qty}</span>
+					<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', 1)">+</button>
+				</div>
+				<button type="button" class="btn-cart-remove" onclick="removeTicketCartItem('${item.id}')" style="margin: 0;">
 					<i class="fa-solid fa-trash-can"></i>
 				</button>
 			</div>

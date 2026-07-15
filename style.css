@@ -7875,14 +7875,13 @@ body {
 
 .exchange-cart-item {
 	display: flex !important;
-	flex-direction: row !important;
-	align-items: center !important;
-	justify-content: space-between !important;
-	gap: 12px !important;
+	flex-direction: column !important;
+	align-items: stretch !important;
+	gap: 8px !important;
 	background: #f8fafc;
 	border: 1px solid #e2e8f0;
 	border-radius: 10px;
-	padding: 10px 12px;
+	padding: 12px !important;
 	transition: all 0.2s ease;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
