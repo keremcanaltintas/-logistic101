@@ -7823,7 +7823,7 @@ body {
 
 @media (min-width: 768px) {
 	.exchange-split-container {
-		grid-template-columns: 1.1fr 0.9fr;
+		grid-template-columns: 1fr 1fr;
 	}
 }
 
@@ -7836,6 +7836,7 @@ body {
 	flex-direction: column;
 	gap: 12px;
 	height: 360px; /* Fixed matching height for perfect visual symmetry */
+	min-width: 0 !important; /* Prevents columns from expanding with content size */
 }
 
 .exchange-column-title {
@@ -8003,7 +8004,6 @@ body {
 }
 .bubble-btn {
 	transition: all 0.2s ease;
-	border: 1.5px solid transparent;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -8012,6 +8012,7 @@ body {
 	border-radius: 8px;
 	background: #ffffff;
 	cursor: pointer;
+	border: 1.5px solid #e2e8f0; /* Default border */
 }
 .bubble-btn:hover {
 	transform: translateY(-2px);
@@ -8021,36 +8022,36 @@ body {
 	transform: translateY(0);
 }
 
-.bubble-yellow { border-color: #fef08a; } 
-.bubble-yellow:hover { background-color: #fef9c3; }
+.bubble-yellow { border: 1.5px solid #fde047 !important; } 
+.bubble-yellow:hover { background-color: #fef9c3 !important; border-color: #eab308 !important; }
 .bubble-yellow.active {
-	background-color: #fef9c3;
-	border-color: #eab308;
-	box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+	background-color: #fef9c3 !important;
+	border-color: #ca8a04 !important;
+	box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2) !important;
 }
 
-.bubble-blue { border-color: #bfdbfe; } 
-.bubble-blue:hover { background-color: #dbeafe; }
+.bubble-blue { border: 1.5px solid #93c5fd !important; } 
+.bubble-blue:hover { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
 .bubble-blue.active {
-	background-color: #dbeafe;
-	border-color: #3b82f6;
-	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+	background-color: #dbeafe !important;
+	border-color: #2563eb !important;
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
 }
 
-.bubble-purple { border-color: #e9d5ff; } 
-.bubble-purple:hover { background-color: #f3e8ff; }
+.bubble-purple { border: 1.5px solid #d8b4fe !important; } 
+.bubble-purple:hover { background-color: #f3e8ff !important; border-color: #a855f7 !important; }
 .bubble-purple.active {
-	background-color: #f3e8ff;
-	border-color: #a855f7;
-	box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+	background-color: #f3e8ff !important;
+	border-color: #7c3aed !important;
+	box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2) !important;
 }
 
-.bubble-orange { border-color: #fed7aa; } 
-.bubble-orange:hover { background-color: #ffedd5; }
+.bubble-orange { border: 1.5px solid #fdba74 !important; } 
+.bubble-orange:hover { background-color: #ffedd5 !important; border-color: #f97316 !important; }
 .bubble-orange.active {
-	background-color: #ffedd5;
-	border-color: #f97316;
-	box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+	background-color: #ffedd5 !important;
+	border-color: #ea580c !important;
+	box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2) !important;
 }
 
 /* Date Disc Picker styles */

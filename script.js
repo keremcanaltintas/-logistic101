@@ -2697,7 +2697,7 @@ function selectTicketAction(action) {
 						<div style="display: flex; align-items: center; gap: 4px;">
 							<span style="width: 6px; height: 6px; border-radius: 50%; background-color: ${p.stock > 0 ? '#10b981' : '#ef4444'};"></span>
 							<span style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: ${p.stock > 0 ? '#10b981' : '#ef4444'};">
-								${p.stock > 0 ? 'Stokta' : 'Tükendi'}
+								${p.stock > 0 ? `Stok: ${p.stock} Adet` : 'Tükendi'}
 							</span>
 						</div>
 					</div>
