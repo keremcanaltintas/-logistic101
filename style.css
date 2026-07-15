@@ -7858,11 +7858,18 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	background: #f8fafc;
+	background: #ffffff;
 	border: 1.5px solid #e2e8f0;
-	border-radius: 8px;
-	padding: 10px 12px;
+	border-radius: 12px;
+	padding: 12px 14px;
 	gap: 8px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+	transition: all 0.2s ease;
+}
+
+.exchange-cart-item:hover {
+	border-color: #cbd5e1;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 @media (min-width: 480px) {
@@ -7905,21 +7912,22 @@ body {
 	background: #ffffff;
 	border: 1.5px solid #cbd5e1;
 	color: #475569;
-	width: 24px;
-	height: 24px;
+	width: 26px;
+	height: 26px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 4px;
+	border-radius: 50%;
 	cursor: pointer;
-	font-weight: 700;
-	font-size: 12px;
+	font-weight: 500;
+	font-size: 13px;
 	transition: all 0.2s;
 }
 
 .btn-cart-qty:hover {
 	border-color: var(--primary);
 	color: var(--primary);
+	background: rgba(16, 185, 129, 0.05);
 }
 
 .cart-item-qty {
@@ -7931,15 +7939,15 @@ body {
 }
 
 .btn-cart-remove {
-	background: #fff1f2;
+	background: #fff5f5;
 	border: 1.5px solid #fecdd3;
 	color: #e11d48;
-	width: 24px;
-	height: 24px;
+	width: 26px;
+	height: 26px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 4px;
+	border-radius: 50%;
 	cursor: pointer;
 	font-size: 11px;
 	transition: all 0.2s;
@@ -8125,6 +8133,12 @@ body {
 .date-disc-item.active .disc-month {
 	color: rgba(255, 255, 255, 0.75) !important;
 }
+
+/* Visibility of check circle on active catalog selection */
+.modern-product-card.selected .select-check-icon {
+	display: block !important;
+}
+
 
 
 

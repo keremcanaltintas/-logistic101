@@ -2587,6 +2587,17 @@ function getStatusBadgeClass(status) {
 
 let ticketExchangeCart = [];
 
+const exchangeMockPrices = {
+	'p-1': '₺250.00',
+	'p-2': '₺250.00',
+	'p-3': '₺1,500.00',
+	'p-4': '₺400.00',
+	'p-5': '₺150.00',
+	'p-6': '₺600.00',
+	'p-7': '₺2,200.00',
+	'p-8': '₺300.00'
+};
+
 function initializeHoldDatePicker() {
 	const container = document.getElementById('hold-date-disc-scroll');
 	if (!container) return;
@@ -2672,11 +2683,24 @@ function selectTicketAction(action) {
 			card.className = 'modern-product-card';
 			card.onclick = () => selectTicketExchangeProduct(card, p.id);
 			
+			const priceStr = exchangeMockPrices[p.id] || '₺450.00';
+			
 			card.innerHTML = `
-				<div class="prod-name">${p.name}</div>
-				<div class="prod-meta">
-					<span>SKU: ${p.sku}</span>
-					<span>Stok: ${p.stock} adet</span>
+				<div style="flex: 1; display: flex; flex-direction: column; text-align: left;">
+					<h4 style="font-weight: 700; font-size: 13px; color: #0b1c30; margin-bottom: 2px;">${p.name}</h4>
+					<span style="font-size: 11px; color: #64748b;">SKU: ${p.sku}</span>
+				</div>
+				<div style="text-align: right; display: flex; align-items: center; gap: 8px;">
+					<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+						<span style="font-weight: 700; font-size: 13px; color: var(--primary);">${priceStr}</span>
+						<div style="display: flex; align-items: center; gap: 4px;">
+							<span style="width: 6px; height: 6px; border-radius: 50%; background-color: ${p.stock > 0 ? '#10b981' : '#ef4444'};"></span>
+							<span style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: ${p.stock > 0 ? '#10b981' : '#ef4444'};">
+								${p.stock > 0 ? 'Stokta' : 'Tükendi'}
+							</span>
+						</div>
+					</div>
+					<span class="material-symbols-outlined select-check-icon" style="font-variation-settings: 'FILL' 1; font-size: 18px; color: var(--primary); display: none;">check_circle</span>
 				</div>
 			`;
 			exchangeList.appendChild(card);
@@ -2684,6 +2708,25 @@ function selectTicketAction(action) {
 		
 		document.getElementById('selected-ticket-exchange-product-id').value = '';
 		document.getElementById('ticket-exchange-qty-input').value = '1';
+		
+		// Katalog arama filtreleme mantığı
+		const searchInput = document.getElementById('exchange-catalog-search');
+		if (searchInput) {
+			searchInput.value = '';
+			searchInput.oninput = (e) => {
+				const query = e.target.value.toLowerCase().trim();
+				const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
+				cards.forEach(card => {
+					const name = card.querySelector('h4').textContent.toLowerCase();
+					const sku = card.querySelector('span').textContent.toLowerCase();
+					if (name.includes(query) || sku.includes(query)) {
+						card.style.setProperty('display', 'flex', 'important');
+					} else {
+						card.style.setProperty('display', 'none', 'important');
+					}
+				});
+			};
+		}
 		
 		// Siparişin mevcut ürünlerini sepete doldur
 		ticketExchangeCart = currentTicketOrder.products.map(op => {
@@ -2783,7 +2826,7 @@ function addSelectedProductToTicketCart() {
 			id: product.id,
 			name: product.name,
 			qty: qty,
-			price: '₺1.200,00'
+			price: exchangeMockPrices[product.id] || '₺450.00'
 		});
 	}
 	
