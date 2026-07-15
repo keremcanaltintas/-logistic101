@@ -2682,7 +2682,7 @@ function selectTicketAction(action) {
 			const card = document.createElement('div');
 			card.className = 'modern-product-card';
 			card.dataset.productId = p.id;
-			card.onclick = () => addProductToExchangeCartDirectly(p.id);
+			card.onclick = () => selectTicketExchangeProduct(card, p.id);
 			
 			const priceStr = exchangeMockPrices[p.id] || '₺450.00';
 			
@@ -2744,27 +2744,11 @@ function selectTicketAction(action) {
 }
 
 function selectTicketExchangeProduct(element, productId) {
-	// Artık direkt tıklama ile sepet yönetildiğinden bu fonksiyon sadece yedek amaçlıdır.
-	document.getElementById('selected-ticket-exchange-product-id').value = productId;
-}
-
-function addProductToExchangeCartDirectly(productId) {
-	const product = products.find(p => p.id === productId);
-	if (!product) return;
+	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
+	cards.forEach(c => c.classList.remove('selected'));
 	
-	const existing = ticketExchangeCart.find(i => i.id === product.id);
-	if (existing) {
-		existing.qty += 1;
-	} else {
-		ticketExchangeCart.push({
-			id: product.id,
-			name: product.name,
-			qty: 1,
-			price: exchangeMockPrices[product.id] || '₺450.00'
-		});
-	}
-	renderTicketExchangeCart();
-	showNotification(`${product.name} sepete eklendi.`, "success");
+	element.classList.add('selected');
+	document.getElementById('selected-ticket-exchange-product-id').value = productId;
 }
 
 function renderTicketExchangeCart() {
@@ -2772,18 +2756,6 @@ function renderTicketExchangeCart() {
 	if (!cartList) return;
 	
 	cartList.innerHTML = '';
-	
-	// Katalog aktiflik sınıfını sepet durumuna göre eşzamanlı eşle
-	const cards = document.querySelectorAll('#ticket-exchange-product-list .modern-product-card');
-	const cartItemIds = ticketExchangeCart.map(item => item.id);
-	cards.forEach(card => {
-		const prodId = card.dataset.productId;
-		if (cartItemIds.includes(prodId)) {
-			card.classList.add('selected');
-		} else {
-			card.classList.remove('selected');
-		}
-	});
 	
 	if (ticketExchangeCart.length === 0) {
 		cartList.innerHTML = '<div style="color: #64748b; font-size: 12.5px; text-align: center; margin-top: 50px; font-weight: 500;">Sepet boş! Katalogdan ürün ekleyin.</div>';
@@ -2795,9 +2767,9 @@ function renderTicketExchangeCart() {
 		itemDiv.className = 'exchange-cart-item';
 		
 		itemDiv.innerHTML = `
-			<div class="exchange-cart-item-info">
-				<div class="exchange-cart-item-name">${item.name}</div>
-				<div class="exchange-cart-item-price">${item.price}</div>
+			<div class="exchange-cart-item-info" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; flex: 1; min-width: 0;">
+				<div class="exchange-cart-item-name" style="font-weight: 600; font-size: 12.5px; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${item.name}</div>
+				<div class="exchange-cart-item-price" style="font-size: 12px; font-weight: 700; color: var(--primary); flex-shrink: 0;">${item.price}</div>
 			</div>
 			<div class="exchange-cart-item-actions">
 				<button type="button" class="btn-cart-qty" onclick="updateTicketCartItemQty('${item.id}', -1)">-</button>

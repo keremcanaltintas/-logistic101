@@ -2229,11 +2229,18 @@
 										</div>
 										
 										<!-- Modern Product List for Modal -->
-										<div class="modern-product-list" id="ticket-exchange-product-list" style="height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+										<div class="modern-product-list" id="ticket-exchange-product-list" style="height: 190px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
 											<!-- JS ile doldurulacak -->
 										</div>
 										<input type="hidden" id="selected-ticket-exchange-product-id" value="">
 										<input type="hidden" id="ticket-exchange-qty-input" value="1">
+										
+										<!-- Add to Cart Button -->
+										<div style="margin-top: auto; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+											<button type="button" class="btn-create-draft" id="btn-exchange-add-to-cart" onclick="addSelectedProductToTicketCart()" style="margin: 0; width: 100%; padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+												<i class="fa-solid fa-plus"></i> Seçilen Ürünü Ekle
+											</button>
+										</div>
 									</div>
 
 									<!-- Right Column: Current/New Products of the Order -->
