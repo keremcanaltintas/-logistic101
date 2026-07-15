@@ -8011,7 +8011,7 @@ body {
 	border-radius: 8px;
 	background: #ffffff;
 	cursor: pointer;
-	border: 1.5px solid #e2e8f0; /* Default border */
+	border: 2px solid transparent; /* Base border to prevent layout shift */
 }
 .bubble-btn:hover {
 	transform: translateY(-2px);
@@ -8021,7 +8021,7 @@ body {
 	transform: translateY(0);
 }
 
-.bubble-yellow { border: 1.5px solid #fde047 !important; } 
+.bubble-yellow { border-color: #fde047 !important; } 
 .bubble-yellow:hover { background-color: #fef9c3 !important; border-color: #eab308 !important; }
 .bubble-yellow.active {
 	background-color: #fef9c3 !important;
@@ -8029,7 +8029,7 @@ body {
 	box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2) !important;
 }
 
-.bubble-blue { border: 1.5px solid #93c5fd !important; } 
+.bubble-blue { border-color: #93c5fd !important; } 
 .bubble-blue:hover { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
 .bubble-blue.active {
 	background-color: #dbeafe !important;
@@ -8037,7 +8037,7 @@ body {
 	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
 }
 
-.bubble-purple { border: 1.5px solid #d8b4fe !important; } 
+.bubble-purple { border-color: #d8b4fe !important; } 
 .bubble-purple:hover { background-color: #f3e8ff !important; border-color: #a855f7 !important; }
 .bubble-purple.active {
 	background-color: #f3e8ff !important;
@@ -8045,7 +8045,7 @@ body {
 	box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2) !important;
 }
 
-.bubble-orange { border: 1.5px solid #fdba74 !important; } 
+.bubble-orange { border-color: #fdba74 !important; } 
 .bubble-orange:hover { background-color: #ffedd5 !important; border-color: #f97316 !important; }
 .bubble-orange.active {
 	background-color: #ffedd5 !important;
