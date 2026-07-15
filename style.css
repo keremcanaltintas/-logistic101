@@ -7974,4 +7974,62 @@ body {
 	}
 }
 
+/* Custom premium styles for new support ticket action grid & info */
+.recessed-card {
+	background-color: #F8FAFC;
+	border: 1px solid #E2E8F0;
+	box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+.bubble-btn {
+	transition: all 0.2s ease;
+	border: 1.5px solid transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 16px;
+	border-radius: 8px;
+	background: #ffffff;
+	cursor: pointer;
+}
+.bubble-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+}
+.bubble-btn:active {
+	transform: translateY(0);
+}
+
+.bubble-yellow { border-color: #fef08a; } 
+.bubble-yellow:hover { background-color: #fef9c3; }
+.bubble-yellow.active {
+	background-color: #fef9c3;
+	border-color: #eab308;
+	box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+}
+
+.bubble-blue { border-color: #bfdbfe; } 
+.bubble-blue:hover { background-color: #dbeafe; }
+.bubble-blue.active {
+	background-color: #dbeafe;
+	border-color: #3b82f6;
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.bubble-purple { border-color: #e9d5ff; } 
+.bubble-purple:hover { background-color: #f3e8ff; }
+.bubble-purple.active {
+	background-color: #f3e8ff;
+	border-color: #a855f7;
+	box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+}
+
+.bubble-orange { border-color: #fed7aa; } 
+.bubble-orange:hover { background-color: #ffedd5; }
+.bubble-orange.active {
+	background-color: #ffedd5;
+	border-color: #f97316;
+	box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+}
+
 
