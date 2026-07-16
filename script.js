@@ -5061,9 +5061,12 @@ function initVerificationView() {
 	if (callTimerInterval) clearInterval(callTimerInterval);
 	
 	// Arayüz Elementlerini Temizle
-	document.getElementById('verification-search-input').value = '';
-	document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-	document.getElementById('verification-order-card').style.display = 'none';
+	const searchInput = document.getElementById('verification-search-input');
+	if (searchInput) searchInput.value = '';
+	
+	const orderCard = document.getElementById('verification-order-card');
+	if (orderCard) orderCard.style.display = 'none';
+	
 	closeModalWithAnimation('verification-call-panel');
 	
 	const toast = document.getElementById('verification-toast');
@@ -5071,6 +5074,8 @@ function initVerificationView() {
 		toast.style.display = 'none';
 		toast.className = 'verification-alert';
 	}
+	
+	renderCallCenterOrders();
 }
 
 // Özel Toast Bildirimi Göster
@@ -5079,113 +5084,83 @@ function showVerificationToast(message, type = 'error') {
 }
 
 // Shopify Sipariş Numarasını Sorgula
-async function handleVerificationSearch(event) {
-	event.preventDefault();
+let callCenterOrders = [
+	{ code: '#2001', customer: 'Ahmet Yılmaz', phone: '+90 532 111 2233', total: '₺450.00', status: 'Bekliyor', address: 'Kadıköy, İstanbul' },
+	{ code: '#2002', customer: 'Ayşe Demir', phone: '+90 555 444 5566', total: '₺120.00', status: 'Bekliyor', address: 'Çankaya, Ankara' },
+	{ code: '#2003', customer: 'Mehmet Kaya', phone: '+90 544 777 8899', total: '₺890.00', status: 'Bekliyor', address: 'Bornova, İzmir' }
+];
+
+function renderCallCenterOrders(query = '') {
+	const tbody = document.getElementById('verification-orders-tbody');
+	if (!tbody) return;
 	
-	const searchInput = document.getElementById('verification-search-input');
-	const orderNumber = searchInput.value.trim();
-	const btn = document.getElementById('btn-verification-search');
+	tbody.innerHTML = '';
 	
-	if (!orderNumber) return;
+	const filteredOrders = callCenterOrders.filter(o => 
+		o.code.toLowerCase().includes(query.toLowerCase()) || 
+		o.customer.toLowerCase().includes(query.toLowerCase())
+	);
 	
-	btn.disabled = true;
-	btn.textContent = 'Sorgulanıyor...';
-	
-	// Arayüzü temizle
-	document.getElementById('verification-order-card').style.display = 'none';
-	closeModalWithAnimation('verification-call-panel');
-	isAddressEditing = false;
-	
-	const SEARCH_COST = 0.50;
-	
-	// Öncelikli Bakiye Kontrolü
-	if (currentBalance < SEARCH_COST) {
-		showVerificationToast(`Yetersiz Bakiye! Sorgulama ücreti ₺${SEARCH_COST.toFixed(2)}'dir. Mevcut bakiyeniz: ₺${currentBalance.toFixed(2)}`, 'error');
-		btn.disabled = false;
-		btn.textContent = `Sorgula (₺${SEARCH_COST.toFixed(2)})`;
+	if (filteredOrders.length === 0) {
+		tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px;">Arama kriterlerine uygun çağrı bulunamadı.</td></tr>`;
 		return;
 	}
+	
+	filteredOrders.forEach(order => {
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+			<td><strong>${order.code}</strong></td>
+			<td>${order.customer}</td>
+			<td>${order.phone}</td>
+			<td class="align-right"><strong>${order.total}</strong></td>
+			<td><span class="status-badge" style="background: rgba(245, 158, 11, 0.15); color: #b45309;">${order.status}</span></td>
+			<td style="text-align: right; padding-right: 20px;">
+				<button class="btn-primary" style="padding: 6px 12px; font-size: 12px; width: auto; margin: 0;" onclick="selectCallCenterOrder('${order.code}')">Seç</button>
+			</td>
+		`;
+		tbody.appendChild(tr);
+	});
+}
 
-	try {
-		// API isteği at
-		const response = await fetch('/api/shopifyOrder', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				orderNumber: orderNumber,
-				userId: 'user_1'
-			})
-		});
-		
-		const data = await response.json();
-		
-		if (!response.ok) {
-			throw new Error(data.error || 'API isteği başarısız oldu.');
-		}
-		
-		// Başarılı ise verileri yerleştir
-		activeVerificationOrder = data.order;
-		currentBalance = data.balance;
-		
-		// Bakiye göstergelerini güncelle
-		updateBalanceDisplay();
-		document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-		
-		renderVerificationOrderDetails();
-		showVerificationToast('Sipariş verileri Shopify üzerinden başarıyla getirildi (₺0.50 düşüldü).', 'success');
-		
-	} catch (err) {
-		console.warn('API Bağlantısı sağlanamadı veya Shopify yapılandırması eksik. Lokal veri fallback devrede.', err);
-		
-		// Fallback: Lokal "orders" dizininde ara (Müşterinin test edebilmesi için demo modu)
-		const formattedQuery = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
-		const cleanQuery = orderNumber.replace('#', '');
-		
-		const localOrder = orders.find(o => o.code === formattedQuery || o.code.replace('#', '') === cleanQuery);
-		
-		if (localOrder) {
-			// Bakiyeyi düş
-			currentBalance -= SEARCH_COST;
-			updateBalanceDisplay();
-			document.getElementById('verification-wallet-balance').textContent = '₺' + currentBalance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-			
-			// Map localOrder to matching structure
-			activeVerificationOrder = {
-				id: Math.floor(Math.random() * 100000) + 1000,
-				order_number: localOrder.code,
-				financial_status: localOrder.status === 'ready' ? 'paid' : 'pending',
-				total_price: localOrder.total.toString(),
-				currency: 'TRY',
-				customer: {
-					first_name: localOrder.customer.split(' ')[0] || '',
-					last_name: localOrder.customer.split(' ').slice(1).join(' ') || '',
-					phone: localOrder.phone || '+90 555 123 4567'
-				},
-				shipping_address: {
-					address1: localOrder.address.split(',')[1]?.trim() || localOrder.address,
-					address2: localOrder.address.split(',')[2]?.trim() || '',
-					city: localOrder.address.split(',')[localOrder.address.split(',').length - 1]?.trim() || localOrder.city,
-					province: localOrder.city,
-					zip: '34000',
-					country: 'Turkey'
-				},
-				line_items: localOrder.products.map((p, idx) => ({
-					id: idx + 1,
-					title: p.name,
-					quantity: p.qty,
-					price: p.price.replace('₺', '').replace(',', '').trim()
-				}))
-			};
-			
-			renderVerificationOrderDetails();
-			showVerificationToast(`[DEMO MODU] Shopify bağlantısı olmadığı için lokal veri getirildi (₺0.50 Kredi Düşüldü).`, 'success');
-		} else {
-			showVerificationToast(`Girilen numaraya ait sipariş bulunamadı (${orderNumber}).`, 'error');
-		}
-	} finally {
-		btn.disabled = false;
-		btn.textContent = `Sorgula (₺${SEARCH_COST.toFixed(2)})`;
-	}
+function selectCallCenterOrder(code) {
+	const localOrder = callCenterOrders.find(o => o.code === code);
+	if (!localOrder) return;
+	
+	activeVerificationOrder = {
+		id: Math.floor(Math.random() * 100000) + 1000,
+		order_number: localOrder.code,
+		financial_status: 'pending',
+		total_price: localOrder.total.replace('₺', '').replace(',', '').trim(),
+		currency: 'TRY',
+		customer: {
+			first_name: localOrder.customer.split(' ')[0] || '',
+			last_name: localOrder.customer.split(' ').slice(1).join(' ') || '',
+			phone: localOrder.phone
+		},
+		shipping_address: {
+			address1: localOrder.address.split(',')[0]?.trim() || localOrder.address,
+			address2: '',
+			city: localOrder.address.split(',')[1]?.trim() || localOrder.address,
+			province: localOrder.address.split(',')[1]?.trim() || localOrder.address,
+			zip: '34000',
+			country: 'Turkey'
+		},
+		line_items: [
+			{ id: 1, title: 'Sepet Ürünleri', quantity: 1, price: localOrder.total.replace('₺', '').replace(',', '').trim() }
+		]
+	};
+	
+	renderVerificationOrderDetails();
+	document.getElementById('verification-order-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function handleVerificationSearch(event) {
+	if(event && event.preventDefault) event.preventDefault();
+	
+	const searchInput = document.getElementById('verification-search-input');
+	const query = searchInput ? searchInput.value.trim() : '';
+	
+	renderCallCenterOrders(query);
 }
 
 // Sipariş Detaylarını Ekrana Yazdır
@@ -5263,18 +5238,11 @@ function toggleAddressEdit() {
 
 // Aramayı Başlat (Call Action)
 async function startCustomerCall() {
-	const CALL_COST = 1.00;
-	
 	const agentPhoneInput = document.getElementById('v-agent-phone-input');
 	const agentPhone = agentPhoneInput ? agentPhoneInput.value.trim() : '';
 	
 	if (!agentPhone) {
 		alert('Aramayı başlatabilmek için önce kendi dahili / cep telefon numaranızı girmelisiniz.');
-		return;
-	}
-
-	if (currentBalance < CALL_COST) {
-		showVerificationToast(`Yetersiz Bakiye! Arama başlatma bedeli ₺${CALL_COST.toFixed(2)}'dir. Mevcut bakiyeniz: ₺${currentBalance.toFixed(2)}`, 'error');
 		return;
 	}
 	

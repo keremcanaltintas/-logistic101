@@ -1494,25 +1494,37 @@
 					</div>
 				</header>
 
-				<!-- Arama Barı ve Bakiye Bilgisi Grid -->
-				<div class="verification-top-grid">
+				<!-- Arama Barı Grid -->
+				<div class="verification-top-grid" style="grid-template-columns: 1fr;">
 					<div class="verification-search-card">
-						<form id="verification-search-form" onsubmit="handleVerificationSearch(event)">
+						<form id="verification-search-form" onsubmit="event.preventDefault();">
 							<div class="verification-search-input-wrapper">
 								<i class="fa-solid fa-magnifying-glass"></i>
-								<input type="text" id="verification-search-input" placeholder="Shopify Sipariş Numarası Girin (Örn: #1024 veya 1024)..." required />
+								<input type="text" id="verification-search-input" placeholder="Sipariş Numarası veya Müşteri İsmi ile arayın..." autocomplete="off" oninput="handleVerificationSearch(event)" />
 							</div>
-							<button type="submit" class="btn-primary" id="btn-verification-search">Sorgula (₺0.50)</button>
 						</form>
 					</div>
-					<div class="verification-balance-card">
-						<div class="balance-card-icon">
-							<i class="fa-solid fa-wallet"></i>
-						</div>
-						<div class="balance-card-info">
-							<span class="balance-label">Kullanılabilir Bakiye</span>
-							<h3 class="balance-value" id="verification-wallet-balance">₺0.00</h3>
-						</div>
+				</div>
+
+				<!-- Call Center Siparişleri Listesi -->
+				<div class="settings-card" style="padding: 20px; margin-top: 16px; margin-bottom: 24px;">
+					<h3 style="margin-bottom: 16px; font-size: 15px; color: var(--text-main);"><i class="fa-solid fa-list-check"></i> Bekleyen Çağrılar</h3>
+					<div class="table-responsive">
+						<table class="orders-table-new" style="width: 100%;">
+							<thead>
+								<tr>
+									<th>Sipariş No</th>
+									<th>Müşteri</th>
+									<th>Telefon</th>
+									<th class="align-right">Tutar</th>
+									<th>Durum</th>
+									<th style="text-align: right; padding-right: 20px;">Aksiyon</th>
+								</tr>
+							</thead>
+							<tbody id="verification-orders-tbody">
+								<!-- JavaScript ile doldurulacak -->
+							</tbody>
+						</table>
 					</div>
 				</div>
 
@@ -1537,7 +1549,7 @@
 								<div class="info-data-action">
 									<span id="v-customer-phone">-</span>
 									<button type="button" class="btn-phone-call" id="btn-start-call" onclick="startCustomerCall()">
-										<i class="fa-solid fa-phone"></i> Ara (₺1.00)
+										<i class="fa-solid fa-phone"></i> Müşteriyi Ara
 									</button>
 								</div>
 							</div>
