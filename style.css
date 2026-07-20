@@ -941,6 +941,7 @@ img, svg {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+	margin-bottom: 32px;
 }
 
 .section-title-bar {
@@ -2896,7 +2897,12 @@ aside.sidebar .menu-item.wizard-highlighted i {
 	min-width: 750px;
 }
 
-.table-responsive table th,
+.table-responsive table th {
+	white-space: normal;
+	word-break: break-word;
+	min-width: 100px;
+}
+
 .table-responsive table td {
 	white-space: nowrap;
 }
